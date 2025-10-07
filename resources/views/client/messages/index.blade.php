@@ -122,7 +122,7 @@
         <i class="fas fa-inbox text-gray-300 text-6xl mb-4"></i>
         <p class="text-gray-500 text-lg">No conversations yet.</p>
         <p class="text-gray-400 mt-2">Start a conversation by visiting a vendor profile and clicking "Send Message".</p>
-        <a href="{{ route('vendors.list') }}" class="inline-block mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition">
+        <a href="{{ route('search.index') }}" class="inline-block mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition">
           <i class="fas fa-search mr-2"></i> Browse Vendors
         </a>
       </div>
