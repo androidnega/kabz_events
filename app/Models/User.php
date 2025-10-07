@@ -68,4 +68,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserInteraction::class);
     }
+
+    /**
+     * Get the reviews written by this user.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
 }

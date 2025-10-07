@@ -103,8 +103,38 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {{-- SMS Configuration --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {{-- Paystack Payment Gateway --}}
+                <div class="group bg-teal-50 hover:bg-teal-100 border-2 border-teal-200 hover:border-teal-300 rounded-lg p-5 transition-all cursor-pointer">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-teal-500 text-white rounded-lg p-2.5">
+                            <i class="fas fa-credit-card text-lg"></i>
+                        </div>
+                        <span class="text-teal-700 text-xs font-semibold bg-teal-200 px-2.5 py-1 rounded-full">Active</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-teal-700 transition">Paystack</h3>
+                    <p class="text-xs text-gray-600">Payment gateway API</p>
+                    <div class="mt-3 pt-3 border-t border-teal-200">
+                        <p class="text-xs text-gray-500"><i class="fas fa-key mr-1"></i> API configured</p>
+                    </div>
+                </div>
+
+                {{-- Cloudinary Media Storage --}}
+                <div class="group bg-sky-50 hover:bg-sky-100 border-2 border-sky-200 hover:border-sky-300 rounded-lg p-5 transition-all cursor-pointer">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-sky-500 text-white rounded-lg p-2.5">
+                            <i class="fas fa-cloud-upload-alt text-lg"></i>
+                        </div>
+                        <span class="text-sky-700 text-xs font-semibold bg-sky-200 px-2.5 py-1 rounded-full">Active</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-sky-700 transition">Cloudinary</h3>
+                    <p class="text-xs text-gray-600">Media & image storage</p>
+                    <div class="mt-3 pt-3 border-t border-sky-200">
+                        <p class="text-xs text-gray-500"><i class="fas fa-image mr-1"></i> Cloud storage</p>
+                    </div>
+                </div>
+
+                {{-- SMS Configuration (Arkasel) --}}
                 <a href="{{ route('superadmin.sms.test') }}" class="group bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-200 hover:border-emerald-300 rounded-lg p-5 transition-all">
                     <div class="flex items-center justify-between mb-3">
                         <div class="bg-emerald-500 text-white rounded-lg p-2.5">
@@ -112,9 +142,27 @@
                         </div>
                         <span class="text-emerald-700 text-xs font-semibold bg-emerald-200 px-2.5 py-1 rounded-full">Active</span>
                     </div>
-                    <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-emerald-700 transition">SMS Settings</h3>
-                    <p class="text-xs text-gray-600">Arkassel gateway config</p>
+                    <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-emerald-700 transition">Arkasel SMS</h3>
+                    <p class="text-xs text-gray-600">SMS gateway config</p>
+                    <div class="mt-3 pt-3 border-t border-emerald-200">
+                        <p class="text-xs text-gray-500"><i class="fas fa-check-circle mr-1"></i> Test available</p>
+                    </div>
                 </a>
+
+                {{-- Laravel Blade Templates --}}
+                <div class="group bg-red-50 hover:bg-red-100 border-2 border-red-200 hover:border-red-300 rounded-lg p-5 transition-all cursor-pointer">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-red-500 text-white rounded-lg p-2.5">
+                            <i class="fab fa-laravel text-lg"></i>
+                        </div>
+                        <span class="text-red-700 text-xs font-semibold bg-red-200 px-2.5 py-1 rounded-full">Core</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-red-700 transition">Blade Engine</h3>
+                    <p class="text-xs text-gray-600">Laravel template engine</p>
+                    <div class="mt-3 pt-3 border-t border-red-200">
+                        <p class="text-xs text-gray-500"><i class="fas fa-code mr-1"></i> Laravel {{ app()->version() }}</p>
+                    </div>
+                </div>
 
                 {{-- Database Backups --}}
                 <a href="{{ route('superadmin.backups.index') }}" class="group bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 hover:border-blue-300 rounded-lg p-5 transition-all">
@@ -126,6 +174,9 @@
                     </div>
                     <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-blue-700 transition">Database Backups</h3>
                     <p class="text-xs text-gray-600">Create & manage backups</p>
+                    <div class="mt-3 pt-3 border-t border-blue-200">
+                        <p class="text-xs text-gray-500"><i class="fas fa-shield-alt mr-1"></i> Auto backup</p>
+                    </div>
                 </a>
 
                 {{-- Location Management --}}
@@ -138,6 +189,9 @@
                     </div>
                     <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-purple-700 transition">Locations</h3>
                     <p class="text-xs text-gray-600">Regions & districts</p>
+                    <div class="mt-3 pt-3 border-t border-purple-200">
+                        <p class="text-xs text-gray-500"><i class="fas fa-map-pin mr-1"></i> 16 regions</p>
+                    </div>
                 </a>
 
                 {{-- CSV Import --}}
@@ -150,7 +204,25 @@
                     </div>
                     <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-orange-700 transition">CSV Upload</h3>
                     <p class="text-xs text-gray-600">Bulk import locations</p>
+                    <div class="mt-3 pt-3 border-t border-orange-200">
+                        <p class="text-xs text-gray-500"><i class="fas fa-file-csv mr-1"></i> Mass import</p>
+                    </div>
                 </a>
+
+                {{-- Email Configuration --}}
+                <div class="group bg-pink-50 hover:bg-pink-100 border-2 border-pink-200 hover:border-pink-300 rounded-lg p-5 transition-all cursor-pointer">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="bg-pink-500 text-white rounded-lg p-2.5">
+                            <i class="fas fa-envelope text-lg"></i>
+                        </div>
+                        <span class="text-pink-700 text-xs font-semibold bg-pink-200 px-2.5 py-1 rounded-full">SMTP</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-pink-700 transition">Email Service</h3>
+                    <p class="text-xs text-gray-600">Mail configuration</p>
+                    <div class="mt-3 pt-3 border-t border-pink-200">
+                        <p class="text-xs text-gray-500"><i class="fas fa-paper-plane mr-1"></i> Configured</p>
+                    </div>
+                </div>
             </div>
         </div>
 
