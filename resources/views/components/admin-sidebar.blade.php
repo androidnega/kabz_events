@@ -98,6 +98,14 @@
                 <i class="fas fa-envelope text-lg w-5"></i>
                 <span>Messages</span>
             </a>
+
+            <!-- Users -->
+            <a href="{{ route('admin.users.index') }}" 
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
+                      {{ request()->routeIs('admin.users.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+                <i class="fas fa-users-cog text-lg w-5"></i>
+                <span>Users</span>
+            </a>
         </div>
 
         <!-- System Section -->

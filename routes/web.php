@@ -113,6 +113,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
     Route::post('reports/{id}/resolve', [ReportController::class, 'resolve'])->name('reports.resolve');
     Route::post('reports/{id}/reopen', [ReportController::class, 'reopen'])->name('reports.reopen');
+    
+    // User Management
+    Route::resource('users', App\Http\Controllers\Admin\UserController::class);
 });
 
 // Vendor Dashboard  
