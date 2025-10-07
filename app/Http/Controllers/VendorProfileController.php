@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\UserActivityLog;
 use App\Models\Vendor;
 use App\Services\RecommendationService;
 use Illuminate\Http\Request;
@@ -81,15 +82,16 @@ class VendorProfileController extends Controller
 
         // Log activity for recommendations
         if (auth()->check()) {
-            RecommendationService::logActivity(
-                'viewed_vendor',
-                $vendor->id,
-                $vendor->services->first()?->category->name
-            );
+            UserActivityLog::create([
+                'user_id' => auth()->id(),
+                'vendor_id' => $vendor->id,
+                'action' => 'viewed_vendor',
+                'meta' => $vendor->services->first()?->category->name,
+            ]);
         }
 
         // Get personalized recommendations
-        $recommendedVendors = RecommendationService::getRecommendations(6);
+        $recommendedVendors = RecommendationService::get(['limit' => 6]);
 
         // Check if user can access sensitive information (contact, reviews)
         $canAccessSensitive = auth()->check();
