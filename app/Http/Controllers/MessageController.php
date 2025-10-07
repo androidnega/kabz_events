@@ -26,6 +26,11 @@ class MessageController extends Controller
             'message'   => 'required|string|max:3000',
         ]);
 
+        // Spam protection: prevent links in messages
+        if (preg_match('/(http:\/\/|https:\/\/|www\.)/i', $request->message)) {
+            return response()->json(['error' => 'Links are not allowed in messages.'], 422);
+        }
+
         $vendor = Vendor::findOrFail($request->vendor_id);
         $sender = Auth::user();
         $receiverUser = $vendor->user; // vendor owner user
@@ -43,14 +48,12 @@ class MessageController extends Controller
             'from_vendor' => $sender->id === $vendor->user_id,
         ]);
 
-        // Optional: notify vendor by SMS/email (if NotificationService is available)
-        // try {
-        //     $text = "New message from {$sender->name} on KABZS: " . \Str::limit($request->message, 120);
-        //     NotificationService::sendSMS($receiverUser->phone ?? $receiverUser->mobile ?? null, $text);
-        //     NotificationService::sendEmail($receiverUser->email, 'New message on KABZS EVENT', 'emails.generic', ['text' => $text]);
-        // } catch (\Throwable $e) {
-        //     \Log::warning('Message notification failed: ' . $e->getMessage());
-        // }
+        // Send notification to receiver
+        try {
+            $receiverUser->notify(new \App\Notifications\NewMessageNotification($msg));
+        } catch (\Throwable $e) {
+            \Log::warning('Message notification failed: ' . $e->getMessage());
+        }
 
         return response()->json([
             'ok' => true,

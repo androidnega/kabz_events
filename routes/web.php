@@ -8,6 +8,7 @@ use App\Http\Controllers\Client\DashboardController as ClientDashboardController
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicVendorController;
 use App\Http\Controllers\ReviewController;
@@ -161,13 +162,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/vendor/register', [VendorRegistrationController::class, 'create'])->name('vendor.register');
     Route::post('/vendor/register', [VendorRegistrationController::class, 'store'])->name('vendor.store');
     
-    // Message Routes (Phase K: Chat System)
-    Route::post('/messages/send', [MessageController::class, 'store'])->name('messages.store');
+    // Message Routes (Phase K: Chat System with Rate Limiting)
+    Route::middleware('message.rate')->group(function () {
+        Route::post('/messages/send', [MessageController::class, 'store'])->name('messages.store');
+    });
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
     Route::get('/messages/conversation', [MessageController::class, 'conversation'])->name('messages.conversation');
     
     // Report Vendor (authenticated users can report vendors)
     Route::post('/reports/vendor', [ReportController::class, 'store'])->name('reports.store');
+    
+    // Notifications (Phase K2)
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     
     // Review Submission (authenticated users only)
     Route::post('/vendors/{vendor}/reviews', [ReviewController::class, 'store'])->name('reviews.store');

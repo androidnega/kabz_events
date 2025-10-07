@@ -75,6 +75,9 @@ $user = Auth::user();
 
       <!-- Account Controls (Desktop) -->
       <div class="hidden md:flex items-center space-x-4">
+        {{-- Notification Bell --}}
+        <x-notification-bell />
+        
         <span class="text-gray-600 text-sm">{{ $user->name }}</span>
         <x-dropdown align="right" width="48">
           <x-slot name="trigger">
