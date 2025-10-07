@@ -11,13 +11,27 @@ class VendorVerificationController extends Controller
     /**
      * Display list of verification requests.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $requests = VerificationRequest::with('vendor')
-            ->latest()
-            ->paginate(15);
+        $tab = $request->get('tab', 'pending');
         
-        return view('admin.verifications.index', compact('requests'));
+        if ($tab === 'verified') {
+            // Show all verified vendors
+            $vendors = \App\Models\Vendor::where('is_verified', true)
+                ->with(['user', 'services'])
+                ->latest('verified_at')
+                ->paginate(15);
+            
+            return view('admin.verifications.index', compact('vendors', 'tab'));
+        } else {
+            // Show pending verification requests
+            $requests = VerificationRequest::with('vendor')
+                ->where('status', 'pending')
+                ->latest()
+                ->paginate(15);
+            
+            return view('admin.verifications.index', compact('requests', 'tab'));
+        }
     }
 
     /**
@@ -56,5 +70,52 @@ class VendorVerificationController extends Controller
         ]);
 
         return back()->with('error', 'Vendor verification rejected.');
+    }
+
+    /**
+     * Suspend a verified vendor (remove verification).
+     */
+    public function suspend($vendorId)
+    {
+        $vendor = \App\Models\Vendor::findOrFail($vendorId);
+        
+        $vendor->update([
+            'is_verified' => false,
+            'verified_at' => null,
+        ]);
+
+        // Create a note in verification_requests if exists
+        VerificationRequest::where('vendor_id', $vendorId)
+            ->where('status', 'approved')
+            ->update([
+                'status' => 'suspended',
+                'admin_note' => 'Verification suspended by admin',
+                'decided_at' => now(),
+            ]);
+
+        return back()->with('success', 'Vendor verification suspended successfully!');
+    }
+
+    /**
+     * Cancel verification (permanent removal).
+     */
+    public function cancelVerification($vendorId)
+    {
+        $vendor = \App\Models\Vendor::findOrFail($vendorId);
+        
+        $vendor->update([
+            'is_verified' => false,
+            'verified_at' => null,
+        ]);
+
+        // Update all verification requests for this vendor
+        VerificationRequest::where('vendor_id', $vendorId)
+            ->update([
+                'status' => 'cancelled',
+                'admin_note' => 'Verification cancelled by admin',
+                'decided_at' => now(),
+            ]);
+
+        return back()->with('success', 'Vendor verification cancelled permanently!');
     }
 }

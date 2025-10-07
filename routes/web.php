@@ -101,6 +101,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('verifications', [VendorVerificationController::class, 'index'])->name('verifications.index');
     Route::post('verifications/{id}/approve', [VendorVerificationController::class, 'approve'])->name('verifications.approve');
     Route::post('verifications/{id}/reject', [VendorVerificationController::class, 'reject'])->name('verifications.reject');
+    Route::post('verifications/{vendorId}/suspend', [VendorVerificationController::class, 'suspend'])->name('verifications.suspend');
+    Route::post('verifications/{vendorId}/cancel', [VendorVerificationController::class, 'cancelVerification'])->name('verifications.cancel');
     
     // Client Management
     Route::get('clients', [ClientController::class, 'index'])->name('clients.index');

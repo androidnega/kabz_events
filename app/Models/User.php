@@ -24,7 +24,40 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'display_id',
     ];
+
+    /**
+     * Boot the model and generate display ID.
+     */
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            if (!$user->display_id) {
+                $user->generateDisplayId();
+            }
+        });
+    }
+
+    /**
+     * Generate a display ID for the user based on their role.
+     */
+    public function generateDisplayId()
+    {
+        $role = $this->roles->first()?->name ?? 'user';
+        
+        $prefix = match($role) {
+            'super_admin' => 'SA',
+            'admin' => 'ADM',
+            'vendor' => 'VND',
+            'client' => 'CLT',
+            default => 'USR',
+        };
+        
+        $displayId = $prefix . '-' . str_pad($this->id, 6, '0', STR_PAD_LEFT);
+        
+        $this->update(['display_id' => $displayId]);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

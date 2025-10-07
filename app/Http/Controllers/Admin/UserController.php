@@ -54,18 +54,32 @@ class UserController extends Controller
 
     /**
      * Show the form for creating a new user.
+     * Only super_admin can access this.
      */
     public function create()
     {
+        // Only super_admin can create users
+        if (!auth()->user()->hasRole('super_admin')) {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'Only Super Admins can create user accounts!');
+        }
+
         $roles = Role::all();
         return view('admin.users.create', compact('roles'));
     }
 
     /**
      * Store a newly created user in storage.
+     * Only super_admin can create users.
      */
     public function store(Request $request)
     {
+        // Only super_admin can create users
+        if (!auth()->user()->hasRole('super_admin')) {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'Only Super Admins can create user accounts!');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -80,9 +94,12 @@ class UserController extends Controller
         ]);
 
         $user->assignRole($validated['role']);
+        
+        // Generate display ID based on assigned role
+        $user->generateDisplayId();
 
         return redirect()->route('admin.users.index')
-            ->with('success', 'User created successfully!');
+            ->with('success', 'User created successfully! ID: ' . $user->display_id);
     }
 
     /**

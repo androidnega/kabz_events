@@ -12,9 +12,15 @@
                     </h1>
                     <p class="text-sm text-gray-600 mt-1">Manage all system users and their roles</p>
                 </div>
-                <a href="{{ route('admin.users.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition">
-                    <i class="fas fa-plus mr-2"></i> Add New User
-                </a>
+                @if(auth()->user()->hasRole('super_admin'))
+                    <a href="{{ route('admin.users.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition">
+                        <i class="fas fa-plus mr-2"></i> Add New User
+                    </a>
+                @else
+                    <div class="text-sm text-gray-500 bg-gray-50 border border-gray-200 rounded-lg px-4 py-2">
+                        <i class="fas fa-lock mr-2"></i> Only Super Admins can create users
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -133,6 +139,7 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email Status</th>
@@ -143,6 +150,11 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         @forelse($users as $user)
                             <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-mono font-bold text-indigo-600">
+                                        {{ $user->display_id ?? 'ID-' . str_pad($user->id, 6, '0', STR_PAD_LEFT) }}
+                                    </div>
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
@@ -224,7 +236,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
                                     <i class="fas fa-users text-gray-300 text-5xl mb-3"></i>
                                     <p class="text-lg font-medium">No users found</p>
                                     <p class="text-sm mt-1">Try adjusting your search or filters</p>
