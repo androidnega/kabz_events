@@ -3,22 +3,24 @@
 <div class="space-y-4">
   {{-- Vendor Profile Card --}}
   <div class="bg-white p-4 rounded-2xl shadow">
-    <div class="flex items-center gap-3 mb-4">
-      <img src="{{ $vendor->profile_image ?? ($vendor->logo ?? asset('images/default_vendor.png')) }}"
-           alt="{{ $vendor->business_name }}"
-           class="w-16 h-16 rounded-full object-cover border border-gray-200" />
-      <div class="flex-1">
-        <div class="flex items-center gap-2 mb-1">
-          <h3 class="font-semibold text-lg text-gray-900">{{ $vendor->business_name }}</h3>
-          @if($vendor->is_verified)
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
-              <i class="fas fa-check-circle mr-1"></i> Verified
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center border border-gray-200">
+            <span class="text-2xl font-bold text-purple-600">
+              {{ strtoupper(substr($vendor->business_name, 0, 1)) }}
             </span>
-          @endif
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-semibold text-lg text-gray-900">{{ $vendor->business_name }}</h3>
+              @if($vendor->is_verified)
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                  <i class="fas fa-check-circle mr-1"></i> Verified
+                </span>
+              @endif
+            </div>
+            <p class="text-sm text-gray-500">{{ $vendor->services->first()?->category->name ?? 'Vendor' }}</p>
+          </div>
         </div>
-        <p class="text-sm text-gray-500">{{ $vendor->services->first()?->category->name ?? 'Vendor' }}</p>
-      </div>
-    </div>
 
     {{-- Contact Buttons --}}
     <div class="space-y-2">

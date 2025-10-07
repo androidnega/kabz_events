@@ -2,14 +2,16 @@
 
 <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
     {{-- Vendor Image/Logo --}}
-    <div class="h-48 bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center overflow-hidden">
-        @if($vendor->profile_photo)
-            <img src="{{ $vendor->profile_photo }}" alt="{{ $vendor->business_name }}" class="w-full h-full object-cover">
-        @elseif($vendor->logo_path)
-            <img src="{{ asset('storage/' . $vendor->logo_path) }}" alt="{{ $vendor->business_name }}" class="w-full h-full object-cover">
-        @else
-            <div class="text-6xl font-bold text-purple-300">
-                {{ substr($vendor->business_name, 0, 1) }}
+    <div class="h-48 bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center overflow-hidden relative">
+        {{-- Always show the business initial as placeholder --}}
+        <div class="text-6xl font-bold text-purple-300">
+            {{ strtoupper(substr($vendor->business_name, 0, 1)) }}
+        </div>
+        
+        {{-- Optional: If vendor has a category, show an icon --}}
+        @if($vendor->services->isNotEmpty())
+            <div class="absolute top-2 right-2 bg-white rounded-full p-2 shadow-md">
+                <i class="fas fa-briefcase text-purple-600 text-sm"></i>
             </div>
         @endif
     </div>
