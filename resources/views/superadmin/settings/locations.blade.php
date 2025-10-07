@@ -136,6 +136,13 @@
                         </a>
                     </div>
                 @endforelse
+
+                {{-- Pagination Links --}}
+                @if($regions->hasPages())
+                    <div class="mt-6 border-t border-gray-200 pt-4">
+                        {{ $regions->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>

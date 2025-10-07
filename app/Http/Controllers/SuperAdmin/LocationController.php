@@ -16,7 +16,7 @@ class LocationController extends Controller
      */
     public function index()
     {
-        $regions = Region::with('districts.towns')->orderBy('name')->get();
+        $regions = Region::with('districts.towns')->orderBy('name')->paginate(10);
         return view('superadmin.settings.locations', compact('regions'));
     }
 
@@ -50,7 +50,7 @@ class LocationController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Location added successfully! 🇬🇭');
+        return back()->with('success', 'Location added successfully!');
     }
 
     /**
@@ -141,7 +141,7 @@ class LocationController extends Controller
                 $imported++;
             }
 
-            $message = "{$imported} locations imported successfully! 🇬🇭";
+            $message = "{$imported} locations imported successfully!";
             if (count($errors) > 0) {
                 $message .= " (" . count($errors) . " rows skipped due to errors)";
             }
