@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Report;
+use Illuminate\Http\Request;
+
+class ReportController extends Controller
+{
+    public function index()
+    {
+        $reports = Report::with('user')
+            ->latest()
+            ->paginate(15);
+        
+        return view('admin.reports.index', compact('reports'));
+    }
+
+    public function resolve(Request $request, $id)
+    {
+        $report = Report::findOrFail($id);
+        
+        $report->update([
+            'status' => 'resolved',
+            'resolved_at' => now(),
+            'admin_response' => $request->input('admin_response', 'Issue resolved by admin'),
+        ]);
+        
+        return back()->with('success', 'Report marked as resolved! 🇬🇭');
+    }
+
+    public function reopen($id)
+    {
+        $report = Report::findOrFail($id);
+        
+        $report->update([
+            'status' => 'open',
+            'resolved_at' => null,
+        ]);
+        
+        return back()->with('info', 'Report reopened.');
+    }
+}
