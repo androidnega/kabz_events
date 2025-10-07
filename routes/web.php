@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\VendorVerificationController;
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicVendorController;
 use App\Http\Controllers\ReviewController;
@@ -21,6 +22,8 @@ use App\Http\Controllers\Vendor\VerificationController;
 use App\Http\Controllers\VendorDashboardController;
 use App\Http\Controllers\VendorProfileController;
 use App\Http\Controllers\VendorRegistrationController;
+use App\Services\RecommendationService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,6 +50,23 @@ Route::post('/signup/vendor', [PublicVendorController::class, 'store'])->name('v
 // Public Vendor Profiles (no auth required)
 Route::get('/vendors', [VendorProfileController::class, 'index'])->name('vendors.index');
 Route::get('/vendors/{slug}', [VendorProfileController::class, 'show'])->name('vendors.show');
+
+// Recommendation API (public - returns JSON)
+Route::get('/recommendations', function (Request $request) {
+    $lat = $request->query('lat');
+    $lng = $request->query('lng');
+    $category = $request->query('category_id');
+    $limit = intval($request->query('limit', 8));
+    
+    $recs = RecommendationService::get([
+        'lat' => $lat,
+        'lng' => $lng,
+        'category_id' => $category,
+        'limit' => $limit,
+    ]);
+    
+    return response()->json($recs);
+})->name('recommendations');
 
 // Role-Based Dashboards
 // Super Admin Dashboard
@@ -142,6 +162,14 @@ Route::middleware('auth')->group(function () {
     
     // Review Submission (authenticated users only)
     Route::post('/vendors/{vendor}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    
+    // User Interaction Logging (with rate limiting)
+    Route::middleware('throttle:60,1')->group(function () {
+        Route::post('/interactions/vendors/{vendor}/view', [InteractionController::class, 'logView'])->name('interactions.view');
+        Route::post('/interactions/search', [InteractionController::class, 'logSearch'])->name('interactions.search');
+        Route::post('/interactions/category', [InteractionController::class, 'logCategoryView'])->name('interactions.category');
+        Route::post('/interactions/vendors/{vendor}/recommendation-click', [InteractionController::class, 'logRecommendationClick'])->name('interactions.recommendation');
+    });
 });
 
 require __DIR__.'/auth.php';

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserActivityLog extends Model
+class VendorRecommendation extends Model
 {
     use HasFactory;
 
@@ -18,12 +18,20 @@ class UserActivityLog extends Model
     protected $fillable = [
         'user_id',
         'vendor_id',
-        'action',
-        'meta',
+        'score',
     ];
 
     /**
-     * Get the user that owns the activity log.
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'score' => 'float',
+    ];
+
+    /**
+     * Get the user that owns the recommendation.
      */
     public function user(): BelongsTo
     {
@@ -31,10 +39,11 @@ class UserActivityLog extends Model
     }
 
     /**
-     * Get the vendor associated with the activity log.
+     * Get the vendor associated with the recommendation.
      */
     public function vendor(): BelongsTo
     {
         return $this->belongsTo(Vendor::class);
     }
 }
+

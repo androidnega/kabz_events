@@ -13,6 +13,12 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+        
+        // Recompute vendor recommendations daily at 3 AM
+        $schedule->command('recs:recompute')
+            ->dailyAt('03:00')
+            ->withoutOverlapping()
+            ->runInBackground();
     }
 
     /**
