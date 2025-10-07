@@ -2,7 +2,7 @@
     {{-- Page Header --}}
     <div class="bg-gradient-to-r from-purple-600 to-teal-500 text-white py-12 mb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 class="text-4xl font-bold mb-2">Find Trusted Event Vendors in Ghana 🇬🇭</h1>
+            <h1 class="text-4xl font-bold mb-2">Find Trusted Event Vendors in Ghana</h1>
             <p class="text-lg text-purple-100">Search from verified vendors across all regions</p>
         </div>
     </div>

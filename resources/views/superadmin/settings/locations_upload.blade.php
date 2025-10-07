@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         <x-card class="p-6">
-            <h2 class="text-2xl font-bold text-purple-700 mb-6">📍 Bulk Import Ghana Locations 🇬🇭</h2>
+            <h2 class="text-2xl font-bold text-purple-700 mb-6">📍 Bulk Import Ghana Locations</h2>
             
             <p class="text-gray-600 mb-6">
                 Upload a CSV file with columns: <strong class="text-purple-700">region, district, town</strong>

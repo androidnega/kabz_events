@@ -2,7 +2,7 @@
     <div class="max-w-6xl mx-auto mt-8 px-4">
         {{-- Page Header --}}
         <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">Choose a Subscription Plan 🇬🇭</h2>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Choose a Subscription Plan</h2>
             <p class="text-lg text-gray-600">Select the plan that best fits your business needs</p>
         </div>
 

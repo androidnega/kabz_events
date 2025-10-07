@@ -4,7 +4,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold">Welcome, {{ $vendor->business_name }}! 🇬🇭</h1>
+                    <h1 class="text-3xl font-bold">Welcome, {{ $vendor->business_name }}!</h1>
                     <p class="text-purple-100 mt-1">Manage your event services business</p>
                 </div>
                 @if($stats['is_verified'])

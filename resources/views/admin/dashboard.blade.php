@@ -2,7 +2,7 @@
     {{-- Admin Dashboard Header --}}
     <div class="bg-gradient-to-r from-red-600 to-yellow-500 text-white py-8 mb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 class="text-3xl font-bold">Admin Dashboard 🇬🇭</h1>
+            <h1 class="text-3xl font-bold">Admin Dashboard</h1>
             <p class="text-red-100 mt-1">Vendor & Client Management | Platform Analytics</p>
         </div>
     </div>

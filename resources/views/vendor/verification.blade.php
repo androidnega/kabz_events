@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="max-w-2xl mx-auto mt-8 px-4">
         <x-card class="p-6">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Vendor Verification 🇬🇭</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Vendor Verification</h2>
 
             @if(session('success'))
                 <x-alert type="success" class="mb-4">

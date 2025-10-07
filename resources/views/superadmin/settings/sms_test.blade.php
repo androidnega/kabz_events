@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         <x-card class="p-6">
-            <h2 class="text-2xl font-bold text-green-700 mb-6">📱 SMS Test (Arkassel Ghana) 🇬🇭</h2>
+            <h2 class="text-2xl font-bold text-green-700 mb-6">📱 SMS Test (Arkassel Ghana)</h2>
 
             @if(session('success'))
                 <div class="mb-4 bg-green-50 border border-green-400 text-green-700 px-4 py-3 rounded">

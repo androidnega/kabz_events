@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         <x-card class="p-6">
-            <h2 class="text-2xl font-bold text-red-700 mb-6">User Reports & Issues 🇬🇭</h2>
+            <h2 class="text-2xl font-bold text-red-700 mb-6">User Reports & Issues</h2>
 
             @if(session('success'))
                 <x-alert type="success" class="mb-4">{{ session('success') }}</x-alert>

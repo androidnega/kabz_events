@@ -20,7 +20,7 @@
         <h3 class="text-xl font-semibold text-gray-800 mb-2 truncate">
             {{ $vendor->business_name }}
             @if($vendor->is_verified)
-                <span class="text-green-500 text-sm" title="Verified Vendor 🇬🇭">✓</span>
+                <span class="text-green-500 text-sm" title="Verified Vendor">✓</span>
             @endif
         </h3>
 

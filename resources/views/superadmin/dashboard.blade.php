@@ -5,7 +5,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold flex items-center">
-                        🇬🇭 Super Admin Dashboard
+                        Super Admin Dashboard
                     </h1>
                     <p class="text-red-100 mt-1">Complete system oversight for KABZS EVENT Ghana</p>
                 </div>

@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto mt-8 px-4">
         <x-card class="p-6">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Vendor Verification Requests 🇬🇭</h2>
+                <h2 class="text-2xl font-bold text-gray-800">Vendor Verification Requests</h2>
                 <div class="text-sm text-gray-600">
                     Total: {{ $requests->total() }} requests
                 </div>

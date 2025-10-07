@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         <x-card class="p-6">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-blue-700">Database Backups 🇬🇭</h2>
+                <h2 class="text-2xl font-bold text-blue-700">Database Backups</h2>
                 <form action="{{ route('superadmin.backups.create') }}" method="POST">
                     @csrf
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">
