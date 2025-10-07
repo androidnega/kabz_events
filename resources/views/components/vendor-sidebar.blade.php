@@ -7,14 +7,16 @@
       <img src="{{ $vendor->profile_image ?? ($vendor->logo ?? asset('images/default_vendor.png')) }}"
            alt="{{ $vendor->business_name }}"
            class="w-16 h-16 rounded-full object-cover border border-gray-200" />
-      <div>
-        <h3 class="font-semibold text-lg text-gray-900">{{ $vendor->business_name }}</h3>
+      <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+          <h3 class="font-semibold text-lg text-gray-900">{{ $vendor->business_name }}</h3>
+          @if($vendor->is_verified)
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+              <i class="fas fa-check-circle mr-1"></i> Verified
+            </span>
+          @endif
+        </div>
         <p class="text-sm text-gray-500">{{ $vendor->services->first()?->category->name ?? 'Vendor' }}</p>
-        @if($vendor->is_verified)
-          <span class="inline-block mt-1 text-green-700 text-sm font-medium">
-            <i class="fas fa-check-circle"></i> Verified
-          </span>
-        @endif
       </div>
     </div>
 
