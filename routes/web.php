@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\VendorVerificationController;
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InteractionController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicVendorController;
 use App\Http\Controllers\ReviewController;
@@ -159,6 +160,11 @@ Route::middleware('auth')->group(function () {
     // Vendor Registration Routes (for existing users to upgrade)
     Route::get('/vendor/register', [VendorRegistrationController::class, 'create'])->name('vendor.register');
     Route::post('/vendor/register', [VendorRegistrationController::class, 'store'])->name('vendor.store');
+    
+    // Message Routes (Phase K: Chat System)
+    Route::post('/messages/send', [MessageController::class, 'store'])->name('messages.store');
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/conversation', [MessageController::class, 'conversation'])->name('messages.conversation');
     
     // Review Submission (authenticated users only)
     Route::post('/vendors/{vendor}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
