@@ -43,7 +43,7 @@
             <!-- Dashboard -->
             <a href="{{ route('admin.dashboard') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
-                      {{ request()->routeIs('admin.dashboard') ? 'bg-teal-50 text-teal-700 border-l-4 border-teal-600' : 'text-gray-700 hover:bg-gray-100' }}">
+                      {{ request()->routeIs('admin.dashboard') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i class="fas fa-tachometer-alt text-lg w-5"></i>
                 <span>Dashboard</span>
             </a>
@@ -51,7 +51,7 @@
             <!-- Verifications -->
             <a href="{{ route('admin.verifications.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
-                      {{ request()->routeIs('admin.verifications.*') ? 'bg-amber-50 text-amber-700 border-l-4 border-amber-600' : 'text-gray-700 hover:bg-gray-100' }}">
+                      {{ request()->routeIs('admin.verifications.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i class="fas fa-user-check text-lg w-5"></i>
                 <span>Verifications</span>
                 @if(isset($pendingCount) && $pendingCount > 0)
@@ -62,7 +62,7 @@
             <!-- Vendors -->
             <a href="{{ route('vendors.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
-                      {{ request()->routeIs('vendors.index') ? 'bg-purple-50 text-purple-700 border-l-4 border-purple-600' : 'text-gray-700 hover:bg-gray-100' }}">
+                      {{ request()->routeIs('vendors.index') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i class="fas fa-store-alt text-lg w-5"></i>
                 <span>All Vendors</span>
             </a>
@@ -70,7 +70,7 @@
             <!-- Clients -->
             <a href="{{ route('admin.clients.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
-                      {{ request()->routeIs('admin.clients.*') ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600' : 'text-gray-700 hover:bg-gray-100' }}">
+                      {{ request()->routeIs('admin.clients.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i class="fas fa-users text-lg w-5"></i>
                 <span>Clients</span>
             </a>
@@ -78,7 +78,7 @@
             <!-- Reports -->
             <a href="{{ route('admin.reports.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
-                      {{ request()->routeIs('admin.reports.*') ? 'bg-red-50 text-red-700 border-l-4 border-red-600' : 'text-gray-700 hover:bg-gray-100' }}">
+                      {{ request()->routeIs('admin.reports.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i class="fas fa-flag text-lg w-5"></i>
                 <span>Reports</span>
             </a>
@@ -86,7 +86,7 @@
             <!-- Categories -->
             <a href="{{ route('search.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
-                      {{ request()->routeIs('search.*') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600' : 'text-gray-700 hover:bg-gray-100' }}">
+                      {{ request()->routeIs('search.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i class="fas fa-th-large text-lg w-5"></i>
                 <span>Browse Services</span>
             </a>
@@ -94,7 +94,7 @@
             <!-- Messages -->
             <a href="{{ route('messages.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
-                      {{ request()->routeIs('messages.*') ? 'bg-pink-50 text-pink-700 border-l-4 border-pink-600' : 'text-gray-700 hover:bg-gray-100' }}">
+                      {{ request()->routeIs('messages.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i class="fas fa-envelope text-lg w-5"></i>
                 <span>Messages</span>
             </a>
@@ -106,14 +106,16 @@
             <div class="space-y-1">
                 <!-- Analytics -->
                 <a href="{{ route('admin.dashboard') }}#analytics" 
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-gray-700 hover:bg-gray-100 transition">
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
+                          {{ request()->routeIs('admin.dashboard') && request()->fragment() === 'analytics' ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                     <i class="fas fa-chart-line text-lg w-5"></i>
                     <span>Analytics</span>
                 </a>
 
                 <!-- Settings -->
                 <a href="{{ route('profile.edit') }}" 
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-gray-700 hover:bg-gray-100 transition">
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
+                          {{ request()->routeIs('profile.edit') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                     <i class="fas fa-cog text-lg w-5"></i>
                     <span>Settings</span>
                 </a>

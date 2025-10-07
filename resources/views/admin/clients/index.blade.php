@@ -1,8 +1,16 @@
-<x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+<x-admin-layout>
+    <x-slot name="pageTitle">Clients</x-slot>
+
+    <div class="p-4 sm:p-6 lg:p-8">
         <x-card class="p-6">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-teal-700">Client Management</h2>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                        <i class="fas fa-users text-blue-600 mr-3"></i>
+                        Client Management
+                    </h2>
+                    <p class="text-sm text-gray-600 mt-1">Manage and monitor all client accounts</p>
+                </div>
                 <div class="text-sm text-gray-600">
                     Total: {{ $clients->total() }} clients
                 </div>
@@ -98,5 +106,5 @@
             @endif
         </x-card>
     </div>
-</x-app-layout>
+</x-admin-layout>
 

@@ -1,8 +1,16 @@
-<x-app-layout>
-    <div class="max-w-7xl mx-auto mt-8 px-4">
+<x-admin-layout>
+    <x-slot name="pageTitle">Verifications</x-slot>
+
+    <div class="p-4 sm:p-6 lg:p-8">
         <x-card class="p-6">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Vendor Verification Requests</h2>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                        <i class="fas fa-user-check text-amber-600 mr-3"></i>
+                        Vendor Verification Requests
+                    </h2>
+                    <p class="text-sm text-gray-600 mt-1">Review and approve vendor verification requests</p>
+                </div>
                 <div class="text-sm text-gray-600">
                     Total: {{ $requests->total() }} requests
                 </div>
@@ -181,5 +189,5 @@
             @endif
         </x-card>
     </div>
-</x-app-layout>
+</x-admin-layout>
 
