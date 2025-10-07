@@ -59,7 +59,7 @@
     </div>
   </div>
 
-  {{-- Contact Details (for authenticated clients) / Login prompt --}}
+  {{-- Contact Details & Actions (for authenticated users) / Login prompt --}}
   @auth
     @if(auth()->user()->hasRole('client'))
       <div class="bg-white p-4 rounded-2xl shadow">
@@ -81,38 +81,87 @@
           </div>
         </div>
       </div>
-
-      {{-- Send Message Section --}}
-      <div class="bg-white p-4 rounded-2xl shadow" x-data="vendorChat({{ $vendor->id }}, {{ auth()->id() }})">
-        <button x-show="!open" @click="open = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
-          <i class="fas fa-comment-dots mr-2"></i> Send Message
-        </button>
-
-        <div x-show="open" x-cloak class="space-y-3">
-          <h4 class="font-semibold text-gray-900">Send a Message</h4>
-          <textarea x-model="message" placeholder="Write a short message to the vendor..." rows="4"
-                    class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"></textarea>
-
-          <div class="flex justify-between items-center">
-            <small class="text-xs text-gray-500">
-              <i class="fas fa-lock text-gray-400 mr-1"></i> Private message
-            </small>
-            <div class="space-x-2">
-              <button @click="send" :disabled="sending" class="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
-                <i class="fas fa-paper-plane mr-1"></i> Send
-              </button>
-              <button @click="open = false" class="text-sm text-gray-600 hover:text-gray-800 px-3 py-2">Cancel</button>
-            </div>
-          </div>
-
-          <template x-if="sent">
-            <div class="text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200">
-              <i class="fas fa-check-circle mr-1"></i> Message sent successfully!
-            </div>
-          </template>
-        </div>
-      </div>
     @endif
+
+    {{-- Send Message Section (all authenticated users) --}}
+    <div class="bg-white p-4 rounded-2xl shadow" x-data="vendorChat({{ $vendor->id }}, {{ auth()->id() }})">
+      <button x-show="!open" @click="open = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
+        <i class="fas fa-comment-dots mr-2"></i> Send Message
+      </button>
+
+      <div x-show="open" x-cloak class="space-y-3">
+        <h4 class="font-semibold text-gray-900">Send a Message</h4>
+        <textarea x-model="message" placeholder="Write a short message to the vendor..." rows="4"
+                  class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"></textarea>
+
+        <div class="flex justify-between items-center">
+          <small class="text-xs text-gray-500">
+            <i class="fas fa-lock text-gray-400 mr-1"></i> Private message
+          </small>
+          <div class="space-x-2">
+            <button @click="send" :disabled="sending" class="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+              <i class="fas fa-paper-plane mr-1"></i> Send
+            </button>
+            <button @click="open = false" class="text-sm text-gray-600 hover:text-gray-800 px-3 py-2">Cancel</button>
+          </div>
+        </div>
+
+        <template x-if="sent">
+          <div class="text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200">
+            <i class="fas fa-check-circle mr-1"></i> Message sent successfully!
+          </div>
+        </template>
+      </div>
+    </div>
+
+    {{-- Report Vendor Section (all authenticated users) --}}
+    <div class="bg-white p-4 rounded-2xl shadow" x-data="vendorReport({{ $vendor->id }})">
+      <button x-show="!open" @click="open = true" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
+        <i class="fas fa-flag mr-2"></i> Report Vendor
+      </button>
+
+      <div x-show="open" x-cloak class="space-y-3">
+        <h4 class="font-semibold text-gray-900">Report this Vendor</h4>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+          <select x-model="category" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+            <option value="">Select a reason</option>
+            <option value="fraud">Fraud or Scam</option>
+            <option value="quality">Poor Service Quality</option>
+            <option value="payment">Payment Issues</option>
+            <option value="unprofessional">Unprofessional Behavior</option>
+            <option value="fake">Fake/Misleading Information</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Details</label>
+          <textarea x-model="message" placeholder="Provide details about your concern..." rows="4"
+                    class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"></textarea>
+        </div>
+
+        <div class="flex justify-between items-center">
+          <small class="text-xs text-gray-500">
+            <i class="fas fa-shield-alt text-gray-400 mr-1"></i> Reports are reviewed by our team
+          </small>
+          <div class="space-x-2">
+            <button @click="submitReport" :disabled="submitting || !category || !message.trim()" 
+                    class="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+              <i class="fas fa-paper-plane mr-1"></i> Submit
+            </button>
+            <button @click="open = false; category = ''; message = ''" class="text-sm text-gray-600 hover:text-gray-800 px-3 py-2">Cancel</button>
+          </div>
+        </div>
+
+        <template x-if="submitted">
+          <div class="text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200">
+            <i class="fas fa-check-circle mr-1"></i> Report submitted. Thank you for helping us maintain quality!
+          </div>
+        </template>
+      </div>
+    </div>
   @else
     <div class="bg-white p-4 rounded-2xl shadow">
       <div class="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
@@ -204,6 +253,58 @@ function vendorChat(vendorId, authId) {
         alert('Could not send message. Try again later.');
       } finally {
         this.sending = false;
+      }
+    }
+  }
+}
+
+function vendorReport(vendorId) {
+  return {
+    open: false,
+    category: '',
+    message: '',
+    submitted: false,
+    submitting: false,
+    async submitReport() {
+      if (!this.category || !this.message.trim()) {
+        alert('Please select a category and provide details.');
+        return;
+      }
+      this.submitting = true;
+      const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+      try {
+        const res = await fetch("{{ route('reports.store') }}", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': token
+          },
+          body: JSON.stringify({
+            vendor_id: vendorId,
+            category: this.category,
+            message: this.message
+          })
+        });
+
+        const json = await res.json();
+        if (json.ok) {
+          this.submitted = true;
+          this.category = '';
+          this.message = '';
+          setTimeout(() => {
+            this.submitted = false;
+            this.open = false;
+          }, 3000);
+        } else {
+          alert(json.message || 'Could not submit report.');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Could not submit report. Try again later.');
+      } finally {
+        this.submitting = false;
       }
     }
   }

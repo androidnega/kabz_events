@@ -12,6 +12,7 @@ class Report extends Model
 
     protected $fillable = [
         'user_id',
+        'vendor_id',
         'type',
         'category',
         'message',
@@ -27,5 +28,10 @@ class Report extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function vendor(): BelongsTo
+    {
+        return $this->belongsTo(Vendor::class);
     }
 }
