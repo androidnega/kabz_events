@@ -169,7 +169,27 @@ Route::middleware('auth')->group(function () {
         Route::post('/interactions/search', [InteractionController::class, 'logSearch'])->name('interactions.search');
         Route::post('/interactions/category', [InteractionController::class, 'logCategoryView'])->name('interactions.category');
         Route::post('/interactions/vendors/{vendor}/recommendation-click', [InteractionController::class, 'logRecommendationClick'])->name('interactions.recommendation');
+        Route::post('/interactions/log', [InteractionController::class, 'logAction'])->name('interactions.log');
     });
+
+    // Personalized Recommendations (authenticated users only)
+    Route::get('/personalized/recommendations', function (Request $request) {
+        $user = auth()->user();
+        $lat = $request->query('lat') ?? ($user->preferences->last_lat ?? null);
+        $lng = $request->query('lng') ?? ($user->preferences->last_lng ?? null);
+        $limit = intval($request->query('limit', 8));
+        $category = $request->query('category_id');
+
+        $recs = \App\Services\PersonalRecommendationService::get([
+            'user_id' => $user->id,
+            'lat' => $lat,
+            'lng' => $lng,
+            'category_id' => $category,
+            'limit' => $limit,
+        ]);
+
+        return response()->json($recs);
+    })->name('personal.recommendations');
 });
 
 require __DIR__.'/auth.php';

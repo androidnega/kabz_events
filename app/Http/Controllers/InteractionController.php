@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserActivityLog;
+use App\Models\UserInteraction;
 use App\Models\Vendor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -80,6 +81,42 @@ class InteractionController extends Controller
         ]);
 
         return response()->json(['ok' => true]);
+    }
+
+    /**
+     * Log weighted interaction action.
+     * Supports: view, search, click_contact, bookmark, book, review
+     */
+    public function logAction(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'vendor_id' => 'required|exists:vendors,id',
+            'action' => 'required|string|in:view,search,click_contact,bookmark,book,review',
+            'meta' => 'nullable|string',
+        ]);
+
+        // Action weight mapping
+        $weights = [
+            'view' => 1,
+            'search' => 1,
+            'click_contact' => 3,
+            'bookmark' => 4,
+            'book' => 8,
+            'review' => 6,
+        ];
+
+        $action = $validated['action'];
+        $weight = $weights[$action] ?? 1;
+
+        UserInteraction::create([
+            'user_id' => auth()->id(),
+            'vendor_id' => $validated['vendor_id'],
+            'action' => $action,
+            'weight' => $weight,
+            'meta' => $validated['meta'] ?? null,
+        ]);
+
+        return response()->json(['ok' => true, 'weight' => $weight]);
     }
 }
 
