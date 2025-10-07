@@ -7,13 +7,35 @@
                 <div>
                     <h2 class="text-2xl font-bold text-gray-800 flex items-center">
                         <i class="fas fa-user-check text-amber-600 mr-3"></i>
-                        Vendor Verification Requests
+                        Vendor Verification Management
                     </h2>
-                    <p class="text-sm text-gray-600 mt-1">Review and approve vendor verification requests</p>
+                    <p class="text-sm text-gray-600 mt-1">Review pending requests and manage verified vendors</p>
                 </div>
                 <div class="text-sm text-gray-600">
-                    Total: {{ $requests->total() }} requests
+                    @if(isset($requests))
+                        Total: {{ $requests->total() }} pending
+                    @elseif(isset($vendors))
+                        Total: {{ $vendors->total() }} verified
+                    @endif
                 </div>
+            </div>
+
+            {{-- Tab Navigation --}}
+            <div class="mb-6 border-b border-gray-200">
+                <nav class="-mb-px flex space-x-8">
+                    <a href="?tab=pending" 
+                       class="@if(!isset($tab) || $tab === 'pending') border-amber-500 text-amber-600 @else border-transparent text-gray-500 hover:text-gray-700 @endif
+                              whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                        <i class="fas fa-clock mr-2"></i>Pending Requests
+                        @if(isset($requests)) <span class="ml-2 bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-xs">{{ $requests->total() }}</span> @endif
+                    </a>
+                    <a href="?tab=verified" 
+                       class="@if(isset($tab) && $tab === 'verified') border-green-500 text-green-600 @else border-transparent text-gray-500 hover:text-gray-700 @endif
+                              whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                        <i class="fas fa-check-circle mr-2"></i>Verified Vendors
+                        @if(isset($vendors)) <span class="ml-2 bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs">{{ $vendors->total() }}</span> @endif
+                    </a>
+                </nav>
             </div>
 
             @if(session('success'))
@@ -28,15 +50,17 @@
                 </x-alert>
             @endif
 
-            @if($requests->isEmpty())
-                <div class="text-center py-16">
-                    <svg class="mx-auto h-24 w-24 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">No verification requests yet</h3>
-                    <p class="text-gray-600">Verification requests from vendors will appear here</p>
-                </div>
-            @else
+            @if(!isset($tab) || $tab === 'pending')
+                {{-- PENDING REQUESTS TAB --}}
+                @if(isset($requests) && $requests->isEmpty())
+                    <div class="text-center py-16">
+                        <svg class="mx-auto h-24 w-24 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No verification requests yet</h3>
+                        <p class="text-gray-600">Verification requests from vendors will appear here</p>
+                    </div>
+                @elseif(isset($requests))
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -185,6 +209,125 @@
                     <div class="mt-6">
                         {{ $requests->links() }}
                     </div>
+                @endif
+                @endif
+            @elseif($tab === 'verified')
+                {{-- VERIFIED VENDORS TAB --}}
+                @if(isset($vendors) && $vendors->isEmpty())
+                    <div class="text-center py-16">
+                        <svg class="mx-auto h-24 w-24 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No verified vendors yet</h3>
+                        <p class="text-gray-600">Approved vendors will appear here</p>
+                    </div>
+                @elseif(isset($vendors))
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Vendor ID
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Vendor Details
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Services
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Verified On
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach($vendors as $vendor)
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-mono font-bold text-green-600">
+                                            {{ $vendor->user->display_id ?? 'VND-' . str_pad($vendor->id, 6, '0', STR_PAD_LEFT) }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                                                <i class="fas fa-store text-green-600"></i>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    {{ $vendor->business_name }}
+                                                    <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        <i class="fas fa-check-circle mr-1"></i> Verified
+                                                    </span>
+                                                </div>
+                                                <div class="text-sm text-gray-500">{{ $vendor->user->email ?? 'N/A' }}</div>
+                                                <div class="text-xs text-gray-400 mt-1">
+                                                    <i class="fas fa-map-marker-alt mr-1"></i>{{ $vendor->address ?? 'No address' }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-600">
+                                            @if($vendor->services->isNotEmpty())
+                                                @foreach($vendor->services->take(2) as $service)
+                                                    <span class="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs mr-1 mb-1">
+                                                        {{ $service->category->name ?? 'N/A' }}
+                                                    </span>
+                                                @endforeach
+                                                @if($vendor->services->count() > 2)
+                                                    <span class="text-xs text-gray-500">+{{ $vendor->services->count() - 2 }} more</span>
+                                                @endif
+                                            @else
+                                                <span class="text-gray-400 text-xs">No services</span>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">
+                                            {{ $vendor->verified_at ? $vendor->verified_at->format('M d, Y') : 'N/A' }}
+                                        </div>
+                                        <div class="text-xs text-gray-500">
+                                            {{ $vendor->verified_at ? $vendor->verified_at->diffForHumans() : '' }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                        <a href="{{ route('vendors.show', $vendor) }}" target="_blank" 
+                                           class="inline-flex items-center px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg transition">
+                                            <i class="fas fa-eye mr-1"></i> View
+                                        </a>
+                                        
+                                        <form action="{{ route('admin.verifications.suspend', $vendor->id) }}" method="POST" class="inline-block"
+                                              onsubmit="return confirm('Are you sure you want to suspend this vendor\'s verification? This is temporary and can be restored.');">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg transition">
+                                                <i class="fas fa-pause-circle mr-1"></i> Suspend
+                                            </button>
+                                        </form>
+                                        
+                                        <form action="{{ route('admin.verifications.cancel', $vendor->id) }}" method="POST" class="inline-block"
+                                              onsubmit="return confirm('Are you sure you want to CANCEL this vendor\'s verification? This is permanent!');">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg transition">
+                                                <i class="fas fa-times-circle mr-1"></i> Cancel
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Pagination --}}
+                @if($vendors->hasPages())
+                    <div class="mt-6">
+                        {{ $vendors->appends(['tab' => 'verified'])->links() }}
+                    </div>
+                @endif
                 @endif
             @endif
         </x-card>
