@@ -1,21 +1,24 @@
-<x-app-layout>
-    {{-- Page Header --}}
-    <div class="py-6 sm:py-8 px-4 sm:px-6 lg:px-8 bg-white shadow-sm border-b border-gray-200">
-        <div class="max-w-7xl mx-auto">
+<x-admin-layout>
+    <x-slot name="pageTitle">Admin Dashboard</x-slot>
+
+    <div class="p-4 sm:p-6 lg:p-8">
+        {{-- Page Header --}}
+        <div class="mb-6 sm:mb-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center">
-                    <i class="fas fa-user-shield text-teal-600 mr-2 sm:mr-3"></i> 
-                    <span>Admin Dashboard</span>
-                </h1>
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center">
+                        <i class="fas fa-tachometer-alt text-teal-600 mr-2 sm:mr-3"></i>
+                        <span>Dashboard Overview</span>
+                    </h1>
+                    <p class="text-sm text-gray-600 mt-1">Monitor your platform's key metrics and activities</p>
+                </div>
                 <div class="text-left sm:text-right text-gray-600">
                     <p class="text-sm font-medium">{{ now()->format('l, F j, Y') }}</p>
                     <p class="text-xs text-gray-500">{{ now()->format('h:i A') }}</p>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="max-w-7xl mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
         <div class="space-y-6 sm:space-y-8">
         {{-- Key Metrics Grid --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
@@ -326,4 +329,4 @@
         });
     </script>
     @endpush
-</x-app-layout>
+</x-admin-layout>
