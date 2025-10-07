@@ -1,117 +1,269 @@
 <x-app-layout>
-    {{-- Admin Dashboard Header --}}
-    <div class="bg-gradient-to-r from-red-600 to-yellow-500 text-white py-8 mb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 class="text-3xl font-bold">Admin Dashboard</h1>
-            <p class="text-red-100 mt-1">Vendor & Client Management | Platform Analytics</p>
+    {{-- Page Header --}}
+    <div class="py-8 px-4 sm:px-6 lg:px-8 bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+                <i class="fas fa-user-shield text-teal-600 mr-3"></i> Admin Dashboard
+            </h1>
+            <div class="text-right text-gray-600">
+                <p class="text-sm">{{ now()->format('l, F j, Y') }}</p>
+                <p class="text-xs">{{ now()->format('h:i A') }}</p>
+            </div>
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Key Metrics --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-            <x-card class="bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-600">
-                <p class="text-sm font-medium text-gray-600">Total Vendors</p>
-                <p class="text-3xl font-bold text-blue-900">{{ $stats['total_vendors'] }}</p>
+    <div class="max-w-7xl mx-auto mt-8 px-4 sm:px-6 lg:px-8 space-y-8">
+        {{-- Key Metrics Grid --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            {{-- Total Vendors --}}
+            <x-card class="border-l-4 border-teal-600 bg-teal-50">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Vendors</p>
+                        <p class="text-3xl font-bold text-teal-900">{{ $stats['total_vendors'] }}</p>
+                    </div>
+                    <i class="fas fa-store text-4xl text-teal-400"></i>
+                </div>
             </x-card>
 
-            <x-card class="bg-gradient-to-br from-green-50 to-green-100 border-l-4 border-green-600">
-                <p class="text-sm font-medium text-gray-600">Verified Vendors</p>
-                <p class="text-3xl font-bold text-green-900">{{ $stats['verified_vendors'] }}</p>
+            {{-- Verified Vendors --}}
+            <x-card class="border-l-4 border-emerald-600 bg-emerald-50">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Verified Vendors</p>
+                        <p class="text-3xl font-bold text-emerald-900">{{ $stats['verified_vendors'] }}</p>
+                    </div>
+                    <i class="fas fa-check-circle text-4xl text-emerald-400"></i>
+                </div>
             </x-card>
 
-            <x-card class="bg-gradient-to-br from-yellow-50 to-yellow-100 border-l-4 border-yellow-600">
-                <p class="text-sm font-medium text-gray-600">Pending Verifications</p>
-                <p class="text-3xl font-bold text-yellow-900">{{ $stats['pending_verifications'] }}</p>
+            {{-- Pending Verifications --}}
+            <x-card class="border-l-4 border-amber-600 bg-amber-50">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Pending Verifications</p>
+                        <p class="text-3xl font-bold text-amber-900">{{ $stats['pending_verifications'] }}</p>
+                    </div>
+                    <i class="fas fa-clock text-4xl text-amber-400"></i>
+                </div>
             </x-card>
 
-            <x-card class="bg-gradient-to-br from-teal-50 to-teal-100 border-l-4 border-teal-600">
-                <p class="text-sm font-medium text-gray-600">Total Clients</p>
-                <p class="text-3xl font-bold text-teal-900">{{ $stats['total_clients'] }}</p>
+            {{-- Total Clients --}}
+            <x-card class="border-l-4 border-blue-600 bg-blue-50">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Clients</p>
+                        <p class="text-3xl font-bold text-blue-900">{{ $stats['total_clients'] }}</p>
+                    </div>
+                    <i class="fas fa-users text-4xl text-blue-400"></i>
+                </div>
             </x-card>
 
-            <x-card class="bg-gradient-to-br from-purple-50 to-purple-100 border-l-4 border-purple-600">
-                <p class="text-sm font-medium text-gray-600">Active Revenue</p>
-                <p class="text-2xl font-bold text-purple-900">GH₵ {{ number_format($stats['total_revenue'], 2) }}</p>
+            {{-- Active Revenue --}}
+            <x-card class="border-l-4 border-purple-600 bg-purple-50">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Active Revenue</p>
+                        <p class="text-2xl font-bold text-purple-900">GH₵ {{ number_format($stats['total_revenue'], 2) }}</p>
+                    </div>
+                    <i class="fas fa-money-bill-wave text-4xl text-purple-400"></i>
+                </div>
             </x-card>
         </div>
 
         {{-- Analytics Chart --}}
-        <x-card class="mb-8">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Platform Growth Analytics ({{ now()->year }})</h3>
-            <canvas id="growthChart" height="80"></canvas>
-        </x-card>
-
-        {{-- Recent Activity --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {{-- Pending Verifications --}}
-            <x-card>
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-800">Pending Verifications</h3>
-                    <a href="{{ route('admin.verifications.index') }}" class="text-sm text-purple-600 hover:underline">
-                        View All →
-                    </a>
+        <section class="space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800">Platform Analytics</h2>
+            <x-card class="bg-white">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Platform Growth - {{ now()->year }}</h3>
+                <div class="w-full overflow-x-auto">
+                    <canvas id="growthChart" class="max-w-full" height="80"></canvas>
                 </div>
-                @forelse($pendingVerifications as $request)
-                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded mb-2">
-                        <div>
-                            <p class="font-medium">{{ $request->vendor->business_name }}</p>
-                            <p class="text-sm text-gray-600">{{ $request->submitted_at->diffForHumans() }}</p>
-                        </div>
-                        <a href="{{ route('admin.verifications.index') }}" class="text-purple-600 text-sm">Review</a>
-                    </div>
-                @empty
-                    <p class="text-gray-500 text-center py-4">No pending verifications</p>
-                @endforelse
             </x-card>
+        </section>
 
-            {{-- Top Rated Vendors --}}
-            <x-card>
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Rated Vendors</h3>
-                @forelse($topRatedVendors as $vendor)
-                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded mb-2">
-                        <div>
-                            <p class="font-medium">{{ $vendor->business_name }}</p>
-                            <p class="text-sm text-yellow-600">★ {{ number_format($vendor->rating_cached, 1) }}</p>
-                        </div>
-                        <span class="text-green-600 text-sm">✓ Verified</span>
+        {{-- Management Sections --}}
+        <section class="space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800">Management & Activity</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {{-- Pending Verifications --}}
+                <x-card class="bg-white">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-user-check text-amber-600 mr-2"></i>
+                            Pending Verifications
+                        </h3>
+                        <a href="{{ route('admin.verifications.index') }}" class="text-sm text-teal-600 hover:text-teal-800 font-medium">
+                            View All <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
                     </div>
-                @empty
-                    <p class="text-gray-500 text-center py-4">No rated vendors yet</p>
-                @endforelse
-            </x-card>
-        </div>
+                    <div class="space-y-2">
+                        @forelse($pendingVerifications as $request)
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                                <div class="flex-1">
+                                    <p class="font-medium text-gray-900">{{ $request->vendor->business_name }}</p>
+                                    <p class="text-sm text-gray-600">
+                                        <i class="fas fa-clock text-gray-400 mr-1"></i>
+                                        {{ $request->submitted_at->diffForHumans() }}
+                                    </p>
+                                </div>
+                                <a href="{{ route('admin.verifications.index') }}" class="text-teal-600 hover:text-teal-800 text-sm font-medium">
+                                    Review <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </div>
+                        @empty
+                            <div class="text-center py-8">
+                                <i class="fas fa-check-double text-gray-300 text-5xl mb-3"></i>
+                                <p class="text-gray-500">No pending verifications</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </x-card>
+
+                {{-- Top Rated Vendors --}}
+                <x-card class="bg-white">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-star text-yellow-600 mr-2"></i>
+                        Top Rated Vendors
+                    </h3>
+                    <div class="space-y-2">
+                        @forelse($topRatedVendors as $vendor)
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                                <div class="flex-1">
+                                    <p class="font-medium text-gray-900">{{ $vendor->business_name }}</p>
+                                    <div class="flex items-center mt-1">
+                                        <i class="fas fa-star text-yellow-500 text-sm"></i>
+                                        <span class="text-sm text-gray-600 ml-1">{{ number_format($vendor->rating_cached, 1) }}</span>
+                                    </div>
+                                </div>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                    <i class="fas fa-check-circle mr-1"></i> Verified
+                                </span>
+                            </div>
+                        @empty
+                            <div class="text-center py-8">
+                                <i class="fas fa-star-half-alt text-gray-300 text-5xl mb-3"></i>
+                                <p class="text-gray-500">No rated vendors yet</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </x-card>
+            </div>
+        </section>
 
         {{-- Quick Actions --}}
-        <x-card class="bg-purple-50 border-2 border-purple-200">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
-            <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-                <a href="{{ route('admin.verifications.index') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition">
-                    <span class="text-3xl mb-2">✓</span>
-                    <span class="text-sm font-medium">Verify Vendors</span>
+        <section class="space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800">Quick Actions</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                {{-- Verify Vendors --}}
+                <a href="{{ route('admin.verifications.index') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition border border-gray-200">
+                    <i class="fas fa-user-check text-3xl text-teal-600 mb-2"></i>
+                    <span class="text-sm font-medium text-gray-700 text-center">Verify Vendors</span>
                 </a>
-                <a href="{{ route('admin.clients.index') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition">
-                    <span class="text-3xl mb-2">👥</span>
-                    <span class="text-sm font-medium">Manage Clients</span>
+
+                {{-- Manage Clients --}}
+                <a href="{{ route('admin.clients.index') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition border border-gray-200">
+                    <i class="fas fa-users text-3xl text-blue-600 mb-2"></i>
+                    <span class="text-sm font-medium text-gray-700 text-center">Manage Clients</span>
                 </a>
-                <a href="{{ route('admin.reports.index') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition">
-                    <span class="text-3xl mb-2">⚠️</span>
-                    <span class="text-sm font-medium">View Reports</span>
+
+                {{-- View Reports --}}
+                <a href="{{ route('admin.reports.index') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition border border-gray-200">
+                    <i class="fas fa-flag text-3xl text-red-600 mb-2"></i>
+                    <span class="text-sm font-medium text-gray-700 text-center">View Reports</span>
                 </a>
-                <a href="{{ route('search.index') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition">
-                    <span class="text-3xl mb-2">🔍</span>
-                    <span class="text-sm font-medium">Browse Vendors</span>
+
+                {{-- Browse Vendors --}}
+                <a href="{{ route('search.index') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition border border-gray-200">
+                    <i class="fas fa-search text-3xl text-gray-600 mb-2"></i>
+                    <span class="text-sm font-medium text-gray-700 text-center">Browse Vendors</span>
                 </a>
-                <a href="{{ route('vendors.index') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition">
-                    <span class="text-3xl mb-2">🏪</span>
-                    <span class="text-sm font-medium">All Vendors</span>
+
+                {{-- All Vendors --}}
+                <a href="{{ route('vendors.index') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition border border-gray-200">
+                    <i class="fas fa-store-alt text-3xl text-purple-600 mb-2"></i>
+                    <span class="text-sm font-medium text-gray-700 text-center">All Vendors</span>
                 </a>
-                <a href="{{ route('home') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition">
-                    <span class="text-3xl mb-2">🏠</span>
-                    <span class="text-sm font-medium">Public Site</span>
+
+                {{-- Public Site --}}
+                <a href="{{ route('home') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition border border-gray-200">
+                    <i class="fas fa-home text-3xl text-indigo-600 mb-2"></i>
+                    <span class="text-sm font-medium text-gray-700 text-center">Public Site</span>
                 </a>
             </div>
-        </x-card>
+        </section>
+
+        {{-- Recent Activity Stats --}}
+        <section class="space-y-6 pb-8">
+            <h2 class="text-2xl font-bold text-gray-800">Platform Statistics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {{-- Services & Content --}}
+                <x-card class="bg-white">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-cubes text-indigo-600 mr-2"></i>
+                        Platform Content
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Total Services</span>
+                            <span class="font-semibold text-gray-900">{{ $stats['total_vendors'] * 3 }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Active Vendors</span>
+                            <span class="font-semibold text-gray-900">{{ $stats['verified_vendors'] }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Active Clients</span>
+                            <span class="font-semibold text-gray-900">{{ $stats['total_clients'] }}</span>
+                        </div>
+                    </div>
+                </x-card>
+
+                {{-- Verification Status --}}
+                <x-card class="bg-white">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-tasks text-emerald-600 mr-2"></i>
+                        Verification Status
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Verified</span>
+                            <span class="font-semibold text-emerald-600">{{ $stats['verified_vendors'] }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Pending</span>
+                            <span class="font-semibold text-amber-600">{{ $stats['pending_verifications'] }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Unverified</span>
+                            <span class="font-semibold text-gray-600">{{ $stats['total_vendors'] - $stats['verified_vendors'] }}</span>
+                        </div>
+                    </div>
+                </x-card>
+
+                {{-- Revenue Stats --}}
+                <x-card class="bg-white">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-chart-line text-purple-600 mr-2"></i>
+                        Revenue Overview
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Total Revenue</span>
+                            <span class="font-semibold text-gray-900">GH₵ {{ number_format($stats['total_revenue'], 2) }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Active Subscriptions</span>
+                            <span class="font-semibold text-gray-900">{{ $stats['verified_vendors'] }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Avg per Vendor</span>
+                            <span class="font-semibold text-gray-900">GH₵ {{ $stats['verified_vendors'] > 0 ? number_format($stats['total_revenue'] / $stats['verified_vendors'], 2) : '0.00' }}</span>
+                        </div>
+                    </div>
+                </x-card>
+            </div>
+        </section>
     </div>
 
     {{-- Chart.js Script --}}
@@ -127,16 +279,16 @@
                     {
                         label: 'Vendors',
                         data: @json(array_values($monthlyStats['vendors'])),
-                        borderColor: 'rgb(234, 179, 8)',
-                        backgroundColor: 'rgba(234, 179, 8, 0.1)',
+                        borderColor: 'rgb(20, 184, 166)',
+                        backgroundColor: 'rgba(20, 184, 166, 0.1)',
                         tension: 0.3,
                         fill: true,
                     },
                     {
                         label: 'Clients',
                         data: @json(array_values($monthlyStats['clients'])),
-                        borderColor: 'rgb(20, 184, 166)',
-                        backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         tension: 0.3,
                         fill: true,
                     }
@@ -168,4 +320,3 @@
     </script>
     @endpush
 </x-app-layout>
-
