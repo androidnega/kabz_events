@@ -1,65 +1,104 @@
 @props(['vendor'])
 
-<div class="bg-white p-4 rounded-2xl shadow space-y-4">
-  <div class="flex items-center gap-3">
-    <img src="{{ $vendor->profile_image ?? ($vendor->logo ?? asset('images/default_vendor.png')) }}"
-         alt="{{ $vendor->business_name }}"
-         class="w-16 h-16 rounded-full object-cover border" />
-    <div>
-      <h3 class="font-semibold text-lg">{{ $vendor->business_name }}</h3>
-      <p class="text-sm text-gray-500">{{ $vendor->services->first()?->category->name ?? 'Vendor' }}</p>
-      @if($vendor->is_verified)
-        <span class="inline-block mt-1 text-green-700 text-sm font-medium">
-          <i class="fas fa-check-circle"></i> Verified
-        </span>
-      @endif
-      <div class="text-xs text-gray-400 mt-1">
-        <i class="fas fa-map-marker-alt"></i> {{ $vendor->town->name ?? $vendor->address }}
+<div class="space-y-4">
+  {{-- Vendor Profile Card --}}
+  <div class="bg-white p-4 rounded-2xl shadow">
+    <div class="flex items-center gap-3 mb-4">
+      <img src="{{ $vendor->profile_image ?? ($vendor->logo ?? asset('images/default_vendor.png')) }}"
+           alt="{{ $vendor->business_name }}"
+           class="w-16 h-16 rounded-full object-cover border border-gray-200" />
+      <div>
+        <h3 class="font-semibold text-lg text-gray-900">{{ $vendor->business_name }}</h3>
+        <p class="text-sm text-gray-500">{{ $vendor->services->first()?->category->name ?? 'Vendor' }}</p>
+        @if($vendor->is_verified)
+          <span class="inline-block mt-1 text-green-700 text-sm font-medium">
+            <i class="fas fa-check-circle"></i> Verified
+          </span>
+        @endif
       </div>
+    </div>
+
+    {{-- Contact Buttons --}}
+    <div class="space-y-2">
+      {{-- Call Button --}}
+      @if($vendor->phone)
+        <a href="tel:{{ $vendor->phone }}" class="block w-full">
+          <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
+            <i class="fas fa-phone mr-2"></i> Call Vendor
+          </button>
+        </a>
+      @endif
+
+      {{-- WhatsApp Button --}}
+      @if($vendor->whatsapp)
+        @php
+          // Clean WhatsApp number (remove spaces, dashes, etc.)
+          $whatsappNumber = preg_replace('/[^0-9+]/', '', $vendor->whatsapp);
+          // If starts with 0, replace with 233
+          if (str_starts_with($whatsappNumber, '0')) {
+            $whatsappNumber = '233' . substr($whatsappNumber, 1);
+          }
+          // Remove + if present for WhatsApp link
+          $whatsappNumber = ltrim($whatsappNumber, '+');
+        @endphp
+        <a href="https://wa.me/{{ $whatsappNumber }}" target="_blank" class="block w-full">
+          <button class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
+            <i class="fab fa-whatsapp mr-2"></i> WhatsApp Vendor
+          </button>
+        </a>
+      @endif
+
+      {{-- Website Button --}}
+      @if($vendor->website)
+        <a href="{{ $vendor->website }}" target="_blank" class="block w-full">
+          <button class="w-full bg-gray-600 hover:bg-gray-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
+            <i class="fas fa-globe mr-2"></i> Visit Website
+          </button>
+        </a>
+      @endif
     </div>
   </div>
 
-  {{-- Contact block (only for authenticated users who are clients) --}}
+  {{-- Contact Details (for authenticated clients) / Login prompt --}}
   @auth
     @if(auth()->user()->hasRole('client'))
-      <div class="text-sm space-y-2 p-3 bg-gray-50 rounded-lg">
-        <div>
-          <strong class="text-gray-700"><i class="fas fa-phone text-indigo-600 mr-1"></i> Phone:</strong>
-          <a href="tel:{{ $vendor->phone }}" class="text-indigo-600 hover:text-indigo-800">{{ $vendor->phone }}</a>
-        </div>
-        <div>
-          <strong class="text-gray-700"><i class="fas fa-envelope text-indigo-600 mr-1"></i> Email:</strong>
-          <a href="mailto:{{ $vendor->user->email ?? '' }}" class="text-indigo-600 hover:text-indigo-800">{{ $vendor->user->email ?? '—' }}</a>
+      <div class="bg-white p-4 rounded-2xl shadow">
+        <h4 class="font-semibold text-gray-900 mb-3">Contact Details</h4>
+        <div class="text-sm space-y-2">
+          <div class="flex items-start">
+            <i class="fas fa-phone text-indigo-600 mr-2 mt-0.5"></i>
+            <div>
+              <p class="text-xs text-gray-500">Phone</p>
+              <a href="tel:{{ $vendor->phone }}" class="text-indigo-600 hover:text-indigo-800 font-medium">{{ $vendor->phone }}</a>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <i class="fas fa-envelope text-indigo-600 mr-2 mt-0.5"></i>
+            <div>
+              <p class="text-xs text-gray-500">Email</p>
+              <a href="mailto:{{ $vendor->user->email ?? '' }}" class="text-indigo-600 hover:text-indigo-800 font-medium">{{ $vendor->user->email ?? '—' }}</a>
+            </div>
+          </div>
         </div>
       </div>
-    @endif
-  @else
-    <div class="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-      <p class="text-sm text-gray-700">
-        <i class="fas fa-lock text-yellow-600 mr-1"></i>
-        Please <a href="{{ route('login') }}" class="text-indigo-600 underline font-medium">log in</a> to view contact details and message the vendor.
-      </p>
-    </div>
-  @endauth
 
-  {{-- Send message button + inline chat area (Alpine.js) --}}
-  @auth
-    @if(auth()->user()->hasRole('client'))
-      <div x-data="vendorChat({{ $vendor->id }}, {{ auth()->id() }})" class="space-y-2">
-        <button x-show="!open" @click="open = true" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition flex items-center justify-center">
+      {{-- Send Message Section --}}
+      <div class="bg-white p-4 rounded-2xl shadow" x-data="vendorChat({{ $vendor->id }}, {{ auth()->id() }})">
+        <button x-show="!open" @click="open = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
           <i class="fas fa-comment-dots mr-2"></i> Send Message
         </button>
 
-        <div x-show="open" x-cloak class="space-y-2">
+        <div x-show="open" x-cloak class="space-y-3">
+          <h4 class="font-semibold text-gray-900">Send a Message</h4>
           <textarea x-model="message" placeholder="Write a short message to the vendor..." rows="4"
-                    class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"></textarea>
 
           <div class="flex justify-between items-center">
             <small class="text-xs text-gray-500">
-              <i class="fas fa-lock text-gray-400 mr-1"></i> Your message will be sent privately.
+              <i class="fas fa-lock text-gray-400 mr-1"></i> Private message
             </small>
             <div class="space-x-2">
-              <button @click="send" :disabled="sending" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
+              <button @click="send" :disabled="sending" class="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
                 <i class="fas fa-paper-plane mr-1"></i> Send
               </button>
               <button @click="open = false" class="text-sm text-gray-600 hover:text-gray-800 px-3 py-2">Cancel</button>
@@ -68,13 +107,56 @@
 
           <template x-if="sent">
             <div class="text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200">
-              <i class="fas fa-check-circle mr-1"></i> Message sent. Vendor will respond on their dashboard.
+              <i class="fas fa-check-circle mr-1"></i> Message sent successfully!
             </div>
           </template>
         </div>
       </div>
     @endif
+  @else
+    <div class="bg-white p-4 rounded-2xl shadow">
+      <div class="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+        <p class="text-sm text-gray-700">
+          <i class="fas fa-lock text-yellow-600 mr-2"></i>
+          <a href="{{ route('login') }}" class="text-indigo-600 underline font-medium">Log in</a> to view contact details and message the vendor.
+        </p>
+      </div>
+    </div>
   @endauth
+
+  {{-- Business Details Card --}}
+  <div class="bg-white p-4 rounded-2xl shadow">
+    <h4 class="font-semibold text-gray-900 mb-3">Business Details</h4>
+    <div class="space-y-3 text-sm">
+      @if($vendor->address)
+        <div class="flex items-start">
+          <i class="fas fa-map-marker-alt text-gray-400 mr-2 mt-0.5"></i>
+          <div>
+            <p class="text-xs text-gray-500">Location</p>
+            <p class="text-gray-900">{{ $vendor->address }}</p>
+          </div>
+        </div>
+      @endif
+
+      @if($vendor->phone)
+        <div class="flex items-start">
+          <i class="fas fa-phone text-gray-400 mr-2 mt-0.5"></i>
+          <div>
+            <p class="text-xs text-gray-500">Phone</p>
+            <p class="text-gray-900">{{ $vendor->phone }}</p>
+          </div>
+        </div>
+      @endif
+
+      <div class="flex items-start">
+        <i class="fas fa-clock text-gray-400 mr-2 mt-0.5"></i>
+        <div>
+          <p class="text-xs text-gray-500">Member Since</p>
+          <p class="text-gray-900">{{ $vendor->created_at->format('F Y') }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
