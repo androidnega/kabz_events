@@ -3,10 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboardController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Vendor\DashboardController as VendorDashboardController;
-use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
 
 class DashboardController extends Controller
 {
@@ -15,35 +11,34 @@ class DashboardController extends Controller
      * 
      * This is a unified dashboard route where all authenticated users
      * visit /dashboard, and the system automatically detects their role
-     * and delegates to the appropriate role-specific controller.
+     * and redirects to the appropriate role-specific dashboard.
+     * 
+     * Phase K5: Unified URL Structure
+     * All dashboards now live under /dashboard/* prefix
      * 
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response|\Illuminate\View\View
+     * @return \Illuminate\Http\RedirectResponse
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function index(Request $request)
     {
         $user = $request->user();
 
-        // Detect role dynamically and delegate to role-specific controller
+        // Detect role dynamically and redirect to role-specific dashboard
         if ($user->hasRole('super_admin')) {
-            $controller = app(SuperAdminDashboardController::class);
-            return $controller->index($request);
+            return redirect()->route('superadmin.dashboard');
         }
 
         if ($user->hasRole('admin')) {
-            $controller = app(AdminDashboardController::class);
-            return $controller->index($request);
+            return redirect()->route('admin.dashboard');
         }
 
         if ($user->hasRole('vendor')) {
-            $controller = app(VendorDashboardController::class);
-            return $controller->index($request);
+            return redirect()->route('vendor.dashboard');
         }
 
         if ($user->hasRole('client')) {
-            $controller = app(ClientDashboardController::class);
-            return $controller->index($request);
+            return redirect()->route('client.dashboard');
         }
 
         // Default fallback - user has no recognized role

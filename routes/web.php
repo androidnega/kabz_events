@@ -71,81 +71,92 @@ Route::get('/recommendations', function (Request $request) {
     return response()->json($recs);
 })->name('recommendations');
 
-// Role-Based Dashboards
-// Super Admin Dashboard
-Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('superadmin.')->group(function () {
-    Route::get('/dashboard', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
-    
-    // SMS Test Interface
-    Route::get('/sms-test', [SMSTestController::class, 'index'])->name('sms.test');
-    Route::post('/sms-test', [SMSTestController::class, 'send'])->name('sms.test.send');
-    
-    // Backup Management
-    Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');
-    Route::post('/backups/create', [BackupController::class, 'create'])->name('backups.create');
-    Route::get('/backups/{id}/download', [BackupController::class, 'download'])->name('backups.download');
-    Route::delete('/backups/{id}', [BackupController::class, 'destroy'])->name('backups.destroy');
-    
-    // Location Management & CSV Import
-    Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');
-    Route::post('/locations', [LocationController::class, 'store'])->name('locations.store');
-    Route::delete('/locations/{id}', [LocationController::class, 'destroy'])->name('locations.destroy');
-    Route::get('/locations/upload', [LocationController::class, 'uploadForm'])->name('locations.upload');
-    Route::post('/locations/import', [LocationController::class, 'importCsv'])->name('locations.import');
-});
+/*
+|--------------------------------------------------------------------------
+| Unified Dashboard Routes (Phase K5)
+|--------------------------------------------------------------------------
+| All dashboard routes consolidated under /dashboard prefix
+| Role-based middleware ensures proper access control
+|
+*/
 
-// Admin Dashboard
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-    
-    // Vendor Verification Management
-    Route::get('verifications', [VendorVerificationController::class, 'index'])->name('verifications.index');
-    Route::post('verifications/{id}/approve', [VendorVerificationController::class, 'approve'])->name('verifications.approve');
-    Route::post('verifications/{id}/reject', [VendorVerificationController::class, 'reject'])->name('verifications.reject');
-    Route::post('verifications/{vendorId}/suspend', [VendorVerificationController::class, 'suspend'])->name('verifications.suspend');
-    Route::post('verifications/{vendorId}/cancel', [VendorVerificationController::class, 'cancelVerification'])->name('verifications.cancel');
-    
-    // Client Management
-    Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
-    Route::get('clients/{id}', [ClientController::class, 'show'])->name('clients.show');
-    Route::post('clients/{id}/deactivate', [ClientController::class, 'deactivate'])->name('clients.deactivate');
-    Route::post('clients/{id}/activate', [ClientController::class, 'activate'])->name('clients.activate');
-    Route::post('clients/{id}/reset-password', [ClientController::class, 'resetPassword'])->name('clients.resetPassword');
-    
-    // Reports & Issues Management
-    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
-    Route::post('reports/{id}/resolve', [ReportController::class, 'resolve'])->name('reports.resolve');
-    Route::post('reports/{id}/reopen', [ReportController::class, 'reopen'])->name('reports.reopen');
-    
-    // User Management
-    Route::resource('users', App\Http\Controllers\Admin\UserController::class);
-});
+// Main Dashboard Route - Auto-redirects based on role
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
-// Vendor Dashboard  
-Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->group(function () {
-    Route::get('/dashboard', [VendorDashboardControllerNew::class, 'index'])->name('dashboard');
-    
-    // Service Management (CRUD)
-    Route::resource('services', ServiceController::class);
-    
-    // Verification Request
-    Route::get('verification', [VerificationController::class, 'index'])->name('verification');
-    Route::post('verification', [VerificationController::class, 'store'])->name('verification.store');
-    
-    // Subscription Plans
-    Route::get('subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions');
-    Route::post('subscriptions/{plan}', [SubscriptionController::class, 'subscribe'])->name('subscriptions.subscribe');
-});
+// All dashboard sub-routes under unified /dashboard prefix
+Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 
-// Client Dashboard
-Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->group(function () {
-    Route::get('/dashboard', [ClientDashboardController::class, 'index'])->name('dashboard');
-});
+    // Super Admin Routes
+    Route::middleware(['role:super_admin'])->name('superadmin.')->group(function () {
+        Route::get('/super-admin', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
+        
+        // SMS Test Interface
+        Route::get('/sms-test', [SMSTestController::class, 'index'])->name('sms.test');
+        Route::post('/sms-test', [SMSTestController::class, 'send'])->name('sms.test.send');
+        
+        // Backup Management
+        Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');
+        Route::post('/backups/create', [BackupController::class, 'create'])->name('backups.create');
+        Route::get('/backups/{id}/download', [BackupController::class, 'download'])->name('backups.download');
+        Route::delete('/backups/{id}', [BackupController::class, 'destroy'])->name('backups.destroy');
+        
+        // Location Management & CSV Import
+        Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');
+        Route::post('/locations', [LocationController::class, 'store'])->name('locations.store');
+        Route::delete('/locations/{id}', [LocationController::class, 'destroy'])->name('locations.destroy');
+        Route::get('/locations/upload', [LocationController::class, 'uploadForm'])->name('locations.upload');
+        Route::post('/locations/import', [LocationController::class, 'importCsv'])->name('locations.import');
+    });
 
-// Unified Dashboard Route (Phase K3: Role-Based Dashboard Resolution)
-// All authenticated users visit /dashboard - system auto-detects role and serves correct view
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Admin Routes
+    Route::middleware(['role:admin'])->name('admin.')->group(function () {
+        Route::get('/admin', [AdminDashboardController::class, 'index'])->name('dashboard');
+        
+        // Vendor Verification Management
+        Route::get('/verifications', [VendorVerificationController::class, 'index'])->name('verifications.index');
+        Route::post('/verifications/{id}/approve', [VendorVerificationController::class, 'approve'])->name('verifications.approve');
+        Route::post('/verifications/{id}/reject', [VendorVerificationController::class, 'reject'])->name('verifications.reject');
+        Route::post('/verifications/{vendorId}/suspend', [VendorVerificationController::class, 'suspend'])->name('verifications.suspend');
+        Route::post('/verifications/{vendorId}/cancel', [VendorVerificationController::class, 'cancelVerification'])->name('verifications.cancel');
+        
+        // Client Management
+        Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
+        Route::get('/clients/{id}', [ClientController::class, 'show'])->name('clients.show');
+        Route::post('/clients/{id}/deactivate', [ClientController::class, 'deactivate'])->name('clients.deactivate');
+        Route::post('/clients/{id}/activate', [ClientController::class, 'activate'])->name('clients.activate');
+        Route::post('/clients/{id}/reset-password', [ClientController::class, 'resetPassword'])->name('clients.resetPassword');
+        
+        // Reports & Issues Management
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::post('/reports/{id}/resolve', [ReportController::class, 'resolve'])->name('reports.resolve');
+        Route::post('/reports/{id}/reopen', [ReportController::class, 'reopen'])->name('reports.reopen');
+        
+        // User Management
+        Route::resource('users', App\Http\Controllers\Admin\UserController::class);
+    });
+
+    // Vendor Routes
+    Route::middleware(['role:vendor'])->name('vendor.')->group(function () {
+        Route::get('/vendor', [VendorDashboardControllerNew::class, 'index'])->name('dashboard');
+        
+        // Service Management (CRUD)
+        Route::resource('services', ServiceController::class);
+        
+        // Verification Request
+        Route::get('/verification', [VerificationController::class, 'index'])->name('verification');
+        Route::post('/verification', [VerificationController::class, 'store'])->name('verification.store');
+        
+        // Subscription Plans
+        Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions');
+        Route::post('/subscriptions/{plan}', [SubscriptionController::class, 'subscribe'])->name('subscriptions.subscribe');
+    });
+
+    // Client Routes
+    Route::middleware(['role:client'])->name('client.')->group(function () {
+        Route::get('/client', [ClientDashboardController::class, 'index'])->name('dashboard');
+    });
 });
 
 Route::middleware('auth')->group(function () {
