@@ -13,11 +13,21 @@
     {{-- Role-specific links --}}
     @if($role === 'super_admin')
         <div class="pt-4 pb-2">
+            <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Configuration</h3>
+        </div>
+        
+        <a href="{{ route('superadmin.settings.index') }}" 
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition {{ request()->routeIs('superadmin.settings.*') ? 'bg-primary bg-opacity-10 text-primary' : 'text-gray-700 hover:bg-gray-50' }}">
+            <i class="fas fa-cog text-lg w-5"></i>
+            <span>Settings Center</span>
+        </a>
+        
+        <div class="pt-4 pb-2">
             <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">System Management</h3>
         </div>
         
         <a href="{{ route('superadmin.sms.test') }}" 
-           class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition {{ request()->routeIs('superadmin.sms.*') ? 'bg-primary bg-opacity-10 text-primary' : 'text-gray-700 hover:bg-gray-50' }}">
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition {{ request()->routeIs('superadmin.sms.test') ? 'bg-primary bg-opacity-10 text-primary' : 'text-gray-700 hover:bg-gray-50' }}">
             <i class="fas fa-sms text-lg w-5"></i>
             <span>SMS Test</span>
         </a>

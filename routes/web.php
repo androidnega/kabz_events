@@ -90,6 +90,26 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 
     // Super Admin Routes
     Route::middleware(['role:super_admin'])->name('superadmin.')->group(function () {
+        // Configuration Center (Phase K6)
+        Route::prefix('settings')->name('settings.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'index'])->name('index');
+            
+            Route::get('/paystack', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'paystack'])->name('paystack');
+            Route::post('/paystack', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updatePaystack'])->name('paystack.update');
+            
+            Route::get('/cloudinary', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'cloudinary'])->name('cloudinary');
+            Route::post('/cloudinary', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateCloudinary'])->name('cloudinary.update');
+            
+            Route::get('/sms', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'sms'])->name('sms');
+            Route::post('/sms', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateSms'])->name('sms.update');
+            
+            Route::get('/smtp', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'smtp'])->name('smtp');
+            Route::post('/smtp', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateSmtp'])->name('smtp.update');
+            
+            Route::get('/system', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'system'])->name('system');
+            Route::post('/system', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateSystem'])->name('system.update');
+        });
+        
         // SMS Test Interface
         Route::get('/sms-test', [SMSTestController::class, 'index'])->name('sms.test');
         Route::post('/sms-test', [SMSTestController::class, 'send'])->name('sms.test.send');
