@@ -13,11 +13,14 @@ class Report extends Model
     protected $fillable = [
         'user_id',
         'vendor_id',
+        'target_id',
+        'target_type',
         'type',
         'category',
         'message',
         'status',
         'admin_response',
+        'admin_note',
         'resolved_at',
     ];
 
@@ -33,5 +36,21 @@ class Report extends Model
     public function vendor(): BelongsTo
     {
         return $this->belongsTo(Vendor::class);
+    }
+
+    /**
+     * The user being reported (target of the report)
+     */
+    public function target(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'target_id');
+    }
+
+    /**
+     * Alias for user relationship (reporter)
+     */
+    public function reporter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -144,8 +144,10 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::post('/clients/{id}/activate', [ClientController::class, 'activate'])->name('clients.activate');
         Route::post('/clients/{id}/reset-password', [ClientController::class, 'resetPassword'])->name('clients.resetPassword');
         
-        // Reports & Issues Management
+        // Reports & Issues Management (Phase L1)
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/{id}', [ReportController::class, 'show'])->name('reports.show');
+        Route::post('/reports/{id}/status', [ReportController::class, 'updateStatus'])->name('reports.update');
         Route::post('/reports/{id}/resolve', [ReportController::class, 'resolve'])->name('reports.resolve');
         Route::post('/reports/{id}/reopen', [ReportController::class, 'reopen'])->name('reports.reopen');
         
@@ -196,14 +198,20 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     // Notifications (Phase K2)
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+
+    // Report Issue (Phase L1) - Rate Limited to 5 per minute
+    Route::middleware('throttle:5,1')->group(function () {
+        Route::get('/report', [\App\Http\Controllers\ReportController::class, 'create'])->name('report.create');
+        Route::post('/report', [\App\Http\Controllers\ReportController::class, 'store'])->name('report.store');
+    });
 });
 
 // ============================================================
 // Public/API Routes (Outside Dashboard)
 // ============================================================
 Route::middleware('auth')->group(function () {
-    // Report Vendor (can be done from public vendor pages)
-    Route::post('/reports/vendor', [ReportController::class, 'store'])->name('reports.store');
+    // Report Vendor (can be done from public vendor pages) - Legacy route maintained for compatibility
+    Route::post('/reports/vendor', [App\Http\Controllers\Admin\ReportController::class, 'store'])->name('reports.vendor.store');
     
     // Review Submission (authenticated users only)
     Route::post('/vendors/{vendor}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
