@@ -90,8 +90,6 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 
     // Super Admin Routes
     Route::middleware(['role:super_admin'])->name('superadmin.')->group(function () {
-        Route::get('/super-admin', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
-        
         // SMS Test Interface
         Route::get('/sms-test', [SMSTestController::class, 'index'])->name('sms.test');
         Route::post('/sms-test', [SMSTestController::class, 'send'])->name('sms.test.send');
@@ -112,8 +110,6 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 
     // Admin Routes
     Route::middleware(['role:admin'])->name('admin.')->group(function () {
-        Route::get('/admin', [AdminDashboardController::class, 'index'])->name('dashboard');
-        
         // Vendor Verification Management
         Route::get('/verifications', [VendorVerificationController::class, 'index'])->name('verifications.index');
         Route::post('/verifications/{id}/approve', [VendorVerificationController::class, 'approve'])->name('verifications.approve');
@@ -139,8 +135,6 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 
     // Vendor Routes
     Route::middleware(['role:vendor'])->name('vendor.')->group(function () {
-        Route::get('/vendor', [VendorDashboardControllerNew::class, 'index'])->name('dashboard');
-        
         // Service Management (CRUD)
         Route::resource('services', ServiceController::class);
         
@@ -154,8 +148,9 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     });
 
     // Client Routes
+    // Note: Client dashboard is served via main /dashboard route
     Route::middleware(['role:client'])->name('client.')->group(function () {
-        Route::get('/client', [ClientDashboardController::class, 'index'])->name('dashboard');
+        // Client-specific routes can be added here
     });
 
     // ============================================================
