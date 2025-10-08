@@ -16,7 +16,7 @@ $user = Auth::user();
       <!-- Desktop Navigation Links -->
       <div class="hidden md:flex space-x-6">
         @role('super_admin')
-          <a href="{{ route('superadmin.dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('superadmin.*') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
+          <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('superadmin.*') || request()->routeIs('dashboard') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
             Dashboard
           </a>
           <a href="{{ route('superadmin.backups.index') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('superadmin.backups.*') ? 'text-indigo-600' : '' }}">
@@ -31,7 +31,7 @@ $user = Auth::user();
         @endrole
 
         @role('admin')
-          <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
+          <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('admin.dashboard') || request()->routeIs('dashboard') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
             Dashboard
           </a>
           <a href="{{ route('admin.verifications.index') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('admin.verifications.*') ? 'text-indigo-600' : '' }}">
@@ -46,7 +46,7 @@ $user = Auth::user();
         @endrole
 
         @role('vendor')
-          <a href="{{ route('vendor.dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('vendor.dashboard') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
+          <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('vendor.dashboard') || request()->routeIs('dashboard') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
             Dashboard
           </a>
           <a href="{{ route('vendor.services.index') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('vendor.services.*') ? 'text-indigo-600' : '' }}">
@@ -61,7 +61,7 @@ $user = Auth::user();
         @endrole
 
         @role('client')
-          <a href="{{ route('client.dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('client.dashboard') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
+          <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('client.dashboard') || request()->routeIs('dashboard') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
             Dashboard
           </a>
           <a href="{{ route('vendors.index') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('vendors.*') ? 'text-indigo-600' : '' }}">
@@ -125,28 +125,28 @@ $user = Auth::user();
   <div :class="{'block': open, 'hidden': !open}" class="hidden md:hidden">
     <div class="px-2 pt-2 pb-3 space-y-1">
       @role('super_admin')
-        <a href="{{ route('superadmin.dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Dashboard</a>
+        <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Dashboard</a>
         <a href="{{ route('superadmin.backups.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Backups</a>
         <a href="{{ route('superadmin.locations.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Locations</a>
         <a href="{{ route('superadmin.sms.test') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">SMS Test</a>
       @endrole
 
       @role('admin')
-        <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Dashboard</a>
+        <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Dashboard</a>
         <a href="{{ route('admin.verifications.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Verifications</a>
         <a href="{{ route('admin.clients.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Clients</a>
         <a href="{{ route('admin.reports.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Reports</a>
       @endrole
 
       @role('vendor')
-        <a href="{{ route('vendor.dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Dashboard</a>
+        <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Dashboard</a>
         <a href="{{ route('vendor.services.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">My Services</a>
         <a href="{{ route('vendor.verification') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Verification</a>
         <a href="{{ route('vendor.subscriptions') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Subscription</a>
       @endrole
 
       @role('client')
-        <a href="{{ route('client.dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Dashboard</a>
+        <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Dashboard</a>
         <a href="{{ route('vendors.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Find Vendors</a>
         <a href="{{ route('search.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Search</a>
       @endrole

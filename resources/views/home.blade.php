@@ -5,26 +5,26 @@
 
     <!-- Hero Section -->
     <div class="bg-gradient-to-r from-primary to-purple-700 text-white">
-        <div class="container mx-auto py-20">
+        <div class="container mx-auto py-12 md:py-20 px-4">
             <div class="text-center">
-                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 px-2">
                     Find the Perfect Vendors for Your Event in Ghana
                 </h1>
-                <p class="text-xl md:text-2xl mb-8 text-purple-100">
+                <p class="text-lg sm:text-xl md:text-2xl mb-8 text-purple-100 px-2">
                     Connect with verified event service providers across Ghana
                 </p>
                 
                 <!-- Search Bar -->
-                <div class="max-w-3xl mx-auto">
-                    <form action="{{ route('search.index') }}" method="GET" class="relative">
+                <div class="max-w-3xl mx-auto px-4">
+                    <form action="{{ route('search.index') }}" method="GET" class="flex flex-col sm:flex-row gap-3 sm:gap-0 sm:relative">
                         <input 
                             type="text" 
                             name="q"
                             placeholder="Search for photographers, caterers, decorators..."
-                            class="w-full px-6 py-4 rounded-full text-gray-900 text-lg focus:outline-none focus:ring-2 focus:ring-purple-300"
+                            class="w-full px-4 sm:px-6 py-3 sm:py-4 sm:pr-36 rounded-full text-gray-900 text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-purple-300 shadow-lg"
                         >
-                        <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-8 rounded-full transition-colors">
-                            Search
+                        <button type="submit" class="w-full sm:w-auto sm:absolute sm:right-2 sm:top-1/2 sm:transform sm:-translate-y-1/2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 sm:py-2 px-8 rounded-full transition-colors shadow-lg">
+                            <i class="fas fa-search mr-2"></i>Search
                         </button>
                     </form>
                 </div>
@@ -33,33 +33,44 @@
     </div>
 
     <!-- Categories Section -->
-    <div class="py-16 bg-white">
-        <div class="container mx-auto">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-gray-900 mb-4">Browse by Category</h2>
-                <p class="text-lg text-gray-600">Find exactly what you need for your special event</p>
+    <div class="py-12 md:py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-8 md:mb-12">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3 md:mb-4">Browse by Category</h2>
+                <p class="text-base md:text-lg text-gray-600">Find exactly what you need for your special event</p>
             </div>
 
             @if($categories->count() > 0)
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 px-4 md:px-0">
                 @foreach($categories as $category)
-                <a href="{{ route('search.index', ['category' => $category->slug]) }}"><x-card hoverable class="p-6 text-center group">
-                    <div class="text-4xl mb-3">
-                        @if($category->icon)
-                            <i class="fas fa-{{ $category->icon }}"></i>
+                <a href="{{ route('search.index', ['category' => $category->slug]) }}" class="block h-full">
+                    <x-card hoverable class="h-full flex flex-col p-4 md:p-6 text-center group transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                        <!-- Icon with circular background -->
+                        <div class="mb-3 flex justify-center">
+                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-purple-100 to-indigo-100 group-hover:from-purple-200 group-hover:to-indigo-200 flex items-center justify-center transition-all duration-300">
+                                @if($category->icon)
+                                    <i class="fas fa-{{ $category->icon }} text-2xl md:text-3xl text-primary group-hover:scale-110 transition-transform duration-300"></i>
+                                @else
+                                    <i class="fas fa-box text-2xl md:text-3xl text-primary group-hover:scale-110 transition-transform duration-300"></i>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <!-- Category name with fixed height -->
+                        <h3 class="font-semibold text-sm md:text-base text-gray-900 group-hover:text-primary mb-2 transition-colors duration-300 min-h-[2.5rem] flex items-center justify-center">
+                            {{ $category->name }}
+                        </h3>
+                        
+                        <!-- Description with fixed height -->
+                        @if($category->description)
+                        <p class="text-xs text-gray-500 mt-auto line-clamp-2 min-h-[2rem]">
+                            {{ Str::limit($category->description, 45) }}
+                        </p>
                         @else
-                            📦
+                        <p class="text-xs text-gray-500 mt-auto min-h-[2rem]">&nbsp;</p>
                         @endif
-                    </div>
-                    <h3 class="font-semibold text-gray-900 group-hover:text-primary">
-                        {{ $category->name }}
-                    </h3>
-                    @if($category->description)
-                    <p class="text-xs text-gray-500 mt-1">
-                        {{ Str::limit($category->description, 50) }}
-                    </p>
-                    @endif
-                </x-card></a>
+                    </x-card>
+                </a>
                 @endforeach
             </div>
             @else
@@ -149,7 +160,7 @@
                         @endif
 
                         <!-- View Profile Button -->
-                        <x-button variant="primary" class="w-full" onclick="window.location='#'">
+                        <x-button variant="primary" class="w-full" onclick="window.location='#';">
                             View Profile
                         </x-button>
                     </div>
@@ -159,9 +170,11 @@
             @else
             <div class="text-center text-gray-500 py-12">
                 <p class="text-lg mb-4">No featured vendors available yet.</p>
-                <x-button variant="primary" size="lg" onclick="window.location='{{ route('vendor.public.register') }}'">
-                    Be the First Vendor
-                </x-button>
+                <a href="{{ route('vendor.public.register') }}">
+                    <x-button variant="primary" size="lg">
+                        Be the First Vendor
+                    </x-button>
+                </a>
             </div>
             @endif
         </div>
@@ -176,9 +189,11 @@
             <p class="text-xl text-purple-100 mb-8">
                 Join hundreds of vendors reaching thousands of clients
             </p>
-            <x-button variant="accent" size="xl" onclick="window.location='{{ route('vendor.public.register') }}'">
-                Register as Vendor Now
-            </x-button>
+            <a href="{{ route('vendor.public.register') }}">
+                <x-button variant="accent" size="xl">
+                    Register as Vendor Now
+                </x-button>
+            </a>
         </div>
     </div>
 

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\VendorVerificationController;
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\MessageController;
@@ -141,22 +142,11 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
     Route::get('/dashboard', [ClientDashboardController::class, 'index'])->name('dashboard');
 });
 
-// Default Dashboard (redirects based on role)
-Route::get('/dashboard', function () {
-    $user = auth()->user();
-    
-    if ($user->hasRole('super_admin')) {
-        return redirect()->route('superadmin.dashboard');
-    } elseif ($user->hasRole('admin')) {
-        return redirect()->route('admin.dashboard');
-    } elseif ($user->hasRole('vendor')) {
-        return redirect()->route('vendor.dashboard');
-    } elseif ($user->hasRole('client')) {
-        return redirect()->route('client.dashboard');
-    }
-    
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Unified Dashboard Route (Phase K3: Role-Based Dashboard Resolution)
+// All authenticated users visit /dashboard - system auto-detects role and serves correct view
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

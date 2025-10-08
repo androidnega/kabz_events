@@ -16,12 +16,6 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     
-                    @role('vendor')
-                    <x-nav-link :href="route('vendor.dashboard')" :active="request()->routeIs('vendor.dashboard')">
-                        {{ __('Vendor Dashboard') }}
-                    </x-nav-link>
-                    @endrole
-                    
                     @if(!Auth::user()->vendor && !Auth::user()->hasRole('vendor'))
                     <x-nav-link :href="route('vendor.register')" :active="request()->routeIs('vendor.register')">
                         {{ __('Become a Vendor') }}

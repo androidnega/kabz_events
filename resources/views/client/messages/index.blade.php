@@ -8,7 +8,7 @@
     </div>
 
     @if($conversations->count() > 0)
-      <div class="grid md:grid-cols-4 gap-6" x-data="clientMessages()">
+      <div class="grid md:grid-cols-4 gap-6" x-data="clientMessages({{ auth()->id() }})">
         {{-- Conversations List --}}
         <div class="md:col-span-1 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
           <h3 class="font-semibold mb-3 text-gray-800">Conversations</h3>
@@ -44,9 +44,9 @@
             </template>
             <template x-for="m in messages" :key="m.id">
               <div class="mb-4">
-                <div :class="{'text-right': m.sender_id == {{ auth()->id() }}}">
+                <div :class="{'text-right': m.sender_id == authUserId}">
                   <div class="inline-block max-w-xs md:max-w-md lg:max-w-lg p-3 rounded-lg"
-                       :class="m.sender_id == {{ auth()->id() }} ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-200 text-gray-900'">
+                       :class="m.sender_id == authUserId ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-200 text-gray-900'">
                     <p x-text="m.message" class="whitespace-pre-wrap"></p>
                   </div>
                   <div class="text-xs text-gray-400 mt-1" x-text="m.sender.name + ' • ' + new Date(m.created_at).toLocaleString()"></div>
@@ -70,17 +70,18 @@
       </div>
 
       <script>
-        function clientMessages() {
+        function clientMessages(authUserId) {
           return {
             messages: [],
             newMessage: '',
             currentVendorId: null,
+            authUserId: authUserId,
             async openConversation(vendorId) {
               this.currentVendorId = vendorId;
               await this.loadMessages(vendorId);
             },
             async loadMessages(vendorId) {
-              const url = "{{ route('messages.conversation') }}?vendor_id=" + vendorId + "&user_id=" + {{ auth()->id() }};
+              const url = "{{ route('messages.conversation') }}?vendor_id=" + vendorId + "&user_id=" + this.authUserId;
               const res = await fetch(url, {
                 headers: {
                   'X-Requested-With':'XMLHttpRequest',

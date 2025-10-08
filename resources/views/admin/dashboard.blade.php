@@ -279,7 +279,18 @@
     {{-- Chart.js Script --}}
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script id="chart-data" type="application/json">
+        {
+            "vendors": @json(array_values($monthlyStats['vendors'] ?? [])),
+            "clients": @json(array_values($monthlyStats['clients'] ?? []))
+        }
+    </script>
     <script>
+        const chartDataElement = document.getElementById('chart-data');
+        const chartData = JSON.parse(chartDataElement.textContent);
+        const vendorsData = chartData.vendors;
+        const clientsData = chartData.clients;
+        
         const ctx = document.getElementById('growthChart');
         new Chart(ctx, {
             type: 'line',
@@ -288,7 +299,7 @@
                 datasets: [
                     {
                         label: 'Vendors',
-                        data: @json(array_values($monthlyStats['vendors'])),
+                        data: vendorsData,
                         borderColor: 'rgb(20, 184, 166)',
                         backgroundColor: 'rgba(20, 184, 166, 0.1)',
                         tension: 0.3,
@@ -296,7 +307,7 @@
                     },
                     {
                         label: 'Clients',
-                        data: @json(array_values($monthlyStats['clients'])),
+                        data: clientsData,
                         borderColor: 'rgb(59, 130, 246)',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         tension: 0.3,

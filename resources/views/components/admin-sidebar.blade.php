@@ -24,7 +24,7 @@
     
     <!-- Logo/Brand -->
     <div class="flex items-center justify-between h-16 px-6 border-b border-gray-200 bg-gradient-to-r from-teal-50 to-emerald-50">
-        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2">
+        <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
             <i class="fas fa-shield-alt text-2xl text-teal-600"></i>
             <div>
                 <h2 class="text-lg font-bold text-gray-800">KABZS</h2>
@@ -40,10 +40,10 @@
     <!-- Navigation -->
     <nav class="flex-1 overflow-y-auto py-4 px-3">
         <div class="space-y-1">
-            <!-- Dashboard -->
-            <a href="{{ route('admin.dashboard') }}" 
+            <!-- Dashboard - Unified Route (Phase K3) -->
+            <a href="{{ route('dashboard') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
-                      {{ request()->routeIs('admin.dashboard') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+                      {{ request()->routeIs('dashboard') || request()->routeIs('admin.dashboard') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i class="fas fa-tachometer-alt text-lg w-5"></i>
                 <span>Dashboard</span>
             </a>
@@ -105,7 +105,7 @@
             <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">System</h3>
             <div class="space-y-1">
                 <!-- Analytics -->
-                <a href="{{ route('admin.dashboard') }}#analytics" 
+                <a href="{{ route('dashboard') }}#analytics" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition text-gray-700 hover:bg-gray-50">
                     <i class="fas fa-chart-line text-lg w-5"></i>
                     <span>Analytics</span>
