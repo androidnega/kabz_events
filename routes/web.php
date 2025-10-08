@@ -157,30 +157,38 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::middleware(['role:client'])->name('client.')->group(function () {
         Route::get('/client', [ClientDashboardController::class, 'index'])->name('dashboard');
     });
-});
 
-Route::middleware('auth')->group(function () {
+    // ============================================================
+    // Common Dashboard Routes (All Authenticated Users)
+    // ============================================================
+    
+    // Profile Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Vendor Registration Routes (for existing users to upgrade)
-    Route::get('/vendor/register', [VendorRegistrationController::class, 'create'])->name('vendor.register');
-    Route::post('/vendor/register', [VendorRegistrationController::class, 'store'])->name('vendor.store');
+    // Vendor Registration (for existing users to upgrade to vendor)
+    Route::get('/vendor-register', [VendorRegistrationController::class, 'create'])->name('vendor.register');
+    Route::post('/vendor-register', [VendorRegistrationController::class, 'store'])->name('vendor.store');
     
-    // Message Routes (Phase K: Chat System with Rate Limiting)
+    // Message System (Phase K: Chat with Rate Limiting)
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/conversation', [MessageController::class, 'conversation'])->name('messages.conversation');
     Route::middleware('message.rate')->group(function () {
         Route::post('/messages/send', [MessageController::class, 'store'])->name('messages.store');
     });
-    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
-    Route::get('/messages/conversation', [MessageController::class, 'conversation'])->name('messages.conversation');
-    
-    // Report Vendor (authenticated users can report vendors)
-    Route::post('/reports/vendor', [ReportController::class, 'store'])->name('reports.store');
     
     // Notifications (Phase K2)
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+});
+
+// ============================================================
+// Public/API Routes (Outside Dashboard)
+// ============================================================
+Route::middleware('auth')->group(function () {
+    // Report Vendor (can be done from public vendor pages)
+    Route::post('/reports/vendor', [ReportController::class, 'store'])->name('reports.store');
     
     // Review Submission (authenticated users only)
     Route::post('/vendors/{vendor}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
