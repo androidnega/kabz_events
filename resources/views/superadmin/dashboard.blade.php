@@ -105,7 +105,7 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {{-- Paystack Payment Gateway --}}
-                <div class="group bg-teal-50 hover:bg-teal-100 border-2 border-teal-200 hover:border-teal-300 rounded-lg p-5 transition-all cursor-pointer">
+                <a href="{{ route('superadmin.settings.paystack') }}" class="group bg-teal-50 hover:bg-teal-100 border-2 border-teal-200 hover:border-teal-300 rounded-lg p-5 transition-all">
                     <div class="flex items-center justify-between mb-3">
                         <div class="bg-teal-500 text-white rounded-lg p-2.5">
                             <i class="fas fa-credit-card text-lg"></i>
@@ -117,10 +117,10 @@
                     <div class="mt-3 pt-3 border-t border-teal-200">
                         <p class="text-xs text-gray-500"><i class="fas fa-key mr-1"></i> API configured</p>
                     </div>
-                </div>
+                </a>
 
                 {{-- Cloudinary Media Storage --}}
-                <div class="group bg-sky-50 hover:bg-sky-100 border-2 border-sky-200 hover:border-sky-300 rounded-lg p-5 transition-all cursor-pointer">
+                <a href="{{ route('superadmin.settings.cloudinary') }}" class="group bg-sky-50 hover:bg-sky-100 border-2 border-sky-200 hover:border-sky-300 rounded-lg p-5 transition-all">
                     <div class="flex items-center justify-between mb-3">
                         <div class="bg-sky-500 text-white rounded-lg p-2.5">
                             <i class="fas fa-cloud-upload-alt text-lg"></i>
@@ -132,10 +132,10 @@
                     <div class="mt-3 pt-3 border-t border-sky-200">
                         <p class="text-xs text-gray-500"><i class="fas fa-image mr-1"></i> Cloud storage</p>
                     </div>
-                </div>
+                </a>
 
                 {{-- SMS Configuration (Arkasel) --}}
-                <a href="{{ route('superadmin.sms.test') }}" class="group bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-200 hover:border-emerald-300 rounded-lg p-5 transition-all">
+                <a href="{{ route('superadmin.settings.sms') }}" class="group bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-200 hover:border-emerald-300 rounded-lg p-5 transition-all">
                     <div class="flex items-center justify-between mb-3">
                         <div class="bg-emerald-500 text-white rounded-lg p-2.5">
                             <i class="fas fa-sms text-lg"></i>
@@ -210,7 +210,7 @@
                 </a>
 
                 {{-- Email Configuration --}}
-                <div class="group bg-pink-50 hover:bg-pink-100 border-2 border-pink-200 hover:border-pink-300 rounded-lg p-5 transition-all cursor-pointer">
+                <a href="{{ route('superadmin.settings.smtp') }}" class="group bg-pink-50 hover:bg-pink-100 border-2 border-pink-200 hover:border-pink-300 rounded-lg p-5 transition-all">
                     <div class="flex items-center justify-between mb-3">
                         <div class="bg-pink-500 text-white rounded-lg p-2.5">
                             <i class="fas fa-envelope text-lg"></i>
@@ -222,7 +222,7 @@
                     <div class="mt-3 pt-3 border-t border-pink-200">
                         <p class="text-xs text-gray-500"><i class="fas fa-paper-plane mr-1"></i> Configured</p>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
 
