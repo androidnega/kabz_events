@@ -5,33 +5,17 @@
     <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
         {{-- Vendor Image/Logo --}}
         @if($vendor->sample_work_images && count($vendor->sample_work_images) > 0)
-            <div class="h-48 bg-gray-100 overflow-hidden relative">
+            <div class="h-48 bg-gray-100 overflow-hidden">
                 <img src="{{ asset('storage/' . $vendor->sample_work_images[0]) }}" 
                      alt="{{ $vendor->business_name }}" 
                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                
-                {{-- Verified Badge Overlay --}}
-                @if($vendor->is_verified)
-                    <div class="absolute top-2 right-2 bg-green-500 text-white rounded-full p-2 shadow-md">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
-                @endif
             </div>
         @else
-            <div class="h-48 bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center overflow-hidden relative">
+            <div class="h-48 bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center overflow-hidden">
                 {{-- Fallback: Show business initial as placeholder --}}
                 <div class="text-6xl font-bold text-purple-300">
                     {{ strtoupper(substr($vendor->business_name, 0, 1)) }}
                 </div>
-                
-                {{-- Optional: If vendor has a category, show an icon --}}
-                @if($vendor->services->isNotEmpty())
-                    <div class="absolute top-2 right-2 bg-white rounded-full p-2 shadow-md">
-                        <i class="fas fa-briefcase text-purple-600 text-sm"></i>
-                    </div>
-                @endif
             </div>
         @endif
 
