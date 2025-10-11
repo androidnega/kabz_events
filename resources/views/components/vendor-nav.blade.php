@@ -3,8 +3,9 @@
 @endphp
 
 <!-- Sidebar Navigation -->
-<aside class="fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 transition-all duration-300 z-20 hidden lg:block"
-       :class="sidebarOpen ? 'w-64' : 'w-20'">
+<aside class="fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 transition-all duration-300 z-20"
+       :class="sidebarOpen ? 'w-64' : 'w-20'"
+       style="display: block !important;">
     <div class="h-full flex flex-col">
         <!-- Navigation Links -->
         <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
