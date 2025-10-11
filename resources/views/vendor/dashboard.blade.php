@@ -1,6 +1,9 @@
 <x-vendor-layout>
     <x-slot name="title">Dashboard</x-slot>
 
+    {{-- Vendor Tour Component --}}
+    <x-vendor-tour :autoStart="$showTour" />
+
     <div class="max-w-screen-2xl mx-auto">
     {{-- Welcome Header --}}
     <div class="bg-purple-50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6 border border-purple-100">

@@ -17,7 +17,10 @@ class VerificationController extends Controller
         $vendor = Auth::user()->vendor;
         $request = $vendor->verificationRequest;
         
-        return view('vendor.verification', compact('vendor', 'request'));
+        // Load Ghana regions with districts and towns for location selection
+        $regions = \App\Models\Region::with(['districts.towns'])->orderBy('name')->get();
+        
+        return view('vendor.verification', compact('vendor', 'request', 'regions'));
     }
 
     /**
@@ -27,29 +30,96 @@ class VerificationController extends Controller
     {
         $vendor = Auth::user()->vendor;
 
-        $request->validate([
+        // Validate comprehensive form data
+        $validated = $request->validate([
+            // Page 1: Business Information
+            'business_category' => 'required|string|max:255',
+            'business_registration_number' => 'nullable|string|max:255',
+            'business_description' => 'required|string|min:50',
+            'years_in_operation' => 'required|integer|min:0|max:100',
+            'business_region' => 'required|string|max:255',
+            'business_district' => 'required|string|max:255',
+            'business_town' => 'required|string|max:255',
+            'business_logo' => 'required|file|mimes:jpg,jpeg,png|max:2048',
+            
+            // Page 2: Contact and Identity
+            'contact_full_name' => 'required|string|max:255',
+            'contact_role' => 'required|string|max:255',
+            'contact_phone' => 'required|string|max:20',
+            'contact_email' => 'required|email|max:255',
+            'national_id_type' => 'required|string|in:Ghana Card,Passport,Voter ID,Driver\'s License',
+            'national_id_number' => 'required|string|max:255',
             'id_document' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'social_links.facebook' => 'nullable|url',
-            'social_links.instagram' => 'nullable|url',
+            'profile_picture' => 'required|file|mimes:jpg,jpeg,png|max:2048',
+            
+            // Page 3: Verification Evidence
+            'social_links' => 'nullable|string',
+            'website_url' => 'nullable|url|max:255',
+            'proof_of_events.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'reference_letter' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'verification_reason' => 'required|string|min:20',
+            'details_confirmed' => 'required|accepted',
+            'terms_agreed' => 'required|accepted',
         ]);
 
         // Check if already submitted
         if ($vendor->verificationRequest) {
-            return back()->with('error', 'You have already submitted a verification request.');
+            return response()->json(['message' => 'You have already submitted a verification request.'], 400);
         }
 
-        // Store document
-        $path = $request->file('id_document')->store('verification_docs', 'public');
+        // Store files
+        $idDocPath = $request->file('id_document')->store('verification/id_documents', 'public');
+        $logoPath = $request->file('business_logo')->store('verification/logos', 'public');
+        $profilePicPath = $request->file('profile_picture')->store('verification/profiles', 'public');
+        
+        $referenceLetterPath = null;
+        if ($request->hasFile('reference_letter')) {
+            $referenceLetterPath = $request->file('reference_letter')->store('verification/references', 'public');
+        }
 
-        // Create verification request
+        // Store proof of events
+        $proofPaths = [];
+        if ($request->hasFile('proof_of_events')) {
+            foreach ($request->file('proof_of_events') as $file) {
+                $proofPaths[] = $file->store('verification/proof_events', 'public');
+            }
+        }
+
+        // Create comprehensive verification request
         VerificationRequest::create([
             'vendor_id' => $vendor->id,
-            'id_document_path' => $path,
-            'social_links' => $request->social_links ?? [],
+            
+            // Page 1
+            'business_category' => $validated['business_category'],
+            'business_registration_number' => $validated['business_registration_number'] ?? null,
+            'business_description' => $validated['business_description'],
+            'years_in_operation' => $validated['years_in_operation'],
+            'business_location' => $validated['business_town'] . ', ' . $validated['business_district'] . ', ' . $validated['business_region'],
+            'business_logo_path' => $logoPath,
+            
+            // Page 2
+            'contact_full_name' => $validated['contact_full_name'],
+            'contact_role' => $validated['contact_role'],
+            'contact_phone' => $validated['contact_phone'],
+            'contact_email' => $validated['contact_email'],
+            'national_id_type' => $validated['national_id_type'],
+            'national_id_number' => $validated['national_id_number'],
+            'id_document_path' => $idDocPath,
+            'profile_picture_path' => $profilePicPath,
+            
+            // Page 3
+            'social_links' => $request->social_links ? json_decode($request->social_links, true) : [],
+            'website_url' => $validated['website_url'] ?? null,
+            'proof_of_events' => $proofPaths,
+            'reference_letter_path' => $referenceLetterPath,
+            'verification_reason' => $validated['verification_reason'],
+            'terms_agreed' => true,
+            'details_confirmed' => true,
+            
             'status' => 'pending',
             'submitted_at' => now(),
         ]);
 
-        return back()->with('success', 'Verification request submitted successfully! We will review it soon.');
+        return response()->json(['success' => true, 'message' => 'Verification request submitted successfully!']);
     }
 }

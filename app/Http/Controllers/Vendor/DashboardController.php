@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Vendor;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -67,14 +69,50 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Check if vendor needs tour (first time)
+        $showTour = !$vendor->tour_completed;
+
         return view('vendor.dashboard', compact(
             'vendor',
             'stats',
             'subscriptionInfo',
             'verificationRequest',
             'recentReviews',
-            'recentServices'
+            'recentServices',
+            'showTour'
         ));
+    }
+
+    /**
+     * Mark the vendor tour as completed
+     */
+    public function completeTour(Request $request): JsonResponse
+    {
+        $vendor = Auth::user()->vendor;
+        
+        if ($vendor) {
+            $vendor->update(['tour_completed' => true]);
+            return response()->json(['success' => true]);
+        }
+        
+        return response()->json(['success' => false], 404);
+    }
+
+    /**
+     * Restart the vendor tour (from settings)
+     */
+    public function restartTour(): RedirectResponse
+    {
+        $vendor = Auth::user()->vendor;
+        
+        if ($vendor) {
+            $vendor->update(['tour_completed' => false]);
+            return redirect()
+                ->route('vendor.dashboard')
+                ->with('success', 'Tutorial will start now!');
+        }
+        
+        return redirect()->back()->with('error', 'Unable to restart tutorial.');
     }
 }
 

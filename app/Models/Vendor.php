@@ -32,6 +32,7 @@ class Vendor extends Model
         'latitude',
         'longitude',
         'is_verified',
+        'tour_completed',
         'verified_at',
         'verification_doc_path',
         'rating_cached',
@@ -47,6 +48,7 @@ class Vendor extends Model
      */
     protected $casts = [
         'is_verified' => 'boolean',
+        'tour_completed' => 'boolean',
         'verified_at' => 'datetime',
         'rating_cached' => 'decimal:2',
         'latitude' => 'decimal:7',

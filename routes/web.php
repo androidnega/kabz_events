@@ -194,6 +194,10 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         // Subscription Plans
         Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions');
         Route::post('/subscriptions/{plan}', [SubscriptionController::class, 'subscribe'])->name('subscriptions.subscribe');
+        
+        // Vendor Tour
+        Route::post('/tour/complete', [VendorDashboardControllerNew::class, 'completeTour'])->name('tour.complete');
+        Route::post('/tour/restart', [VendorDashboardControllerNew::class, 'restartTour'])->name('tour.restart');
     });
 
     // Client Routes
