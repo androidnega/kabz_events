@@ -1,11 +1,14 @@
-<x-app-layout>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-      <h2 class="text-2xl font-bold text-gray-800 flex items-center">
-        <i class="fas fa-comments text-indigo-600 mr-3"></i> Messages
-      </h2>
-      <p class="text-gray-600 mt-1">Communicate with your clients</p>
-    </div>
+<x-vendor-layout>
+  <x-slot name="title">Messages</x-slot>
+
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+      <i class="fas fa-comments text-purple-600 mr-3"></i> Messages
+    </h2>
+    <p class="text-gray-600 mt-1">Communicate with your clients</p>
+  </div>
+
+  <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
 
     @if($vendor && $conversations->count() > 0)
       <div class="grid md:grid-cols-4 gap-6" x-data="vendorMessages({{ $vendor->id }})">
@@ -124,5 +127,5 @@
       </div>
     @endif
   </div>
-</x-app-layout>
+</x-vendor-layout>
 
