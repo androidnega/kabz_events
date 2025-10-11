@@ -92,7 +92,7 @@
                             @if(count($vendor->sample_work_images) > 1)
                             <div class="grid grid-cols-5 gap-2">
                                 @foreach($vendor->sample_work_images as $index => $image)
-                                <div class="relative cursor-pointer group" onclick="changeMainImage('{{ addslashes($image) }}', {{ $index + 1 }})">
+                                <div class="relative cursor-pointer group" data-image-src="{{ $image }}" data-image-index="{{ $index + 1 }}" onclick="changeMainImage(this.getAttribute('data-image-src'), this.getAttribute('data-image-index'))">
                                     <img src="{{ $image }}" 
                                          alt="Sample work {{ $index + 1 }}" 
                                          class="w-full h-16 md:h-20 object-cover rounded-lg border-2 border-gray-200 group-hover:border-primary transition">
