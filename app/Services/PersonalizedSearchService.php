@@ -50,6 +50,7 @@ class PersonalizedSearchService
             if ($user->latitude && $user->longitude) {
                 $userLat = (float) $user->latitude;
                 $userLng = (float) $user->longitude;
+                /** @var Builder<Vendor> $query */
                 $query = self::addDistanceCalculation($query, $userLat, $userLng);
                 $query->whereRaw("(6371 * acos(cos(radians(?)) * cos(radians(vendors.latitude)) * cos(radians(vendors.longitude) - radians(?)) + sin(radians(?)) * sin(radians(vendors.latitude)))) <= ?", 
                     [$userLat, $userLng, $userLat, $user->search_radius_km ?? 50]
@@ -60,14 +61,20 @@ class PersonalizedSearchService
             
             // Score vendors based on multiple factors
             $scored = $vendors->map(function ($vendor) use ($userBehavior, $user) {
+                /** @var Vendor $vendor */
                 $score = 0;
-                
+
                 // Category match score (40% weight)
                 $categoryScore = self::calculateCategoryScore($vendor, $userBehavior['preferred_categories']);
                 $score += $categoryScore * 0.40;
-                
+
                 // Distance score (25% weight)
-                if ($user->latitude && $user->longitude && $vendor->distance !== null) {
+                if (
+                    isset($user->latitude, $user->longitude) &&
+                    ($user->latitude !== null && $user->longitude !== null) &&
+                    isset($vendor->distance) &&
+                    $vendor->distance !== null
+                ) {
                     $distanceScore = max(0, 1 - ($vendor->distance / ($user->search_radius_km ?? 50)));
                     $score += $distanceScore * 0.25;
                 }
@@ -205,9 +212,12 @@ class PersonalizedSearchService
     {
         $haversine = "(6371 * acos(cos(radians(?)) * cos(radians(vendors.latitude)) * cos(radians(vendors.longitude) - radians(?)) + sin(radians(?)) * sin(radians(vendors.latitude))))";
         
-        return $query->selectRaw("vendors.*, $haversine as distance", [$lat, $lng, $lat])
+        /** @var Builder<Vendor> $query */
+        $query = $query->selectRaw("vendors.*, $haversine as distance", [$lat, $lng, $lat])
             ->whereNotNull('latitude')
             ->whereNotNull('longitude');
+            
+        return $query;
     }
     
     /**
