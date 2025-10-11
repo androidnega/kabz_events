@@ -28,8 +28,8 @@
             <x-vendor-nav />
             
             <!-- Main Content -->
-            <main class="flex-1 overflow-x-hidden w-full pb-20 lg:pb-6" :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'">
-                <div class="p-3 sm:p-4 md:p-6">
+            <main class="flex-1 overflow-x-hidden w-full pb-20 lg:pb-6 pt-16" :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'">
+                <div class="p-3 sm:p-4 md:p-6 w-full">
                     {{ $slot }}
                 </div>
             </main>

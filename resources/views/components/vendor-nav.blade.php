@@ -3,7 +3,7 @@
 @endphp
 
 <!-- Sidebar Navigation -->
-<aside class="hidden lg:fixed lg:block top-16 left-0 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 transition-all duration-300 z-20"
+<aside class="fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 transition-all duration-300 z-20 hidden lg:block"
        :class="sidebarOpen ? 'w-64' : 'w-20'">
     <div class="h-full flex flex-col">
         <!-- Navigation Links -->
