@@ -124,4 +124,28 @@ class Vendor extends Model
             ->latest('ends_at')
             ->first();
     }
+
+    /**
+     * Get the region for the vendor.
+     */
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class);
+    }
+
+    /**
+     * Get the district for the vendor.
+     */
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
+    }
+
+    /**
+     * Get the town for the vendor.
+     */
+    public function town(): BelongsTo
+    {
+        return $this->belongsTo(Town::class);
+    }
 }

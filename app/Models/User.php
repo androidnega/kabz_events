@@ -25,6 +25,15 @@ class User extends Authenticatable
         'email',
         'password',
         'display_id',
+        'latitude',
+        'longitude',
+        'location_name',
+        'location_updated_at',
+        'preferred_categories',
+        'preferred_region',
+        'search_radius_km',
+        'total_searches',
+        'total_vendor_views',
     ];
 
     /**
