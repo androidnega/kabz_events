@@ -1,179 +1,199 @@
-<x-app-layout>
-    {{-- Vendor Dashboard Header --}}
-    <div class="bg-gradient-to-r from-purple-600 to-yellow-500 text-white py-8 mb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<x-vendor-layout>
+    <x-slot name="title">Dashboard</x-slot>
+
+    {{-- Welcome Header --}}
+    <div class="bg-gradient-to-r from-purple-600 to-yellow-500 rounded-lg p-6 mb-6 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold mb-1">Welcome back!</h1>
+                <p class="text-purple-100">{{ $vendor->business_name }}</p>
+            </div>
+            @if($stats['is_verified'])
+                <div class="bg-green-500 px-4 py-2 rounded-full font-semibold flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Verified
+                </div>
+            @else
+                <a href="{{ route('vendor.verification') }}" 
+                   class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-full font-semibold transition">
+                    Get Verified →
+                </a>
+            @endif
+        </div>
+    </div>
+
+    {{-- Subscription Banner --}}
+    @if($subscriptionInfo)
+        <div class="mb-6 bg-gradient-to-r from-purple-500 to-teal-500 rounded-lg p-5 text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold">Welcome, {{ $vendor->business_name }}!</h1>
-                    <p class="text-purple-100 mt-1">Manage your event services business</p>
+                    <h3 class="text-lg font-bold mb-1">{{ $subscriptionInfo['plan'] }} Plan Active</h3>
+                    @if($subscriptionInfo['ends_at'])
+                        <p class="text-sm text-purple-100">
+                            Expires: {{ $subscriptionInfo['ends_at']->format('M d, Y') }}
+                            @if($subscriptionInfo['days_remaining'] > 0)
+                                ({{ $subscriptionInfo['days_remaining'] }} days left)
+                            @endif
+                        </p>
+                    @else
+                        <p class="text-sm text-purple-100">Lifetime Access</p>
+                    @endif
                 </div>
-                @if($stats['is_verified'])
-                    <div class="bg-green-500 px-4 py-2 rounded-full text-white font-semibold">
-                        ✓ Verified Vendor
-                    </div>
-                @else
-                    <a href="{{ route('vendor.verification') }}" class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-full text-white font-semibold transition">
-                        Get Verified →
-                    </a>
-                @endif
+                <a href="{{ route('vendor.subscriptions') }}" 
+                   class="bg-white text-purple-600 px-4 py-2 rounded-lg font-semibold hover:bg-purple-50 transition">
+                    Upgrade
+                </a>
             </div>
+        </div>
+    @endif
+
+    {{-- Key Metrics Cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <!-- Total Services -->
+        <div class="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
+                    <i class="fas fa-th-large text-blue-600 text-xl"></i>
+                </div>
+                <span class="text-3xl font-bold text-gray-900">{{ $stats['total_services'] }}</span>
+            </div>
+            <p class="text-sm font-medium text-gray-600">Total Services</p>
+        </div>
+
+        <!-- Average Rating -->
+        <div class="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-lg">
+                    <i class="fas fa-star text-yellow-600 text-xl"></i>
+                </div>
+                <span class="text-3xl font-bold text-gray-900">{{ $stats['average_rating'] }}</span>
+            </div>
+            <p class="text-sm font-medium text-gray-600">Average Rating</p>
+        </div>
+
+        <!-- Total Reviews -->
+        <div class="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
+                    <i class="fas fa-comments text-green-600 text-xl"></i>
+                </div>
+                <span class="text-3xl font-bold text-gray-900">{{ $stats['total_reviews'] }}</span>
+            </div>
+            <p class="text-sm font-medium text-gray-600">Total Reviews</p>
+        </div>
+
+        <!-- Verification Status -->
+        <div class="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center justify-center w-12 h-12 {{ $stats['is_verified'] ? 'bg-green-100' : 'bg-gray-100' }} rounded-lg">
+                    <i class="fas {{ $stats['is_verified'] ? 'fa-check-circle text-green-600' : 'fa-clock text-gray-600' }} text-xl"></i>
+                </div>
+                <span class="text-lg font-bold {{ $stats['is_verified'] ? 'text-green-600' : 'text-gray-600' }}">
+                    {{ $stats['verification_status'] }}
+                </span>
+            </div>
+            <p class="text-sm font-medium text-gray-600">Verification</p>
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Subscription Banner --}}
-        @if($subscriptionInfo)
-            <div class="mb-6 bg-gradient-to-r from-purple-500 to-teal-500 rounded-lg p-6 text-white">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-xl font-bold mb-2">{{ $subscriptionInfo['plan'] }} Plan Active</h3>
-                        @if($subscriptionInfo['ends_at'])
-                            <p class="text-purple-100">
-                                Expires: {{ $subscriptionInfo['ends_at']->format('M d, Y') }}
-                                @if($subscriptionInfo['days_remaining'] > 0)
-                                    ({{ $subscriptionInfo['days_remaining'] }} days remaining)
-                                @endif
-                            </p>
-                        @else
-                            <p class="text-purple-100">Lifetime Access</p>
-                        @endif
-                    </div>
-                    <a href="{{ route('vendor.subscriptions') }}" class="bg-white text-purple-600 px-4 py-2 rounded-lg font-semibold hover:bg-purple-50 transition">
-                        Upgrade Plan
-                    </a>
-                </div>
-            </div>
-        @else
-            <x-alert type="info" class="mb-6">
-                <div class="flex items-center justify-between">
-                    <span>You're on the Free plan. Upgrade for more features!</span>
-                    <a href="{{ route('vendor.subscriptions') }}" class="font-semibold underline">View Plans →</a>
-                </div>
-            </x-alert>
-        @endif
-
-        {{-- Key Metrics --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <x-card class="bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-600">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Total Services</p>
-                        <p class="text-3xl font-bold text-blue-900">{{ $stats['total_services'] }}</p>
-                    </div>
-                    <div class="text-4xl">📦</div>
-                </div>
-            </x-card>
-
-            <x-card class="bg-gradient-to-br from-yellow-50 to-yellow-100 border-l-4 border-yellow-600">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Average Rating</p>
-                        <p class="text-3xl font-bold text-yellow-900">{{ $stats['average_rating'] }}</p>
-                        <p class="text-xs text-gray-600 mt-1">★★★★★</p>
-                    </div>
-                    <div class="text-4xl">⭐</div>
-                </div>
-            </x-card>
-
-            <x-card class="bg-gradient-to-br from-green-50 to-green-100 border-l-4 border-green-600">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Total Reviews</p>
-                        <p class="text-3xl font-bold text-green-900">{{ $stats['total_reviews'] }}</p>
-                    </div>
-                    <div class="text-4xl">💬</div>
-                </div>
-            </x-card>
-
-            <x-card class="bg-gradient-to-br from-purple-50 to-purple-100 border-l-4 border-purple-600">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Verification</p>
-                        <p class="text-lg font-bold 
-                            @if($stats['is_verified']) text-green-900 @else text-gray-600 @endif">
-                            {{ $stats['verification_status'] }}
-                        </p>
-                    </div>
-                    <div class="text-4xl">
-                        @if($stats['is_verified']) ✅ @else ⏳ @endif
-                    </div>
-                </div>
-            </x-card>
-        </div>
-
-        {{-- Recent Activity --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {{-- Recent Services --}}
-            <x-card>
+    {{-- Content Grid --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {{-- Recent Services --}}
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div class="p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-800">Recent Services</h3>
-                    <a href="{{ route('vendor.services.index') }}" class="text-sm text-purple-600 hover:underline">
-                        Manage All →
+                    <h3 class="text-lg font-semibold text-gray-900">Recent Services</h3>
+                    <a href="{{ route('vendor.services.index') }}" 
+                       class="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                        View All →
                     </a>
                 </div>
-                @forelse($recentServices as $service)
-                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded mb-2">
-                        <div>
-                            <p class="font-medium">{{ $service->title }}</p>
-                            <p class="text-sm text-gray-600">{{ $service->category->name }}</p>
-                        </div>
-                        <span class="text-sm font-semibold text-purple-600">
-                            GH₵ {{ number_format($service->price_min, 0) }}
-                        </span>
-                    </div>
-                @empty
-                    <div class="text-center py-8">
-                        <p class="text-gray-500 mb-4">No services yet</p>
-                        <a href="{{ route('vendor.services.create') }}" class="inline-block bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
-                            Add Your First Service
-                        </a>
-                    </div>
-                @endforelse
-            </x-card>
 
-            {{-- Recent Reviews --}}
-            <x-card>
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Reviews</h3>
-                @forelse($recentReviews as $review)
-                    <div class="p-3 bg-gray-50 rounded mb-2">
-                        <div class="flex justify-between items-start mb-1">
-                            <p class="font-medium">{{ $review->user->name }}</p>
-                            <span class="text-yellow-600 text-sm">
-                                {{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}
+                <div class="space-y-3">
+                    @forelse($recentServices as $service)
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                            <div>
+                                <p class="font-medium text-gray-900">{{ $service->title }}</p>
+                                <p class="text-sm text-gray-600">{{ $service->category->name }}</p>
+                            </div>
+                            <span class="text-sm font-semibold text-purple-600">
+                                GH₵ {{ number_format($service->price_min, 0) }}
                             </span>
                         </div>
-                        <p class="text-sm text-gray-700">{{ Str::limit($review->comment, 100) }}</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ $review->created_at->diffForHumans() }}</p>
-                    </div>
-                @empty
-                    <p class="text-gray-500 text-center py-4">No reviews yet</p>
-                @endforelse
-            </x-card>
+                    @empty
+                        <div class="text-center py-8">
+                            <i class="fas fa-inbox text-gray-300 text-4xl mb-3"></i>
+                            <p class="text-gray-500 mb-4">No services yet</p>
+                            <a href="{{ route('vendor.services.create') }}" 
+                               class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                                <i class="fas fa-plus mr-2"></i>
+                                Add Your First Service
+                            </a>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
         </div>
 
-        {{-- Quick Actions --}}
-        <x-card class="bg-purple-50 border-2 border-purple-200">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <a href="{{ route('vendor.services.create') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition">
-                    <span class="text-3xl mb-2">➕</span>
-                    <span class="text-sm font-medium">Add Service</span>
-                </a>
-                <a href="{{ route('vendor.subscriptions') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition">
-                    <span class="text-3xl mb-2">💎</span>
-                    <span class="text-sm font-medium">Upgrade Plan</span>
-                </a>
-                @if(!$stats['is_verified'])
-                <a href="{{ route('vendor.verification') }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition">
-                    <span class="text-3xl mb-2">✓</span>
-                    <span class="text-sm font-medium">Get Verified</span>
-                </a>
-                @endif
-                <a href="{{ route('vendors.show', $vendor->slug) }}" class="flex flex-col items-center p-4 bg-white rounded-lg hover:shadow-md transition">
-                    <span class="text-3xl mb-2">👁️</span>
-                    <span class="text-sm font-medium">View Public Profile</span>
-                </a>
+        {{-- Recent Reviews --}}
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Reviews</h3>
+
+                <div class="space-y-3">
+                    @forelse($recentReviews as $review)
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <div class="flex justify-between items-start mb-2">
+                                <p class="font-medium text-gray-900">{{ $review->user->name }}</p>
+                                <div class="flex items-center text-yellow-500">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="fas fa-star {{ $i <= $review->rating ? '' : 'text-gray-300' }} text-sm"></i>
+                                    @endfor
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-700">{{ Str::limit($review->comment, 100) }}</p>
+                            <p class="text-xs text-gray-500 mt-2">{{ $review->created_at->diffForHumans() }}</p>
+                        </div>
+                    @empty
+                        <div class="text-center py-8">
+                            <i class="fas fa-comments text-gray-300 text-4xl mb-3"></i>
+                            <p class="text-gray-500">No reviews yet</p>
+                        </div>
+                    @endforelse
+                </div>
             </div>
-        </x-card>
+        </div>
     </div>
-</x-app-layout>
+
+    {{-- Quick Actions --}}
+    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <a href="{{ route('vendor.services.create') }}" 
+               class="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition border border-purple-200">
+                <i class="fas fa-plus text-purple-600 text-2xl mb-2"></i>
+                <span class="text-sm font-medium text-gray-900">Add Service</span>
+            </a>
+
+            <a href="{{ route('vendor.subscriptions') }}" 
+               class="flex flex-col items-center justify-center p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition border border-yellow-200">
+                <i class="fas fa-crown text-yellow-600 text-2xl mb-2"></i>
+                <span class="text-sm font-medium text-gray-900">Upgrade Plan</span>
+            </a>
+
+            @if(!$stats['is_verified'])
+            <a href="{{ route('vendor.verification') }}" 
+               class="flex flex-col items-center justify-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition border border-green-200">
+                <i class="fas fa-certificate text-green-600 text-2xl mb-2"></i>
+                <span class="text-sm font-medium text-gray-900">Get Verified</span>
+            </a>
+            @endif
+
+            <a href="{{ route('vendors.show', $vendor->slug) }}" 
+               class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition border border-blue-200">
+                <i class="fas fa-eye text-blue-600 text-2xl mb-2"></i>
+                <span class="text-sm font-medium text-gray-900">View Profile</span>
+            </a>
+        </div>
+    </div>
+</x-vendor-layout>

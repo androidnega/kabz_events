@@ -1,14 +1,14 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Add New Service') }}
-        </h2>
-    </x-slot>
+<x-vendor-layout>
+    <x-slot name="title">Add New Service</x-slot>
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <x-card>
-                <div class="p-6">
+    <div class="max-w-2xl mx-auto">
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">Add New Service</h2>
+            <p class="text-gray-600 mt-1">Create a new service listing for your business</p>
+        </div>
+
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div class="p-6">
                     <form method="POST" action="{{ route('vendor.services.store') }}" class="space-y-6">
                         @csrf
 
@@ -143,10 +143,9 @@
                                 Save Service
                             </x-button>
                         </div>
-                    </form>
-                </div>
-            </x-card>
+                </form>
+            </div>
         </div>
     </div>
-</x-app-layout>
+</x-vendor-layout>
 

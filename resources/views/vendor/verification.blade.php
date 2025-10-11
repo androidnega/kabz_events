@@ -1,7 +1,9 @@
-<x-app-layout>
-    <div class="max-w-2xl mx-auto mt-8 px-4">
-        <x-card class="p-6">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Vendor Verification</h2>
+<x-vendor-layout>
+    <x-slot name="title">Verification</x-slot>
+
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <h2 class="text-2xl font-bold mb-6 text-gray-900">Vendor Verification</h2>
 
             @if(session('success'))
                 <x-alert type="success" class="mb-4">
@@ -153,7 +155,7 @@
                     </div>
                 </form>
             @endif
-        </x-card>
+        </div>
     </div>
-</x-app-layout>
+</x-vendor-layout>
 

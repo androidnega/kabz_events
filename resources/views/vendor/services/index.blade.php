@@ -1,35 +1,30 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('My Services') }}
-            </h2>
-            <x-button variant="primary" onclick="window.location='{{ route('vendor.services.create') }}'">
-                <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                </svg>
+<x-vendor-layout>
+    <x-slot name="title">My Services</x-slot>
+
+    <div class="max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">My Services</h2>
+            <a href="{{ route('vendor.services.create') }}" 
+               class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                <i class="fas fa-plus mr-2"></i>
                 Add New Service
-            </x-button>
+            </a>
         </div>
-    </x-slot>
+        <!-- Success/Error Messages -->
+        @if (session('success'))
+            <x-alert type="success" class="mb-6">
+                {{ session('success') }}
+            </x-alert>
+        @endif
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Success/Error Messages -->
-            @if (session('success'))
-                <x-alert type="success" class="mb-6">
-                    {{ session('success') }}
-                </x-alert>
-            @endif
+        @if (session('error'))
+            <x-alert type="error" class="mb-6">
+                {{ session('error') }}
+            </x-alert>
+        @endif
 
-            @if (session('error'))
-                <x-alert type="error" class="mb-6">
-                    {{ session('error') }}
-                </x-alert>
-            @endif
-
-            <x-card>
-                <div class="p-6">
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div class="p-6">
                     @if($services->count() > 0)
                         <!-- Desktop Table -->
                         <div class="hidden md:block overflow-x-auto">
@@ -186,10 +181,9 @@
                                 </x-button>
                             </div>
                         </div>
-                    @endif
-                </div>
-            </x-card>
+                @endif
+            </div>
         </div>
     </div>
-</x-app-layout>
+</x-vendor-layout>
 
