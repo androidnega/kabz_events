@@ -136,54 +136,52 @@
       <div x-show="showLoginModal" 
            x-cloak
            @click.away="showLoginModal = false"
-           class="fixed inset-0 z-50 overflow-y-auto" 
+           class="fixed inset-0 z-50 flex items-center justify-center p-4" 
            style="display: none;">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-          <!-- Background overlay -->
-          <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="showLoginModal = false"></div>
+        <!-- Background overlay -->
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" @click="showLoginModal = false"></div>
 
-          <!-- Modal panel -->
-          <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
-            <div class="bg-white px-6 pt-6 pb-4">
-              <div class="text-center">
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 mb-4">
-                  <i class="fas fa-lock text-indigo-600 text-2xl"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                  Login Required
-                </h3>
-                <p class="text-sm text-gray-600 mb-6">
-                  Please sign in to contact this vendor and access full details
-                </p>
+        <!-- Modal panel - Centered -->
+        <div class="relative bg-white rounded-2xl shadow-2xl transform transition-all w-full max-w-md mx-auto">
+          <div class="bg-white px-6 py-8 sm:px-8">
+            <div class="text-center">
+              <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 mb-4">
+                <i class="fas fa-lock text-indigo-600 text-2xl"></i>
               </div>
+              <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                Login Required
+              </h3>
+              <p class="text-sm sm:text-base text-gray-600">
+                Please sign in to contact this vendor and access full details
+              </p>
             </div>
-            
-            <div class="bg-gray-50 px-6 py-4 space-y-3">
-              <a href="{{ route('login') }}" class="block w-full">
-                <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-lg font-medium transition">
-                  <i class="fas fa-sign-in-alt mr-2"></i> Sign In
-                </button>
-              </a>
-              
-              <a href="{{ route('register') }}" class="block w-full">
-                <button class="w-full bg-white hover:bg-gray-50 text-indigo-600 border-2 border-indigo-600 px-4 py-3 rounded-lg font-medium transition">
-                  <i class="fas fa-user-plus mr-2"></i> Create Account
-                </button>
-              </a>
-
-              <div class="text-center pt-2">
-                <p class="text-sm text-gray-600">
-                  Are you a vendor? 
-                  <a href="{{ route('vendor.public.register') }}" class="text-indigo-600 hover:text-indigo-700 font-medium">
-                    Register here
-                  </a>
-                </p>
-              </div>
-
-              <button @click="showLoginModal = false" class="w-full text-gray-600 hover:text-gray-800 px-4 py-2 text-sm font-medium">
-                Maybe Later
+          </div>
+          
+          <div class="bg-gray-50 px-6 py-6 sm:px-8 space-y-3 rounded-b-2xl">
+            <a href="{{ route('login') }}" class="block w-full">
+              <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-lg font-medium transition shadow-sm">
+                <i class="fas fa-sign-in-alt mr-2"></i> Sign In
               </button>
+            </a>
+            
+            <a href="{{ route('register') }}" class="block w-full">
+              <button class="w-full bg-white hover:bg-gray-50 text-indigo-600 border-2 border-indigo-600 px-4 py-3 rounded-lg font-medium transition">
+                <i class="fas fa-user-plus mr-2"></i> Create Account
+              </button>
+            </a>
+
+            <div class="text-center pt-2 pb-1">
+              <p class="text-sm text-gray-600">
+                Are you a vendor? 
+                <a href="{{ route('vendor.public.register') }}" class="text-indigo-600 hover:text-indigo-700 font-medium">
+                  Register here
+                </a>
+              </p>
             </div>
+
+            <button @click="showLoginModal = false" class="w-full text-gray-600 hover:text-gray-800 px-4 py-2 text-sm font-medium hover:bg-gray-100 rounded-lg transition">
+              Maybe Later
+            </button>
           </div>
         </div>
       </div>
@@ -192,58 +190,54 @@
 
   {{-- Message Modal (for authenticated users) --}}
   @auth
-    <div x-show="chatOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-      <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75" @click="chatOpen = false"></div>
-        <div class="relative bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
-          <h4 class="font-semibold text-gray-900 mb-3 text-sm">Send a Message</h4>
-          <textarea x-model="chatMessage" placeholder="Write a short message to the vendor..." rows="4"
-                    class="w-full border border-gray-300 rounded-lg p-3 text-xs focus:ring-2 focus:ring-purple-500 focus:border-purple-500 mb-3"></textarea>
-          <div class="flex justify-end space-x-2">
-            <button @click="chatOpen = false" class="text-xs text-gray-600 hover:text-gray-800 px-3 py-2">Cancel</button>
-            <button @click="sendMessage" :disabled="chatSending" class="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg text-xs font-medium">
-              <i class="fas fa-paper-plane mr-1"></i> Send
-            </button>
-          </div>
-          <template x-if="chatSent">
-            <div class="text-xs text-green-700 bg-green-50 p-2 rounded-lg border border-green-200 mt-3">
-              <i class="fas fa-check-circle mr-1"></i> Message sent successfully!
-            </div>
-          </template>
+    <div x-show="chatOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
+      <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" @click="chatOpen = false"></div>
+      <div class="relative bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl mx-auto">
+        <h4 class="font-semibold text-gray-900 mb-4 text-base sm:text-lg">Send a Message</h4>
+        <textarea x-model="chatMessage" placeholder="Write a short message to the vendor..." rows="4"
+                  class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 mb-4"></textarea>
+        <div class="flex justify-end space-x-2">
+          <button @click="chatOpen = false" class="text-sm text-gray-600 hover:text-gray-800 px-4 py-2 hover:bg-gray-100 rounded-lg transition">Cancel</button>
+          <button @click="sendMessage" :disabled="chatSending" class="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-5 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+            <i class="fas fa-paper-plane mr-1"></i> Send
+          </button>
         </div>
+        <template x-if="chatSent">
+          <div class="text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200 mt-3">
+            <i class="fas fa-check-circle mr-1"></i> Message sent successfully!
+          </div>
+        </template>
       </div>
     </div>
 
     {{-- Report Modal (for authenticated users) --}}
-    <div x-show="reportOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-      <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75" @click="reportOpen = false"></div>
-        <div class="relative bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
-          <h4 class="font-semibold text-gray-900 mb-3 text-sm">Report this Vendor</h4>
-          <select x-model="reportCategory" class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-red-500 mb-3">
-            <option value="">Select a reason</option>
-            <option value="fraud">Fraud or Scam</option>
-            <option value="quality">Poor Service Quality</option>
-            <option value="payment">Payment Issues</option>
-            <option value="unprofessional">Unprofessional Behavior</option>
-            <option value="fake">Fake/Misleading Information</option>
-            <option value="other">Other</option>
-          </select>
-          <textarea x-model="reportMessage" placeholder="Provide details..." rows="4"
-                    class="w-full border border-gray-300 rounded-lg p-3 text-xs focus:ring-2 focus:ring-red-500 mb-3"></textarea>
-          <div class="flex justify-end space-x-2">
-            <button @click="reportOpen = false; reportCategory = ''; reportMessage = ''" class="text-xs text-gray-600 hover:text-gray-800 px-3 py-2">Cancel</button>
-            <button @click="submitReport" :disabled="reportSubmitting || !reportCategory || !reportMessage.trim()" 
-                    class="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg text-xs font-medium">
-              <i class="fas fa-paper-plane mr-1"></i> Submit
-            </button>
-          </div>
-          <template x-if="reportSubmitted">
-            <div class="text-xs text-green-700 bg-green-50 p-2 rounded-lg border border-green-200 mt-3">
-              <i class="fas fa-check-circle mr-1"></i> Report submitted!
-            </div>
-          </template>
+    <div x-show="reportOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
+      <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" @click="reportOpen = false"></div>
+      <div class="relative bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl mx-auto">
+        <h4 class="font-semibold text-gray-900 mb-4 text-base sm:text-lg">Report this Vendor</h4>
+        <select x-model="reportCategory" class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-red-500 mb-3">
+          <option value="">Select a reason</option>
+          <option value="fraud">Fraud or Scam</option>
+          <option value="quality">Poor Service Quality</option>
+          <option value="payment">Payment Issues</option>
+          <option value="unprofessional">Unprofessional Behavior</option>
+          <option value="fake">Fake/Misleading Information</option>
+          <option value="other">Other</option>
+        </select>
+        <textarea x-model="reportMessage" placeholder="Provide details about your concern..." rows="4"
+                  class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-red-500 mb-4"></textarea>
+        <div class="flex justify-end space-x-2">
+          <button @click="reportOpen = false; reportCategory = ''; reportMessage = ''" class="text-sm text-gray-600 hover:text-gray-800 px-4 py-2 hover:bg-gray-100 rounded-lg transition">Cancel</button>
+          <button @click="submitReport" :disabled="reportSubmitting || !reportCategory || !reportMessage.trim()" 
+                  class="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-5 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+            <i class="fas fa-paper-plane mr-1"></i> Submit
+          </button>
         </div>
+        <template x-if="reportSubmitted">
+          <div class="text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200 mt-3">
+            <i class="fas fa-check-circle mr-1"></i> Report submitted!
+          </div>
+        </template>
       </div>
     </div>
   @endauth
