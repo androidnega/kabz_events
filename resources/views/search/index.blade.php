@@ -26,7 +26,7 @@
                 </div>
 
                 {{-- Filter Row --}}
-                <div class="grid md:grid-cols-4 gap-4">
+                <div class="grid md:grid-cols-5 gap-4">
                     {{-- Category Filter --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
@@ -53,6 +53,18 @@
                         </select>
                     </div>
 
+                    {{-- Rating Filter --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Min Rating</label>
+                        <select name="min_rating" class="w-full border-2 border-gray-300 rounded-lg p-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-colors">
+                            <option value="">Any Rating</option>
+                            <option value="4.5" @selected(request('min_rating') == '4.5')>4.5+ Stars</option>
+                            <option value="4.0" @selected(request('min_rating') == '4.0')>4.0+ Stars</option>
+                            <option value="3.5" @selected(request('min_rating') == '3.5')>3.5+ Stars</option>
+                            <option value="3.0" @selected(request('min_rating') == '3.0')>3.0+ Stars</option>
+                        </select>
+                    </div>
+
                     {{-- Sort Filter --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
@@ -74,6 +86,17 @@
                     </div>
                 </div>
 
+                {{-- Advanced Search Link --}}
+                <div class="text-center pt-2">
+                    <a href="{{ route('search.advanced') }}" class="text-sm text-purple-600 hover:text-purple-800 font-medium inline-flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Advanced Search with GPS Location & More Filters
+                    </a>
+                </div>
+
                 {{-- Clear Filters --}}
                 @if(request()->hasAny(['q', 'category', 'region', 'sort']))
                     <div class="text-center">
@@ -84,6 +107,37 @@
                 @endif
             </form>
         </div>
+
+        {{-- Personalized Recommendations --}}
+        @if($showPersonalized && $personalizedVendors->isNotEmpty())
+            <div class="bg-gradient-to-r from-purple-50 to-teal-50 border border-purple-200 rounded-lg p-6 mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-purple-900 flex items-center gap-2">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                            </svg>
+                            Recommended For You
+                        </h3>
+                        <p class="text-sm text-gray-600">Based on your search history and preferences</p>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    @foreach($personalizedVendors as $vendor)
+                        <a href="{{ route('vendors.show', $vendor->slug) }}" class="block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4">
+                            <h4 class="font-semibold text-sm text-gray-900 mb-1 truncate">{{ $vendor->business_name }}</h4>
+                            <div class="flex items-center text-xs text-yellow-600 mb-2">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                </svg>
+                                {{ number_format($vendor->rating_cached, 1) }}
+                            </div>
+                            <p class="text-xs text-gray-500 truncate">{{ Str::limit($vendor->address, 30) }}</p>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        @endif
 
         {{-- Results Count --}}
         <div class="mb-6 flex justify-between items-center">

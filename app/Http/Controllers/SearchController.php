@@ -29,13 +29,27 @@ class SearchController extends Controller
      */
     public function index(Request $request)
     {
+        $user = auth()->user();
+        
+        // Log search activity for recommendations
+        if ($user && $request->hasAny(['q', 'category', 'region'])) {
+            \App\Services\PersonalizedSearchService::logSearchActivity($user, $request->only([
+                'q', 'category', 'region'
+            ]));
+        }
+        
         // Start with verified vendors only
         $query = Vendor::with(['services.category', 'reviews'])
             ->where('is_verified', true);
 
-        // Keyword search (business name)
+        // Keyword search (business name, description, address)
         if ($request->filled('q')) {
-            $query->where('business_name', 'like', "%{$request->q}%");
+            $searchTerm = $request->q;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('business_name', 'like', "%{$searchTerm}%")
+                  ->orWhere('description', 'like', "%{$searchTerm}%")
+                  ->orWhere('address', 'like', "%{$searchTerm}%");
+            });
         }
 
         // Category filter
@@ -50,6 +64,12 @@ class SearchController extends Controller
         // Region filter (Ghana regions)
         if ($request->filled('region')) {
             $query->where('address', 'like', "%{$request->region}%");
+        }
+        
+        // Rating filter (minimum rating)
+        if ($request->filled('min_rating')) {
+            $minRating = (float) $request->min_rating;
+            $query->where('rating_cached', '>=', $minRating);
         }
 
         // Sorting
@@ -73,7 +93,13 @@ class SearchController extends Controller
 
         // Ghana regions
         $regions = self::GHANA_REGIONS;
+        
+        // Get personalized recommendations if user has enough activity
+        $showPersonalized = $user && $user->total_searches > 2 && $user->total_vendor_views > 2;
+        $personalizedVendors = $showPersonalized 
+            ? \App\Services\PersonalizedSearchService::getPersonalizedRecommendations($user, ['limit' => 6])
+            : collect();
 
-        return view('search.index', compact('vendors', 'categories', 'regions'));
+        return view('search.index', compact('vendors', 'categories', 'regions', 'showPersonalized', 'personalizedVendors'));
     }
 }

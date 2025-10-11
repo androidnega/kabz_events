@@ -46,6 +46,14 @@ Route::get('/api/load-more-vendors', [HomeController::class, 'loadMoreVendors'])
 
 // Search & Filter Vendors
 Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+Route::get('/search/advanced', [\App\Http\Controllers\AdvancedSearchController::class, 'index'])->name('search.advanced');
+
+// Location and Nearby Vendors (AJAX endpoints)
+Route::post('/api/location/update', [\App\Http\Controllers\AdvancedSearchController::class, 'updateLocation'])
+    ->middleware('auth')
+    ->name('api.location.update');
+Route::get('/api/vendors/nearby', [\App\Http\Controllers\AdvancedSearchController::class, 'getNearbyVendors'])
+    ->name('api.vendors.nearby');
 
 // Public Vendor Registration (for non-logged-in users)
 Route::get('/signup/vendor', [PublicVendorController::class, 'create'])->name('vendor.public.register');
@@ -54,6 +62,15 @@ Route::post('/signup/vendor', [PublicVendorController::class, 'store'])->name('v
 // Public Vendor Profiles (no auth required)
 Route::get('/vendors', [VendorProfileController::class, 'index'])->name('vendors.index');
 Route::get('/vendors/{slug}', [VendorProfileController::class, 'show'])->name('vendors.show');
+
+// Log vendor view for recommendations
+Route::post('/vendors/{vendor}/log-view', function (\App\Models\Vendor $vendor) {
+    $user = auth()->user();
+    if ($user) {
+        \App\Services\PersonalizedSearchService::logVendorView($user, $vendor);
+    }
+    return response()->json(['success' => true]);
+})->name('vendors.log-view');
 
 // Recommendation API (public - returns JSON)
 Route::get('/recommendations', function (Request $request) {

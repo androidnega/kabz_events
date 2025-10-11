@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 class RecommendationService
 {
     /**
-     * Get recommendations for a user (MVP).
+     * Get recommendations for a user (Enhanced with user behavior).
      *
      * $options = [
      *   'user_id' => null,
@@ -45,7 +45,8 @@ class RecommendationService
 
                 if (!empty($pre)) {
                     $vendors = Vendor::whereIn('id', $pre)
-                        ->with(['user', 'reviews'])
+                        ->where('is_verified', true)
+                        ->with(['services.category', 'reviews'])
                         ->get();
                     
                     // Preserve the order from recommendations
@@ -56,6 +57,18 @@ class RecommendationService
                     
                     return $ordered;
                 }
+                
+                // Check if user has behavior data for personalized recommendations
+                $user = \App\Models\User::find($userId);
+                if ($user && $user->total_searches > 2 && $user->total_vendor_views > 2) {
+                    // Use PersonalizedSearchService for users with enough activity
+                    return \App\Services\PersonalizedSearchService::getPersonalizedRecommendations($user, [
+                        'limit' => $limit,
+                        'lat' => $lat,
+                        'lng' => $lng,
+                        'category_id' => $categoryId,
+                    ]);
+                }
             }
 
             // Fall back to on-the-fly scoring
@@ -64,7 +77,7 @@ class RecommendationService
     }
 
     /**
-     * On-the-fly scoring: proximity + category + rating + recency.
+     * On-the-fly scoring: proximity + category + rating + recency + popularity.
      */
     protected static function onTheFlyScore($lat, $lng, $categoryId, $limit): Collection
     {
@@ -74,27 +87,45 @@ class RecommendationService
         // calculate distance if lat/lng provided using Haversine formula in km
         if ($lat && $lng) {
             $haversine = "(6371 * acos(cos(radians(?)) * cos(radians(vendors.latitude)) * cos(radians(vendors.longitude) - radians(?)) + sin(radians(?)) * sin(radians(vendors.latitude))))";
-            $query->selectRaw("$haversine as distance", [$lat, $lng, $lat]);
+            $query->selectRaw("$haversine as distance", [$lat, $lng, $lat])
+                ->whereNotNull('latitude')
+                ->whereNotNull('longitude');
         } else {
             // fallback big distance to keep scoring maths safe
             $query->selectRaw("9999 as distance");
         }
 
         if ($categoryId) {
-            $query->where('category_id', $categoryId);
+            $query->whereHas('services', function($q) use ($categoryId) {
+                $q->where('category_id', $categoryId);
+            });
         }
 
         $vendors = $query->where('is_verified', 1)
-            ->whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->with(['user', 'reviews'])
+            ->with(['services.category', 'reviews' => function($q) {
+                $q->where('approved', true);
+            }])
             ->get();
 
+        // Get view counts for popularity scoring
+        $viewCounts = UserActivityLog::where('action', 'viewed_vendor')
+            ->where('created_at', '>=', now()->subDays(30))
+            ->selectRaw('vendor_id, COUNT(*) as view_count')
+            ->groupBy('vendor_id')
+            ->pluck('view_count', 'vendor_id');
+
         // compute score locally (php) for flexibility
-        $scored = $vendors->map(function ($v) use ($lat, $lng) {
-            $categoryMatch = 0; // category logic can be applied externally
+        $scored = $vendors->map(function ($v) use ($lat, $lng, $categoryId, $viewCounts) {
+            // category match score
+            $categoryMatch = 0;
+            if ($categoryId) {
+                $hasCategory = $v->services->pluck('category_id')->contains($categoryId);
+                $categoryMatch = $hasCategory ? 1.0 : 0.3;
+            } else {
+                $categoryMatch = 0.5; // neutral for no category filter
+            }
             
-            // rating score: use cached rating or calculate from reviews
+            // rating score: use cached rating or calculate from approved reviews
             $avgRating = $v->rating_cached ?? $v->reviews->avg('rating') ?? 3.0;
             $ratingScore = $avgRating / 5.0; // normalized 0..1
             
@@ -105,9 +136,17 @@ class RecommendationService
             // recency: more recent updated vendors get small boost (0..1)
             $days = now()->diffInDays($v->updated_at ?? $v->created_at ?? now());
             $recencyScore = max(0, 1 - ($days / 365)); // older than 1 year → ~0
+            
+            // popularity score based on recent views (0..1)
+            $views = $viewCounts[$v->id] ?? 0;
+            $popularityScore = min(1.0, $views / 100); // cap at 100 views
 
-            // Weighted sum
-            $score = (0.4 * $categoryMatch) + (0.35 * $proximityScore) + (0.2 * $ratingScore) + (0.05 * $recencyScore);
+            // Weighted sum (total = 1.0)
+            $score = (0.25 * $categoryMatch) + 
+                     (0.30 * $proximityScore) + 
+                     (0.25 * $ratingScore) + 
+                     (0.05 * $recencyScore) +
+                     (0.15 * $popularityScore);
 
             $v->computed_score = $score;
             return $v;

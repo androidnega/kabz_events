@@ -83,18 +83,15 @@ class VendorProfileController extends Controller
             ->limit(3)
             ->get();
 
-        // Log activity for recommendations
+        // Log activity for recommendations using PersonalizedSearchService
         if (auth()->check()) {
-            UserActivityLog::create([
-                'user_id' => auth()->id(),
-                'vendor_id' => $vendor->id,
-                'action' => 'viewed_vendor',
-                'meta' => $vendor->services->first()?->category->name,
-            ]);
+            \App\Services\PersonalizedSearchService::logVendorView(auth()->user(), $vendor);
         }
 
-        // Get personalized recommendations
-        $recommendedVendors = RecommendationService::get(['limit' => 6]);
+        // Get personalized recommendations (use PersonalizedSearchService for logged-in users)
+        $recommendedVendors = auth()->check() 
+            ? \App\Services\PersonalizedSearchService::getPersonalizedRecommendations(auth()->user(), ['limit' => 6])
+            : RecommendationService::get(['limit' => 6]);
 
         // Check if user can access sensitive information (contact, reviews)
         $canAccessSensitive = auth()->check();

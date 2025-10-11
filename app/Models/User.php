@@ -85,6 +85,13 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'latitude' => 'decimal:7',
+        'longitude' => 'decimal:7',
+        'location_updated_at' => 'datetime',
+        'preferred_categories' => 'array',
+        'search_radius_km' => 'decimal:2',
+        'total_searches' => 'integer',
+        'total_vendor_views' => 'integer',
     ];
 
     /**
