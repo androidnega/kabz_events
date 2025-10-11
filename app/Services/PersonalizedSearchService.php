@@ -196,12 +196,12 @@ class PersonalizedSearchService
     /**
      * Add distance calculation to query.
      * 
-     * @param \Illuminate\Database\Eloquent\Builder<Vendor> $query
+     * @param Builder<Vendor> $query
      * @param float $lat
      * @param float $lng
-     * @return \Illuminate\Database\Eloquent\Builder<Vendor>
+     * @return Builder<Vendor>
      */
-    protected static function addDistanceCalculation(\Illuminate\Database\Eloquent\Builder $query, float $lat, float $lng): \Illuminate\Database\Eloquent\Builder
+    protected static function addDistanceCalculation(Builder $query, float $lat, float $lng): Builder
     {
         $haversine = "(6371 * acos(cos(radians(?)) * cos(radians(vendors.latitude)) * cos(radians(vendors.longitude) - radians(?)) + sin(radians(?)) * sin(radians(vendors.latitude))))";
         
