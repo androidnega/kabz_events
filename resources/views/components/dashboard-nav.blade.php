@@ -78,7 +78,6 @@ $user = Auth::user();
         {{-- Notification Bell --}}
         <x-notification-bell />
         
-        <span class="text-gray-600 text-sm">{{ $user->name }}</span>
         <x-dropdown align="right" width="48">
           <x-slot name="trigger">
             <button class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition ease-in-out duration-150">
@@ -153,8 +152,7 @@ $user = Auth::user();
 
       <div class="border-t border-gray-200 pt-4 pb-1">
         <div class="px-3">
-          <div class="text-base font-medium text-gray-800">{{ $user->name }}</div>
-          <div class="text-sm font-medium text-gray-500">{{ $user->email }}</div>
+          <div class="text-sm font-medium text-gray-600">{{ $user->email }}</div>
         </div>
         <div class="mt-3 space-y-1">
           <a href="{{ route('profile.edit') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Profile</a>

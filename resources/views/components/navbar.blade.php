@@ -41,8 +41,7 @@
                     <!-- User Dropdown -->
                     <div x-data="{ open: false }" class="relative">
                         <button @click="open = !open" class="flex items-center text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium transition">
-                            <i class="fas fa-user-circle mr-2"></i>
-                            <span>{{ Auth::user()->name }}</span>
+                            <i class="fas fa-user-circle text-xl"></i>
                             <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>

@@ -31,13 +31,12 @@
           </a>
         @else
           {{-- All authenticated users go to unified dashboard --}}
-          <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium">
+          <a href="{{ route('dashboard') }}" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
             Dashboard
           </a>
-          <span class="hidden sm:inline text-gray-600 text-sm">{{ Auth::user()->name }}</span>
           <form action="{{ route('logout') }}" method="POST" class="inline">
             @csrf
-            <button type="submit" class="text-red-500 hover:text-red-600 font-medium">
+            <button type="submit" class="text-gray-700 hover:text-red-600 font-medium text-sm">
               Logout
             </button>
           </form>
