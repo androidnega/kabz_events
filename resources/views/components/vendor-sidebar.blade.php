@@ -1,6 +1,95 @@
 @props(['vendor', 'averageRating' => 0, 'totalReviews' => 0])
 
-<div class="space-y-3">
+<div class="space-y-3" x-data="{ 
+  showLoginModal: false,
+  chatOpen: false, 
+  reportOpen: false,
+  chatMessage: '',
+  chatSent: false,
+  chatSending: false,
+  reportCategory: '',
+  reportMessage: '',
+  reportSubmitted: false,
+  reportSubmitting: false,
+  async sendMessage() {
+    if (!this.chatMessage.trim()) {
+      alert('Please enter a message.');
+      return;
+    }
+    this.chatSending = true;
+    const token = document.querySelector('meta[name=\"csrf-token\"]').getAttribute('content');
+    try {
+      const res = await fetch('{{ route('messages.store') }}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': token
+        },
+        body: JSON.stringify({
+          vendor_id: {{ $vendor->id }},
+          message: this.chatMessage
+        })
+      });
+      const json = await res.json();
+      if (json.ok) {
+        this.chatSent = true;
+        this.chatMessage = '';
+        setTimeout(() => {
+          this.chatSent = false;
+          this.chatOpen = false;
+        }, 3000);
+      } else {
+        alert(json.error || 'Could not send message.');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Could not send message. Try again later.');
+    } finally {
+      this.chatSending = false;
+    }
+  },
+  async submitReport() {
+    if (!this.reportCategory || !this.reportMessage.trim()) {
+      alert('Please select a category and provide details.');
+      return;
+    }
+    this.reportSubmitting = true;
+    const token = document.querySelector('meta[name=\"csrf-token\"]').getAttribute('content');
+    try {
+      const res = await fetch('{{ route('reports.store') }}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': token
+        },
+        body: JSON.stringify({
+          vendor_id: {{ $vendor->id }},
+          category: this.reportCategory,
+          message: this.reportMessage
+        })
+      });
+      const json = await res.json();
+      if (json.ok) {
+        this.reportSubmitted = true;
+        this.reportCategory = '';
+        this.reportMessage = '';
+        setTimeout(() => {
+          this.reportSubmitted = false;
+          this.reportOpen = false;
+        }, 3000);
+      } else {
+        alert(json.message || 'Could not submit report.');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Could not submit report. Try again later.');
+    } finally {
+      this.reportSubmitting = false;
+    }
+  }
+}">
   {{-- Vendor Profile Card with Business Details --}}
   <div class="bg-white p-3 rounded-2xl shadow">
     <div class="flex items-center gap-3 mb-3">
@@ -63,7 +152,7 @@
 
   {{-- Action Buttons Card - 2 per row --}}
   <div class="bg-white p-3 rounded-2xl shadow">
-    <div class="grid grid-cols-2 gap-2" x-data="{ showLoginModal: false }">
+    <div class="grid grid-cols-2 gap-2">
       @auth
         {{-- Authenticated users see real buttons --}}
         {{-- Call Button --}}
@@ -92,12 +181,12 @@
         @endif
 
         {{-- Send Message Button --}}
-        <button x-data="vendorChat({{ $vendor->id }}, {{ auth()->id() }})" @click="open = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+        <button @click="chatOpen = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
           <i class="fas fa-comment-dots mr-1 text-xs"></i> Message
         </button>
 
         {{-- Report Button --}}
-        <button x-data="vendorReport({{ $vendor->id }})" @click="open = true" class="w-full bg-red-600 hover:bg-red-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+        <button @click="reportOpen = true" class="w-full bg-red-600 hover:bg-red-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
           <i class="fas fa-flag mr-1 text-xs"></i> Report
         </button>
       @else
@@ -181,73 +270,37 @@
     </div>
   </div>
 
-  {{-- Contact Details & Actions (for authenticated users) / Login prompt --}}
+  {{-- Message Modal (for authenticated users) --}}
   @auth
-    @if(auth()->user()->hasRole('client'))
-      <div class="bg-white p-4 rounded-2xl shadow">
-        <h4 class="font-semibold text-gray-900 mb-3">Contact Details</h4>
-        <div class="text-sm space-y-2">
-          <div class="flex items-start">
-            <i class="fas fa-phone text-indigo-600 mr-2 mt-0.5"></i>
-            <div>
-              <p class="text-xs text-gray-500">Phone</p>
-              <a href="tel:{{ $vendor->phone }}" class="text-indigo-600 hover:text-indigo-800 font-medium">{{ $vendor->phone }}</a>
-            </div>
-          </div>
-          <div class="flex items-start">
-            <i class="fas fa-envelope text-indigo-600 mr-2 mt-0.5"></i>
-            <div>
-              <p class="text-xs text-gray-500">Email</p>
-              <a href="mailto:{{ $vendor->user?->email ?? '' }}" class="text-indigo-600 hover:text-indigo-800 font-medium">{{ $vendor->user?->email ?? '—' }}</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    @endif
-
-    {{-- Send Message Section (all authenticated users) --}}
-    <div class="bg-white p-4 rounded-2xl shadow" x-data="vendorChat({{ $vendor->id }}, {{ auth()->id() }})">
-      <button x-show="!open" @click="open = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
-        <i class="fas fa-comment-dots mr-2"></i> Send Message
-      </button>
-
-      <div x-show="open" x-cloak class="space-y-3">
-        <h4 class="font-semibold text-gray-900">Send a Message</h4>
-        <textarea x-model="message" placeholder="Write a short message to the vendor..." rows="4"
-                  class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"></textarea>
-
-        <div class="flex justify-between items-center">
-          <small class="text-xs text-gray-500">
-            <i class="fas fa-lock text-gray-400 mr-1"></i> Private message
-          </small>
-          <div class="space-x-2">
-            <button @click="send" :disabled="sending" class="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+    <div x-show="chatOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+      <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75" @click="chatOpen = false"></div>
+        <div class="relative bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
+          <h4 class="font-semibold text-gray-900 mb-3 text-sm">Send a Message</h4>
+          <textarea x-model="chatMessage" placeholder="Write a short message to the vendor..." rows="4"
+                    class="w-full border border-gray-300 rounded-lg p-3 text-xs focus:ring-2 focus:ring-purple-500 focus:border-purple-500 mb-3"></textarea>
+          <div class="flex justify-end space-x-2">
+            <button @click="chatOpen = false" class="text-xs text-gray-600 hover:text-gray-800 px-3 py-2">Cancel</button>
+            <button @click="sendMessage" :disabled="chatSending" class="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg text-xs font-medium">
               <i class="fas fa-paper-plane mr-1"></i> Send
             </button>
-            <button @click="open = false" class="text-sm text-gray-600 hover:text-gray-800 px-3 py-2">Cancel</button>
           </div>
+          <template x-if="chatSent">
+            <div class="text-xs text-green-700 bg-green-50 p-2 rounded-lg border border-green-200 mt-3">
+              <i class="fas fa-check-circle mr-1"></i> Message sent successfully!
+            </div>
+          </template>
         </div>
-
-        <template x-if="sent">
-          <div class="text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200">
-            <i class="fas fa-check-circle mr-1"></i> Message sent successfully!
-          </div>
-        </template>
       </div>
     </div>
 
-    {{-- Report Vendor Section (all authenticated users) --}}
-    <div class="bg-white p-4 rounded-2xl shadow" x-data="vendorReport({{ $vendor->id }})">
-      <button x-show="!open" @click="open = true" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
-        <i class="fas fa-flag mr-2"></i> Report Vendor
-      </button>
-
-      <div x-show="open" x-cloak class="space-y-3">
-        <h4 class="font-semibold text-gray-900">Report this Vendor</h4>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-          <select x-model="category" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+    {{-- Report Modal (for authenticated users) --}}
+    <div x-show="reportOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+      <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75" @click="reportOpen = false"></div>
+        <div class="relative bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
+          <h4 class="font-semibold text-gray-900 mb-3 text-sm">Report this Vendor</h4>
+          <select x-model="reportCategory" class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-red-500 mb-3">
             <option value="">Select a reason</option>
             <option value="fraud">Fraud or Scam</option>
             <option value="quality">Poor Service Quality</option>
@@ -256,287 +309,54 @@
             <option value="fake">Fake/Misleading Information</option>
             <option value="other">Other</option>
           </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Details</label>
-          <textarea x-model="message" placeholder="Provide details about your concern..." rows="4"
-                    class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"></textarea>
-        </div>
-
-        <div class="flex justify-between items-center">
-          <small class="text-xs text-gray-500">
-            <i class="fas fa-shield-alt text-gray-400 mr-1"></i> Reports are reviewed by our team
-          </small>
-          <div class="space-x-2">
-            <button @click="submitReport" :disabled="submitting || !category || !message.trim()" 
-                    class="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+          <textarea x-model="reportMessage" placeholder="Provide details..." rows="4"
+                    class="w-full border border-gray-300 rounded-lg p-3 text-xs focus:ring-2 focus:ring-red-500 mb-3"></textarea>
+          <div class="flex justify-end space-x-2">
+            <button @click="reportOpen = false; reportCategory = ''; reportMessage = ''" class="text-xs text-gray-600 hover:text-gray-800 px-3 py-2">Cancel</button>
+            <button @click="submitReport" :disabled="reportSubmitting || !reportCategory || !reportMessage.trim()" 
+                    class="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg text-xs font-medium">
               <i class="fas fa-paper-plane mr-1"></i> Submit
             </button>
-            <button @click="open = false; category = ''; message = ''" class="text-sm text-gray-600 hover:text-gray-800 px-3 py-2">Cancel</button>
           </div>
-        </div>
-
-        <template x-if="submitted">
-          <div class="text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200">
-            <i class="fas fa-check-circle mr-1"></i> Report submitted. Thank you for helping us maintain quality!
-          </div>
-        </template>
-      </div>
-    </div>
-  @else
-    {{-- Send Message Button for unauthenticated users --}}
-    <div class="bg-white p-4 rounded-2xl shadow" x-data="{ showLoginModal: false }">
-      <button @click="showLoginModal = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
-        <i class="fas fa-comment-dots mr-2"></i> Send Message
-      </button>
-
-      {{-- Login Modal for Send Message --}}
-      <div x-show="showLoginModal" 
-           x-cloak
-           @click.away="showLoginModal = false"
-           class="fixed inset-0 z-50 overflow-y-auto" 
-           style="display: none;">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-          <!-- Background overlay -->
-          <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="showLoginModal = false"></div>
-
-          <!-- Modal panel -->
-          <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
-            <div class="bg-white px-6 pt-6 pb-4">
-              <div class="text-center">
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 mb-4">
-                  <i class="fas fa-lock text-indigo-600 text-2xl"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                  Login Required
-                </h3>
-                <p class="text-sm text-gray-600 mb-6">
-                  Please sign in to contact this vendor and access full details
-                </p>
-              </div>
+          <template x-if="reportSubmitted">
+            <div class="text-xs text-green-700 bg-green-50 p-2 rounded-lg border border-green-200 mt-3">
+              <i class="fas fa-check-circle mr-1"></i> Report submitted!
             </div>
-            
-            <div class="bg-gray-50 px-6 py-4 space-y-3">
-              <a href="{{ route('login') }}" class="block w-full">
-                <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-lg font-medium transition">
-                  <i class="fas fa-sign-in-alt mr-2"></i> Sign In
-                </button>
-              </a>
-              
-              <a href="{{ route('register') }}" class="block w-full">
-                <button class="w-full bg-white hover:bg-gray-50 text-indigo-600 border-2 border-indigo-600 px-4 py-3 rounded-lg font-medium transition">
-                  <i class="fas fa-user-plus mr-2"></i> Create Account
-                </button>
-              </a>
-
-              <div class="text-center pt-2">
-                <p class="text-sm text-gray-600">
-                  Are you a vendor? 
-                  <a href="{{ route('vendor.public.register') }}" class="text-indigo-600 hover:text-indigo-700 font-medium">
-                    Register here
-                  </a>
-                </p>
-              </div>
-
-              <button @click="showLoginModal = false" class="w-full text-gray-600 hover:text-gray-800 px-4 py-2 text-sm font-medium">
-                Maybe Later
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {{-- Report Vendor Button for unauthenticated users --}}
-    <div class="bg-white p-4 rounded-2xl shadow" x-data="{ showLoginModal: false }">
-      <button @click="showLoginModal = true" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
-        <i class="fas fa-flag mr-2"></i> Report Vendor
-      </button>
-
-      {{-- Login Modal for Report --}}
-      <div x-show="showLoginModal" 
-           x-cloak
-           @click.away="showLoginModal = false"
-           class="fixed inset-0 z-50 overflow-y-auto" 
-           style="display: none;">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-          <!-- Background overlay -->
-          <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="showLoginModal = false"></div>
-
-          <!-- Modal panel -->
-          <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
-            <div class="bg-white px-6 pt-6 pb-4">
-              <div class="text-center">
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 mb-4">
-                  <i class="fas fa-lock text-indigo-600 text-2xl"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                  Login Required
-                </h3>
-                <p class="text-sm text-gray-600 mb-6">
-                  Please sign in to report this vendor
-                </p>
-              </div>
-            </div>
-            
-            <div class="bg-gray-50 px-6 py-4 space-y-3">
-              <a href="{{ route('login') }}" class="block w-full">
-                <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-lg font-medium transition">
-                  <i class="fas fa-sign-in-alt mr-2"></i> Sign In
-                </button>
-              </a>
-              
-              <a href="{{ route('register') }}" class="block w-full">
-                <button class="w-full bg-white hover:bg-gray-50 text-indigo-600 border-2 border-indigo-600 px-4 py-3 rounded-lg font-medium transition">
-                  <i class="fas fa-user-plus mr-2"></i> Create Account
-                </button>
-              </a>
-
-              <div class="text-center pt-2">
-                <p class="text-sm text-gray-600">
-                  Are you a vendor? 
-                  <a href="{{ route('vendor.public.register') }}" class="text-indigo-600 hover:text-indigo-700 font-medium">
-                    Register here
-                  </a>
-                </p>
-              </div>
-
-              <button @click="showLoginModal = false" class="w-full text-gray-600 hover:text-gray-800 px-4 py-2 text-sm font-medium">
-                Maybe Later
-              </button>
-            </div>
-          </div>
+          </template>
         </div>
       </div>
     </div>
   @endauth
 
-  {{-- Business Details Card --}}
-  <div class="bg-white p-4 rounded-2xl shadow">
-    <h4 class="font-semibold text-gray-900 mb-3">Business Details</h4>
-    <div class="space-y-3 text-sm">
-      @if($vendor->address)
-        <div class="flex items-start">
-          <i class="fas fa-map-marker-alt text-gray-400 mr-2 mt-0.5"></i>
-          <div>
-            <p class="text-xs text-gray-500">Location</p>
-            <p class="text-gray-900">{{ $vendor->address }}</p>
-          </div>
-        </div>
-      @endif
-
-      <div class="flex items-start">
-        <i class="fas fa-clock text-gray-400 mr-2 mt-0.5"></i>
-        <div>
-          <p class="text-xs text-gray-500">Member Since</p>
-          <p class="text-gray-900">{{ $vendor->created_at->format('F Y') }}</p>
-        </div>
-      </div>
-    </div>
+  {{-- Safety Tips Card --}}
+  <div class="bg-white p-3 rounded-2xl shadow">
+    <h4 class="font-semibold text-gray-900 mb-3 text-xs">Safety Tips</h4>
+    <ul class="text-[11px] text-gray-700 space-y-2">
+      <li class="flex items-start">
+        <svg class="w-3 h-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        Avoid sending any prepayments
+      </li>
+      <li class="flex items-start">
+        <svg class="w-3 h-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        Meet with the seller at a safe public place
+      </li>
+      <li class="flex items-start">
+        <svg class="w-3 h-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        Inspect what you're going to buy to make sure it's what you need
+      </li>
+      <li class="flex items-start">
+        <svg class="w-3 h-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        Check all the docs and only pay if you're satisfied
+      </li>
+    </ul>
   </div>
 </div>
-
-<script>
-function vendorChat(vendorId, authId) {
-  return {
-    open: false,
-    message: '',
-    sent: false,
-    sending: false,
-    async send() {
-      if (!this.message.trim()) {
-        alert('Please enter a message.');
-        return;
-      }
-      this.sending = true;
-      const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-      try {
-        const res = await fetch("{{ route('messages.store') }}", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': token
-          },
-          body: JSON.stringify({
-            vendor_id: vendorId,
-            message: this.message
-          })
-        });
-
-        const json = await res.json();
-        if (json.ok) {
-          this.sent = true;
-          this.message = '';
-          setTimeout(() => {
-            this.sent = false;
-            this.open = false;
-          }, 3000);
-        } else {
-          alert(json.error || 'Could not send message.');
-        }
-      } catch (e) {
-        console.error(e);
-        alert('Could not send message. Try again later.');
-      } finally {
-        this.sending = false;
-      }
-    }
-  }
-}
-
-function vendorReport(vendorId) {
-  return {
-    open: false,
-    category: '',
-    message: '',
-    submitted: false,
-    submitting: false,
-    async submitReport() {
-      if (!this.category || !this.message.trim()) {
-        alert('Please select a category and provide details.');
-        return;
-      }
-      this.submitting = true;
-      const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-      try {
-        const res = await fetch("{{ route('reports.store') }}", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': token
-          },
-          body: JSON.stringify({
-            vendor_id: vendorId,
-            category: this.category,
-            message: this.message
-          })
-        });
-
-        const json = await res.json();
-        if (json.ok) {
-          this.submitted = true;
-          this.category = '';
-          this.message = '';
-          setTimeout(() => {
-            this.submitted = false;
-            this.open = false;
-          }, 3000);
-        } else {
-          alert(json.message || 'Could not submit report.');
-        }
-      } catch (e) {
-        console.error(e);
-        alert('Could not submit report. Try again later.');
-      } finally {
-        this.submitting = false;
-      }
-    }
-  }
-}
-</script>
 

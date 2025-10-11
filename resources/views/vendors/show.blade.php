@@ -53,18 +53,6 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Main Column -->
                 <div class="lg:col-span-2 space-y-8">
-                    <!-- About Section -->
-                    <x-card>
-                        <div class="p-6">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-4">About This Business</h2>
-                            @if($vendor->description)
-                                <p class="text-gray-700 leading-relaxed">{{ $vendor->description }}</p>
-                            @else
-                                <p class="text-gray-500 italic">No description provided yet.</p>
-                            @endif
-                        </div>
-                    </x-card>
-
                     <!-- Sample Work Section -->
                     @if($vendor->sample_work_images && count($vendor->sample_work_images) > 0)
                     <x-card>
@@ -108,6 +96,36 @@
                         </div>
                     </x-card>
                     @endif
+
+                    <!-- About Section (moved after pictures) -->
+                    <x-card>
+                        <div class="p-6" x-data="{ expanded: false }">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-4">About This Business</h2>
+                            @if($vendor->description)
+                                @php
+                                    $descriptionLength = strlen($vendor->description);
+                                    $shortDescription = $descriptionLength > 300 ? substr($vendor->description, 0, 300) . '...' : $vendor->description;
+                                @endphp
+                                <div class="text-gray-700 leading-relaxed">
+                                    <p x-show="!expanded">{{ $shortDescription }}</p>
+                                    <p x-show="expanded" x-cloak>{{ $vendor->description }}</p>
+                                </div>
+                                @if($descriptionLength > 300)
+                                    <button @click="expanded = !expanded" class="mt-3 text-primary hover:text-purple-700 font-medium text-sm flex items-center">
+                                        <span x-text="expanded ? 'Read less' : 'Read more'"></span>
+                                        <svg x-show="!expanded" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                        <svg x-show="expanded" x-cloak class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    </button>
+                                @endif
+                            @else
+                                <p class="text-gray-500 italic">No description provided yet.</p>
+                            @endif
+                        </div>
+                    </x-card>
 
                     <!-- Services Section -->
                     <x-card>
@@ -297,59 +315,40 @@
                     </x-card>
                 </div>
 
-                <!-- Sidebar -->
-                <div class="lg:col-span-1 space-y-6">
-                    <!-- Vendor Sidebar Component with Chat -->
-                    <x-vendor-sidebar :vendor="$vendor" />
-
-                    <!-- Stats Card -->
-                    <x-card>
-                        <div class="p-6">
-                            <div class="grid grid-cols-3 gap-4 text-center">
-                                <div>
-                                    <p class="text-2xl font-bold text-primary">{{ $vendor->services->count() }}</p>
-                                    <p class="text-xs text-gray-500">Services</p>
-                                </div>
-                                <div>
-                                    <p class="text-2xl font-bold text-accent">{{ number_format($averageRating, 1) }}</p>
-                                    <p class="text-xs text-gray-500">Rating</p>
-                                </div>
-                                <div>
-                                    <p class="text-2xl font-bold text-secondary">{{ $totalReviews }}</p>
-                                    <p class="text-xs text-gray-500">Reviews</p>
-                                </div>
-                            </div>
-                        </div>
-                    </x-card>
-                </div>
-
-                <!-- Sidebar Column (Mobile moves below main) -->
+                <!-- Sticky Sidebar -->
                 <div class="lg:col-span-1">
-                    <!-- Similar Vendors -->
-                    @if($similarVendors->count() > 0)
-                    <x-card>
-                        <div class="p-6">
-                            <h3 class="text-lg font-bold text-gray-900 mb-4">Similar Vendors</h3>
-                            <div class="space-y-4">
+                    <div class="lg:sticky lg:top-20 space-y-4">
+                        <!-- Vendor Sidebar Component with all sidebar content -->
+                        <x-vendor-sidebar 
+                            :vendor="$vendor" 
+                            :averageRating="$averageRating" 
+                            :totalReviews="$totalReviews" 
+                        />
+
+                        <!-- Similar Vendors -->
+                        @if($similarVendors->count() > 0)
+                        <div class="bg-white p-3 rounded-2xl shadow">
+                            <h3 class="text-sm font-bold text-gray-900 mb-3">Similar Vendors</h3>
+                            <div class="space-y-3">
                                 @foreach($similarVendors as $similar)
                                 <a href="{{ route('vendors.show', $similar->slug) }}" class="block group">
                                     <div class="flex items-center">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                            <span class="text-lg text-primary font-bold">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <span class="text-sm text-primary font-bold">
                                                 {{ strtoupper(substr($similar->business_name, 0, 1)) }}
                                             </span>
                                         </div>
                                         <div class="ml-3 flex-1">
-                                            <p class="text-sm font-semibold text-gray-900 group-hover:text-primary">
-                                                {{ Str::limit($similar->business_name, 30) }}
+                                            <p class="text-xs font-semibold text-gray-900 group-hover:text-primary">
+                                                {{ Str::limit($similar->business_name, 25) }}
                                             </p>
                                             <div class="flex items-center">
                                                 @for($i = 1; $i <= 5; $i++)
-                                                    <svg class="w-3 h-3 {{ $i <= round($similar->rating_cached) ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                    <svg class="w-2.5 h-2.5 {{ $i <= round($similar->rating_cached) ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                                     </svg>
                                                 @endfor
-                                                <span class="ml-1 text-xs text-gray-500">{{ number_format($similar->rating_cached, 1) }}</span>
+                                                <span class="ml-1 text-[10px] text-gray-500">{{ number_format($similar->rating_cached, 1) }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -357,41 +356,8 @@
                                 @endforeach
                             </div>
                         </div>
-                    </x-card>
-                    @endif
-
-                    <!-- Safety Tips -->
-                    <x-card>
-                        <div class="p-6">
-                            <h3 class="text-lg font-bold text-gray-900 mb-4">Safety Tips</h3>
-                            <ul class="text-sm text-gray-700 space-y-3">
-                                <li class="flex items-start">
-                                    <svg class="w-4 h-4 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
-                                    Avoid sending any prepayments
-                                </li>
-                                <li class="flex items-start">
-                                    <svg class="w-4 h-4 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
-                                    Meet with the seller at a safe public place
-                                </li>
-                                <li class="flex items-start">
-                                    <svg class="w-4 h-4 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
-                                    Inspect what you're going to buy to make sure it's what you need
-                                </li>
-                                <li class="flex items-start">
-                                    <svg class="w-4 h-4 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
-                                    Check all the docs and only pay if you're satisfied
-                                </li>
-                            </ul>
-                        </div>
-                    </x-card>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
