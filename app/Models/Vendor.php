@@ -23,6 +23,8 @@ class Vendor extends Model
         'business_name',
         'slug',
         'description',
+        'sample_work_images',
+        'sample_work_title',
         'phone',
         'whatsapp',
         'website',
@@ -46,6 +48,7 @@ class Vendor extends Model
         'rating_cached' => 'decimal:2',
         'latitude' => 'decimal:7',
         'longitude' => 'decimal:7',
+        'sample_work_images' => 'array',
     ];
 
     /**

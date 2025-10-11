@@ -65,6 +65,50 @@
                         </div>
                     </x-card>
 
+                    <!-- Sample Work Section -->
+                    @if($vendor->sample_work_images && count($vendor->sample_work_images) > 0)
+                    <x-card>
+                        <div class="p-6">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                                {{ $vendor->sample_work_title ?? 'Sample Work' }}
+                            </h2>
+                            
+                            <!-- Main Image -->
+                            <div class="mb-4">
+                                <div class="relative">
+                                    <img src="{{ $vendor->sample_work_images[0] }}" 
+                                         alt="Sample work from {{ $vendor->business_name }}" 
+                                         class="main-sample-image w-full h-64 md:h-80 object-cover rounded-lg shadow-lg">
+                                    <div class="absolute top-4 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm image-counter">
+                                        1/{{ count($vendor->sample_work_images) }}
+                                    </div>
+                                    <div class="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
+                                        {{ $vendor->business_name }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Thumbnail Images -->
+                            @if(count($vendor->sample_work_images) > 1)
+                            <div class="grid grid-cols-5 gap-2">
+                                @foreach($vendor->sample_work_images as $index => $image)
+                                <div class="relative cursor-pointer group" onclick="changeMainImage('{{ addslashes($image) }}', {{ $index + 1 }})">
+                                    <img src="{{ $image }}" 
+                                         alt="Sample work {{ $index + 1 }}" 
+                                         class="w-full h-16 md:h-20 object-cover rounded-lg border-2 border-gray-200 group-hover:border-primary transition">
+                                    @if($index == 4 && count($vendor->sample_work_images) > 5)
+                                    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
+                                        <span class="text-white text-sm font-bold">+{{ count($vendor->sample_work_images) - 5 }}</span>
+                                    </div>
+                                    @endif
+                                </div>
+                                @endforeach
+                            </div>
+                            @endif
+                        </div>
+                    </x-card>
+                    @endif
+
                     <!-- Services Section -->
                     <x-card>
                         <div class="p-6">
@@ -320,30 +364,30 @@
                     <x-card>
                         <div class="p-6">
                             <h3 class="text-lg font-bold text-gray-900 mb-4">Safety Tips</h3>
-                            <ul class="text-sm text-gray-700 space-y-2">
+                            <ul class="text-sm text-gray-700 space-y-3">
                                 <li class="flex items-start">
-                                    <svg class="w-4 h-4 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg class="w-4 h-4 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                     </svg>
-                                    Meet vendor in person before payment
+                                    Avoid sending any prepayments
                                 </li>
                                 <li class="flex items-start">
-                                    <svg class="w-4 h-4 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg class="w-4 h-4 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                     </svg>
-                                    Check reviews and ratings
+                                    Meet with the seller at a safe public place
                                 </li>
                                 <li class="flex items-start">
-                                    <svg class="w-4 h-4 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg class="w-4 h-4 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                     </svg>
-                                    Verify vendor credentials
+                                    Inspect what you're going to buy to make sure it's what you need
                                 </li>
                                 <li class="flex items-start">
-                                    <svg class="w-4 h-4 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg class="w-4 h-4 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                     </svg>
-                                    Get written quotation first
+                                    Check all the docs and only pay if you're satisfied
                                 </li>
                             </ul>
                         </div>
@@ -353,4 +397,19 @@
         </div>
     </div>
 </x-layouts.base>
+
+<script>
+function changeMainImage(imageSrc, imageNumber) {
+    const mainImage = document.querySelector('.main-sample-image');
+    const imageCounter = document.querySelector('.image-counter');
+    
+    if (mainImage) {
+        mainImage.src = imageSrc;
+    }
+    
+    if (imageCounter) {
+        imageCounter.textContent = imageNumber + '/{{ count($vendor->sample_work_images ?? []) }}';
+    }
+}
+</script>
 

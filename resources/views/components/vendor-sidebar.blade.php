@@ -161,7 +161,7 @@
             <i class="fas fa-envelope text-indigo-600 mr-2 mt-0.5"></i>
             <div>
               <p class="text-xs text-gray-500">Email</p>
-              <a href="mailto:{{ $vendor->user->email ?? '' }}" class="text-indigo-600 hover:text-indigo-800 font-medium">{{ $vendor->user->email ?? '—' }}</a>
+              <a href="mailto:{{ $vendor->user?->email ?? '' }}" class="text-indigo-600 hover:text-indigo-800 font-medium">{{ $vendor->user?->email ?? '—' }}</a>
             </div>
           </div>
         </div>

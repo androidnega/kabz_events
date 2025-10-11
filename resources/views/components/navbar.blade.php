@@ -27,10 +27,15 @@
                     <!-- Unified Dashboard Link - Phase K3 -->
                     <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
                         <i class="fas fa-tachometer-alt mr-1"></i> 
-                        @role('super_admin')Super Admin@endrole
-                        @role('admin')Admin@endrole
-                        @role('vendor')My Business@endrole
-                        @role('client')Dashboard@endrole
+                        @if(auth()->user()->hasRole('super-admin'))
+                            Super Admin
+                        @elseif(auth()->user()->hasRole('admin'))
+                            Admin
+                        @elseif(auth()->user()->hasRole('vendor'))
+                            My Business
+                        @else
+                            Dashboard
+                        @endif
                     </a>
                     
                     <!-- User Dropdown -->
@@ -117,10 +122,15 @@
                 <!-- Unified Dashboard Link - Phase K3 Mobile -->
                 <a href="{{ route('dashboard') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">
                     <i class="fas fa-tachometer-alt mr-2 w-5"></i> 
-                    @role('super_admin')Super Admin Dashboard@endrole
-                    @role('admin')Admin Dashboard@endrole
-                    @role('vendor')My Business Dashboard@endrole
-                    @role('client')My Dashboard@endrole
+                    @if(auth()->user()->hasRole('super-admin'))
+                        Super Admin Dashboard
+                    @elseif(auth()->user()->hasRole('admin'))
+                        Admin Dashboard
+                    @elseif(auth()->user()->hasRole('vendor'))
+                        My Business Dashboard
+                    @else
+                        My Dashboard
+                    @endif
                 </a>
                 
                 <div class="border-t border-gray-200 my-2"></div>
@@ -134,7 +144,9 @@
                         <i class="fas fa-sign-out-alt mr-2 w-5"></i> Logout
                     </button>
                 </form>
-            @else
+            @endauth
+            
+            @guest
                 <div class="border-t border-gray-200 my-2"></div>
                 
                 <!-- Auth Section -->
@@ -150,7 +162,7 @@
                         <i class="fas fa-store mr-2 w-5"></i> Sign Up as Vendor
                     </a>
                 </div>
-            @endauth
+            @endguest
         </div>
     </div>
 </nav>

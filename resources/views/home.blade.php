@@ -160,9 +160,11 @@
                         @endif
 
                         <!-- View Profile Button -->
-                        <x-button variant="primary" class="w-full" onclick="window.location='#';">
-                            View Profile
-                        </x-button>
+                        <a href="{{ route('vendors.show', $vendor->slug) }}" class="block w-full">
+                            <x-button variant="primary" class="w-full">
+                                View Profile
+                            </x-button>
+                        </a>
                     </div>
                 </x-card>
                 @endforeach
