@@ -55,6 +55,10 @@ Route::post('/api/location/update', [\App\Http\Controllers\AdvancedSearchControl
 Route::get('/api/vendors/nearby', [\App\Http\Controllers\AdvancedSearchController::class, 'getNearbyVendors'])
     ->name('api.vendors.nearby');
 
+// Live Search API (AJAX endpoint)
+Route::get('/api/search/live', [SearchController::class, 'liveSearch'])
+    ->name('api.search.live');
+
 // Public Vendor Registration (for non-logged-in users)
 Route::get('/signup/vendor', [PublicVendorController::class, 'create'])->name('vendor.public.register');
 Route::post('/signup/vendor', [PublicVendorController::class, 'store'])->name('vendor.public.store');
