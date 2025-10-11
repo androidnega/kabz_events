@@ -1,4 +1,4 @@
-@props(['vendor', 'averageRating' => 0, 'totalReviews' => 0])
+@props(['vendor', 'averageRating' => 0, 'totalReviews' => 0, 'averageResponseTime' => null])
 
 <div class="space-y-3" x-data="{ 
   showLoginModal: false,
@@ -100,24 +100,24 @@
       </div>
       <div class="flex-1">
         <div class="flex items-center gap-1 mb-1">
-          <h3 class="font-semibold text-sm text-gray-900">{{ $vendor->business_name }}</h3>
+          <h3 class="font-semibold text-[15px] text-gray-900">{{ $vendor->business_name }}</h3>
           @if($vendor->is_verified)
             <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 text-blue-800 border border-blue-200">
               <i class="fas fa-check-circle mr-0.5"></i> Verified
             </span>
           @endif
         </div>
-        <p class="text-xs text-gray-500">{{ $vendor->services->first()?->category->name ?? 'Vendor' }}</p>
+        <p class="text-[13px] text-gray-500">{{ $vendor->services->first()?->category->name ?? 'Vendor' }}</p>
       </div>
     </div>
 
     {{-- Business Details in same card --}}
-    <div class="border-t border-gray-100 pt-3 space-y-2 text-xs">
+    <div class="border-t border-gray-100 pt-3 space-y-2 text-[13px]">
       @if($vendor->address)
         <div class="flex items-start">
           <i class="fas fa-map-marker-alt text-gray-400 mr-2 mt-0.5 text-xs"></i>
           <div>
-            <p class="text-[10px] text-gray-500">Location</p>
+            <p class="text-xs text-gray-500">Location</p>
             <p class="text-gray-900">{{ $vendor->address }}</p>
           </div>
         </div>
@@ -125,7 +125,7 @@
       <div class="flex items-start">
         <i class="fas fa-clock text-gray-400 mr-2 mt-0.5 text-xs"></i>
         <div>
-          <p class="text-[10px] text-gray-500">Member Since</p>
+          <p class="text-xs text-gray-500">Member Since</p>
           <p class="text-gray-900">{{ $vendor->created_at->format('F Y') }}</p>
         </div>
       </div>
@@ -136,16 +136,16 @@
   <div class="bg-white p-3 rounded-2xl shadow">
     <div class="grid grid-cols-3 gap-3 text-center">
       <div>
-        <p class="text-lg font-bold text-primary">{{ $vendor->services->count() }}</p>
-        <p class="text-[10px] text-gray-500">Services</p>
+        <p class="text-xl font-bold text-primary">{{ $vendor->services->count() }}</p>
+        <p class="text-xs text-gray-500">Services</p>
       </div>
       <div>
-        <p class="text-lg font-bold text-accent">{{ number_format($averageRating, 1) }}</p>
-        <p class="text-[10px] text-gray-500">Rating</p>
+        <p class="text-xl font-bold text-accent">{{ number_format($averageRating, 1) }}</p>
+        <p class="text-xs text-gray-500">Rating</p>
       </div>
       <div>
-        <p class="text-lg font-bold text-secondary">{{ $totalReviews }}</p>
-        <p class="text-[10px] text-gray-500">Reviews</p>
+        <p class="text-xl font-bold text-secondary">{{ $totalReviews }}</p>
+        <p class="text-xs text-gray-500">Reviews</p>
       </div>
     </div>
   </div>
@@ -158,7 +158,7 @@
         {{-- Call Button --}}
         @if($vendor->phone)
           <a href="tel:{{ $vendor->phone }}">
-            <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+            <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2 rounded-lg text-[13px] font-medium transition flex items-center justify-center">
               <i class="fas fa-phone mr-1 text-xs"></i> Call
             </button>
           </a>
@@ -174,40 +174,40 @@
             $whatsappNumber = ltrim($whatsappNumber, '+');
           @endphp
           <a href="https://wa.me/{{ $whatsappNumber }}" target="_blank">
-            <button class="w-full bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+            <button class="w-full bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded-lg text-[13px] font-medium transition flex items-center justify-center">
               <i class="fab fa-whatsapp mr-1 text-xs"></i> WhatsApp
             </button>
           </a>
         @endif
 
         {{-- Send Message Button --}}
-        <button @click="chatOpen = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+        <button @click="chatOpen = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-2 py-2 rounded-lg text-[13px] font-medium transition flex items-center justify-center">
           <i class="fas fa-comment-dots mr-1 text-xs"></i> Message
         </button>
 
         {{-- Report Button --}}
-        <button @click="reportOpen = true" class="w-full bg-red-600 hover:bg-red-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+        <button @click="reportOpen = true" class="w-full bg-red-600 hover:bg-red-700 text-white px-2 py-2 rounded-lg text-[13px] font-medium transition flex items-center justify-center">
           <i class="fas fa-flag mr-1 text-xs"></i> Report
         </button>
       @else
         {{-- Unauthenticated users see login prompts --}}
         @if($vendor->phone)
-          <button @click="showLoginModal = true" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+          <button @click="showLoginModal = true" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2 rounded-lg text-[13px] font-medium transition flex items-center justify-center">
             <i class="fas fa-phone mr-1 text-xs"></i> Call
           </button>
         @endif
 
         @if($vendor->whatsapp)
-          <button @click="showLoginModal = true" class="w-full bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+          <button @click="showLoginModal = true" class="w-full bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded-lg text-[13px] font-medium transition flex items-center justify-center">
             <i class="fab fa-whatsapp mr-1 text-xs"></i> WhatsApp
           </button>
         @endif
 
-        <button @click="showLoginModal = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+        <button @click="showLoginModal = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-2 py-2 rounded-lg text-[13px] font-medium transition flex items-center justify-center">
           <i class="fas fa-comment-dots mr-1 text-xs"></i> Message
         </button>
 
-        <button @click="showLoginModal = true" class="w-full bg-red-600 hover:bg-red-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+        <button @click="showLoginModal = true" class="w-full bg-red-600 hover:bg-red-700 text-white px-2 py-2 rounded-lg text-[13px] font-medium transition flex items-center justify-center">
           <i class="fas fa-flag mr-1 text-xs"></i> Report
         </button>
       @endauth
@@ -330,8 +330,8 @@
 
   {{-- Safety Tips Card --}}
   <div class="bg-white p-3 rounded-2xl shadow">
-    <h4 class="font-semibold text-gray-900 mb-3 text-xs">Safety Tips</h4>
-    <ul class="text-[11px] text-gray-700 space-y-2">
+    <h4 class="font-semibold text-gray-900 mb-3 text-[13px]">Safety Tips</h4>
+    <ul class="text-xs text-gray-700 space-y-2">
       <li class="flex items-start">
         <svg class="w-3 h-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>

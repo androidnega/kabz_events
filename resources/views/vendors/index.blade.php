@@ -136,9 +136,11 @@
                             @endif
 
                             <!-- View Profile Button -->
-                            <x-button variant="primary" class="w-full" onclick="window.location='{{ route('vendors.show', $vendor->slug) }}'">
-                                View Profile
-                            </x-button>
+                            <a href="{{ route('vendors.show', $vendor->slug) }}" class="block">
+                                <x-button variant="primary" class="w-full">
+                                    View Profile
+                                </x-button>
+                            </a>
                         </div>
                     </x-card>
                     @endforeach
@@ -156,9 +158,11 @@
                     <h3 class="mt-2 text-sm font-medium text-gray-900">No vendors found</h3>
                     <p class="mt-1 text-sm text-gray-500">Try adjusting your search or filter criteria.</p>
                     <div class="mt-6">
-                        <x-button variant="primary" onclick="window.location='{{ route('vendors.index') }}'">
-                            View All Vendors
-                        </x-button>
+                        <a href="{{ route('vendors.index') }}">
+                            <x-button variant="primary">
+                                View All Vendors
+                            </x-button>
+                        </a>
                     </div>
                 </div>
             @endif
