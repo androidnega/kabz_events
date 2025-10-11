@@ -158,6 +158,11 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 
     // Vendor Routes
     Route::middleware(['role:vendor'])->name('vendor.')->group(function () {
+        // Vendor Profile
+        Route::get('/profile', [\App\Http\Controllers\Vendor\ProfileController::class, 'index'])->name('profile');
+        Route::get('/profile/edit', [\App\Http\Controllers\Vendor\ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [\App\Http\Controllers\Vendor\ProfileController::class, 'update'])->name('profile.update');
+        
         // Service Management (CRUD)
         Route::resource('services', ServiceController::class);
         

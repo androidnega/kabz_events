@@ -1,7 +1,5 @@
 <x-vendor-layout>
     <x-slot name="title">My Services</x-slot>
-
-    <div class="max-w-7xl mx-auto">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-gray-900">My Services</h2>
             <a href="{{ route('vendor.services.create') }}" 
@@ -188,6 +186,5 @@
                 @endif
             </div>
         </div>
-    </div>
 </x-vendor-layout>
 

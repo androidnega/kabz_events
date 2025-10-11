@@ -100,6 +100,12 @@
 
         <!-- Navigation Links -->
         <nav class="space-y-2">
+            <a href="{{ route('vendor.profile') }}" 
+               class="flex items-center p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('vendor.profile') ? 'bg-purple-50 text-purple-700' : 'text-gray-700' }}">
+                <i class="fas fa-user-circle w-6"></i>
+                <span class="ml-3 font-medium">Profile</span>
+            </a>
+
             <a href="{{ route('vendor.verification') }}" 
                class="flex items-center p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('vendor.verification') ? 'bg-purple-50 text-purple-700' : 'text-gray-700' }}">
                 <i class="fas fa-certificate w-6"></i>

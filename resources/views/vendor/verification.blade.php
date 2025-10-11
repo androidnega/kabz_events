@@ -1,7 +1,7 @@
 <x-vendor-layout>
     <x-slot name="title">Verification</x-slot>
 
-    <div class="max-w-2xl mx-auto">
+    <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
             <h2 class="text-2xl font-bold mb-6 text-gray-900">Vendor Verification</h2>
 

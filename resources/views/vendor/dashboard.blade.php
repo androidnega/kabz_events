@@ -1,6 +1,7 @@
 <x-vendor-layout>
     <x-slot name="title">Dashboard</x-slot>
 
+    <div class="max-w-screen-2xl mx-auto">
     {{-- Welcome Header --}}
     <div class="bg-purple-50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6 border border-purple-100">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -187,5 +188,6 @@
                 <span class="text-xs sm:text-sm font-medium text-gray-900 text-center">View Profile</span>
             </a>
         </div>
+    </div>
     </div>
 </x-vendor-layout>

@@ -1,7 +1,5 @@
 <x-vendor-layout>
     <x-slot name="title">Subscription Plans</x-slot>
-
-    <div class="max-w-6xl mx-auto">
         {{-- Page Header --}}
         <div class="text-center mb-8">
             <h2 class="text-3xl font-bold text-gray-900 mb-2">Choose a Subscription Plan</h2>
@@ -234,6 +232,5 @@
                 Back to Dashboard
             </a>
         </div>
-    </div>
 </x-vendor-layout>
 
