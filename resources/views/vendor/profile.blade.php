@@ -1,7 +1,5 @@
 <x-vendor-layout>
     <x-slot name="title">Vendor Profile</x-slot>
-
-    <div class="max-w-5xl mx-auto">
         <!-- Page Header -->
         <div class="mb-6">
             <h2 class="text-2xl font-bold text-gray-900">Vendor Profile</h2>
@@ -224,6 +222,5 @@
                 </div>
             </div>
         </div>
-    </div>
 </x-vendor-layout>
 
