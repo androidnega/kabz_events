@@ -43,7 +43,7 @@
             <!-- Dashboard - Unified Route (Phase K3) -->
             <a href="{{ route('dashboard') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
-                      {{ request()->routeIs('dashboard') || request()->routeIs('admin.dashboard') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+                      {{ request()->routeIs('dashboard') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i class="fas fa-tachometer-alt text-lg w-5"></i>
                 <span>Dashboard</span>
             </a>

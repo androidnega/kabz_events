@@ -69,7 +69,7 @@
 
                 {{-- Submit Button --}}
                 <div class="flex items-center justify-between pt-4">
-                    <a href="{{ route('superadmin.dashboard') }}" class="text-gray-600 hover:text-gray-800 underline">
+                    <a href="{{ route('dashboard') }}" class="text-gray-600 hover:text-gray-800 underline">
                         Back to Dashboard
                     </a>
                     <x-button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold">

@@ -30,19 +30,8 @@
             Login
           </a>
         @else
-          @php
-            $dashboardRoute = 'dashboard';
-            if (Auth::user()->hasRole('super_admin')) {
-              $dashboardRoute = 'superadmin.dashboard';
-            } elseif (Auth::user()->hasRole('admin')) {
-              $dashboardRoute = 'admin.dashboard';
-            } elseif (Auth::user()->hasRole('vendor')) {
-              $dashboardRoute = 'vendor.dashboard';
-            } elseif (Auth::user()->hasRole('client')) {
-              $dashboardRoute = 'client.dashboard';
-            }
-          @endphp
-          <a href="{{ route($dashboardRoute) }}" class="text-gray-700 hover:text-indigo-600 font-medium">
+          {{-- All authenticated users go to unified dashboard --}}
+          <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium">
             Dashboard
           </a>
           <span class="hidden sm:inline text-gray-600 text-sm">{{ Auth::user()->name }}</span>

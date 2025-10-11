@@ -18,7 +18,7 @@ class VendorRegistrationController extends Controller
         // Check if user already has a vendor profile
         if (Auth::user()->vendor) {
             return redirect()
-                ->route('vendor.dashboard')
+                ->route('dashboard')
                 ->with('info', 'You already have a vendor profile.');
         }
 
@@ -33,7 +33,7 @@ class VendorRegistrationController extends Controller
         // Check if user already has a vendor profile
         if (Auth::user()->vendor) {
             return redirect()
-                ->route('vendor.dashboard')
+                ->route('dashboard')
                 ->with('info', 'You already have a vendor profile.');
         }
 
@@ -65,9 +65,9 @@ class VendorRegistrationController extends Controller
         // Assign vendor role to user
         Auth::user()->assignRole('vendor');
 
-        // Redirect to vendor dashboard with success message
+        // Redirect to unified dashboard with success message
         return redirect()
-            ->route('vendor.dashboard')
+            ->route('dashboard')
             ->with('success', 'Congratulations! Your vendor profile has been created successfully.');
     }
 }

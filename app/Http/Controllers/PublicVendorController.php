@@ -120,9 +120,9 @@ class PublicVendorController extends Controller
         // Log the user in
         Auth::login($user);
 
-        // Redirect to vendor dashboard with success message
+        // Redirect to unified dashboard with success message
         return redirect()
-            ->route('vendor.dashboard')
+            ->route('dashboard')
             ->with('success', 'Welcome to KABZS EVENT! Your vendor account has been created successfully. You can now add more services and apply for verification.');
     }
 }

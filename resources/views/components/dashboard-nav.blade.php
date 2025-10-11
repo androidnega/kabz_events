@@ -31,7 +31,7 @@ $user = Auth::user();
         @endrole
 
         @role('admin')
-          <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('admin.dashboard') || request()->routeIs('dashboard') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
+          <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('dashboard') || request()->routeIs('admin.*') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
             Dashboard
           </a>
           <a href="{{ route('admin.verifications.index') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('admin.verifications.*') ? 'text-indigo-600' : '' }}">
@@ -46,7 +46,7 @@ $user = Auth::user();
         @endrole
 
         @role('vendor')
-          <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('vendor.dashboard') || request()->routeIs('dashboard') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
+          <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('dashboard') || request()->routeIs('vendor.*') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
             Dashboard
           </a>
           <a href="{{ route('vendor.services.index') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('vendor.services.*') ? 'text-indigo-600' : '' }}">
@@ -61,7 +61,7 @@ $user = Auth::user();
         @endrole
 
         @role('client')
-          <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('client.dashboard') || request()->routeIs('dashboard') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
+          <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('dashboard') || request()->routeIs('client.*') ? 'text-indigo-600 border-b-2 border-indigo-600 pb-1' : '' }}">
             Dashboard
           </a>
           <a href="{{ route('vendors.index') }}" class="text-gray-700 hover:text-indigo-600 font-medium {{ request()->routeIs('vendors.*') ? 'text-indigo-600' : '' }}">
