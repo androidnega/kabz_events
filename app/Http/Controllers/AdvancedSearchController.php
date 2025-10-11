@@ -151,16 +151,18 @@ class AdvancedSearchController extends Controller
         }]);
         
         // Paginate results
-        $vendors = $query->paginate(12)->withQueryString();
+        $vendors = $query->paginate(12);
+        
+        // Preserve query string parameters
+        $vendors->appends(request()->query());
         
         // Add user-friendly distance to results
         if ($userLat && $userLng) {
-            $vendors->getCollection()->transform(function ($vendor) {
+            foreach ($vendors as $vendor) {
                 if (isset($vendor->distance)) {
                     $vendor->distance_formatted = $this->formatDistance($vendor->distance);
                 }
-                return $vendor;
-            });
+            }
         }
         
         // Get all categories for filter dropdown

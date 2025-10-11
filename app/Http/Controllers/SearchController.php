@@ -86,7 +86,8 @@ class SearchController extends Controller
         }
 
         // Paginate results
-        $vendors = $query->paginate(12)->withQueryString();
+        $vendors = $query->paginate(12);
+        $vendors->appends(request()->query());
 
         // Get all categories for filter dropdown
         $categories = Category::orderBy('name')->get();
