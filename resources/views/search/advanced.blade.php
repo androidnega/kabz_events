@@ -302,9 +302,17 @@
     </div>
 
     {{-- JavaScript for Location and Dynamic Filters --}}
+    <div id="districts-data" 
+         data-districts="{{ json_encode($districts) }}" 
+         data-is-authenticated="{{ auth()->check() ? '1' : '0' }}"
+         data-update-location-url="{{ route('api.location.update') }}"
+         data-csrf-token="{{ csrf_token() }}"
+         style="display:none;">
+    </div>
     <script>
         // District data
-        const districts = @json($districts);
+        const districtsData = document.getElementById('districts-data').getAttribute('data-districts');
+        const districts = JSON.parse(districtsData);
         
         // Region change handler
         document.getElementById('regionSelect').addEventListener('change', function() {
@@ -356,19 +364,24 @@
                         `;
                         
                         // Update user location on server if logged in
-                        @auth
-                        fetch('{{ route("api.location.update") }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                latitude: lat,
-                                longitude: lng
-                            })
-                        });
-                        @endauth
+                        const dataElement = document.getElementById('districts-data');
+                        const isAuthenticated = dataElement.getAttribute('data-is-authenticated') === '1';
+                        if (isAuthenticated) {
+                            const updateUrl = dataElement.getAttribute('data-update-location-url');
+                            const csrfToken = dataElement.getAttribute('data-csrf-token');
+                            
+                            fetch(updateUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                body: JSON.stringify({
+                                    latitude: lat,
+                                    longitude: lng
+                                })
+                            });
+                        }
                         
                         // Reset button
                         button.disabled = false;

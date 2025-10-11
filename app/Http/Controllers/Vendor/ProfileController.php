@@ -47,6 +47,7 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $vendor = Auth::user()->vendor;
+        $user = Auth::user();
         
         if (!$vendor) {
             return redirect()->route('dashboard')
@@ -60,7 +61,36 @@ class ProfileController extends Controller
             'whatsapp' => 'nullable|string|max:20',
             'website' => 'nullable|url|max:255',
             'address' => 'nullable|string|max:500',
+            'profile_photo' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
         ]);
+
+        // Check if business name is being changed
+        if ($validated['business_name'] !== $vendor->business_name) {
+            // Check if vendor is verified
+            if ($vendor->is_verified) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'You cannot change your business name after verification. Changing it will require re-verification. Please contact support if you need to update your business name.');
+            }
+
+            // Check if vendor can change name
+            if (!$vendor->canChangeBusinessName()) {
+                $nextDate = $vendor->last_business_name_change_at ? $vendor->last_business_name_change_at->addYear()->format('M d, Y') : 'N/A';
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', "You have reached the maximum number of business name changes (3 per year). Next change available on: {$nextDate}");
+            }
+
+            // Update name change tracking
+            $vendor->business_name_changes_count++;
+            $vendor->last_business_name_change_at = now();
+        }
+
+        // Handle profile photo upload
+        if ($request->hasFile('profile_photo')) {
+            $path = $request->file('profile_photo')->store('vendors/profiles', 'public');
+            $validated['profile_photo'] = $path;
+        }
 
         $vendor->update($validated);
 

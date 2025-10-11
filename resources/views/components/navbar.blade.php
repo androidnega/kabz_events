@@ -26,16 +26,7 @@
                 @auth
                     <!-- Unified Dashboard Link - Phase K3 -->
                     <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
-                        <i class="fas fa-tachometer-alt mr-1"></i> 
-                        @if(auth()->user()->hasRole('super-admin'))
-                            Super Admin
-                        @elseif(auth()->user()->hasRole('admin'))
-                            Admin
-                        @elseif(auth()->user()->hasRole('vendor'))
-                            My Business
-                        @else
-                            Dashboard
-                        @endif
+                        <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
                     </a>
                     
                     <!-- User Dropdown -->

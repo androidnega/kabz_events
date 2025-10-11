@@ -15,8 +15,7 @@
                 
                 <!-- Logo -->
                 <a href="{{ route('dashboard') }}" class="flex items-center">
-                    <x-application-logo class="h-6 sm:h-8 w-auto" />
-                    <span class="ml-2 text-lg sm:text-xl font-bold text-purple-600">KABZS</span>
+                    <x-kabzs-logo class="h-8 sm:h-10 w-auto" />
                 </a>
             </div>
 
@@ -36,11 +35,21 @@
                 <div x-data="{ open: false }" class="relative hidden lg:block">
                     <button @click="open = !open" 
                             class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
-                        <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center border border-purple-200">
-                            <span class="text-purple-700 font-semibold text-sm">
-                                {{ strtoupper(substr($vendor->business_name, 0, 1)) }}
-                            </span>
-                        </div>
+                        @if($user->profile_photo)
+                            <img src="{{ asset('storage/' . $user->profile_photo) }}" 
+                                 alt="Profile" 
+                                 class="w-8 h-8 rounded-full object-cover border-2 border-purple-200">
+                        @elseif($vendor->profile_photo && !str_contains($vendor->profile_photo, 'picsum'))
+                            <img src="{{ asset('storage/' . $vendor->profile_photo) }}" 
+                                 alt="Profile" 
+                                 class="w-8 h-8 rounded-full object-cover border-2 border-purple-200">
+                        @else
+                            <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center border border-purple-200">
+                                <span class="text-purple-700 font-semibold text-sm">
+                                    {{ strtoupper(substr($vendor->business_name, 0, 1)) }}
+                                </span>
+                            </div>
+                        @endif
                         <i class="fas fa-chevron-down text-gray-600 text-xs"></i>
                     </button>
 

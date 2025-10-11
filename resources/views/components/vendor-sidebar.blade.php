@@ -85,7 +85,7 @@
         @endif
 
         {{-- WhatsApp Button --}}
-        @if($vendor->whatsapp)
+        @if($vendor->whatsapp && $vendor->canShowWhatsApp())
           @php
             $whatsappNumber = preg_replace('/[^0-9+]/', '', $vendor->whatsapp);
             if (str_starts_with($whatsappNumber, '0')) {
@@ -117,7 +117,7 @@
           </button>
         @endif
 
-        @if($vendor->whatsapp)
+        @if($vendor->whatsapp && $vendor->canShowWhatsApp())
           <button @click="showLoginModal = true" class="w-full bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded-lg text-[13px] font-medium transition flex items-center justify-center">
             <i class="fab fa-whatsapp mr-1 text-xs"></i> WhatsApp
           </button>

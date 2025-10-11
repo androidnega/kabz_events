@@ -7,9 +7,8 @@ $user = Auth::user();
     <div class="flex justify-between h-16 items-center">
       <!-- Logo -->
       <div class="flex items-center">
-        <a href="/" class="flex items-center text-lg font-semibold text-indigo-600">
-          <x-application-logo class="h-8 w-auto mr-2" />
-          <span class="hidden sm:inline">KABZS EVENT</span>
+        <a href="/" class="flex items-center">
+          <x-kabzs-logo class="h-10 w-auto" />
         </a>
       </div>
 

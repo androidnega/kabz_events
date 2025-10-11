@@ -2,9 +2,8 @@
   <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center">
       <!-- Logo -->
-      <a href="{{ route('home') }}" class="flex items-center text-lg font-semibold text-indigo-600">
-        <x-application-logo class="h-8 w-auto mr-2" />
-        <span class="hidden sm:inline">KABZS EVENT</span>
+      <a href="{{ route('home') }}" class="flex items-center">
+        <x-kabzs-logo class="h-10 w-auto" />
       </a>
 
       <!-- Desktop Navigation -->

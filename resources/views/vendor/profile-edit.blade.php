@@ -19,9 +19,47 @@
         </div>
     @endif
 
-    <form action="{{ route('vendor.profile.update') }}" method="POST" class="space-y-6">
+    <form action="{{ route('vendor.profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
         @csrf
         @method('PUT')
+
+        <!-- Profile Photo Upload -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Profile Photo</h3>
+            
+            <div class="flex items-center space-x-6">
+                <!-- Current Photo -->
+                <div>
+                    @if($vendor->profile_photo && !str_contains($vendor->profile_photo, 'picsum'))
+                        <img src="{{ asset('storage/' . $vendor->profile_photo) }}" 
+                             alt="Profile" 
+                             class="w-24 h-24 rounded-full object-cover border-4 border-purple-100">
+                    @else
+                        <div class="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center border-4 border-purple-200">
+                            <span class="text-3xl font-bold text-purple-600">
+                                {{ strtoupper(substr($vendor->business_name, 0, 1)) }}
+                            </span>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Upload Input -->
+                <div class="flex-1">
+                    <label for="profile_photo" class="block text-sm font-medium text-gray-700 mb-2">
+                        Upload New Photo
+                    </label>
+                    <input type="file" 
+                           id="profile_photo" 
+                           name="profile_photo" 
+                           accept="image/jpeg,image/jpg,image/png"
+                           class="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
+                    <p class="mt-1 text-xs text-gray-500">JPG, JPEG or PNG. Max 2MB</p>
+                    @error('profile_photo')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+        </div>
 
         <!-- Business Information Card -->
         <div class="bg-white rounded-lg border border-gray-200 p-6">
@@ -42,6 +80,26 @@
                     @error('business_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
+
+                    <!-- Name Change Warning -->
+                    @if($vendor->is_verified)
+                        <div class="mt-3 bg-red-50 border border-red-200 rounded-lg p-3">
+                            <p class="text-sm text-red-700 font-medium flex items-center">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                Warning: You are verified. Changing your business name will require re-verification.
+                            </p>
+                        </div>
+                    @else
+                        <div class="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                            <p class="text-sm text-amber-700">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                You can change your business name <strong>{{ $vendor->remainingBusinessNameChanges() }} more time(s)</strong> this year.
+                                @if($vendor->business_name_changes_count > 0)
+                                    ({{ $vendor->business_name_changes_count }}/3 used)
+                                @endif
+                            </p>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Description -->
@@ -78,6 +136,9 @@
                 <div>
                     <label for="whatsapp" class="block text-sm font-medium text-gray-700 mb-2">
                         WhatsApp Number
+                        @if(!$vendor->canShowWhatsApp())
+                            <span class="text-xs text-amber-600">(Hidden until verified or subscribed)</span>
+                        @endif
                     </label>
                     <input type="text" 
                            id="whatsapp" 
@@ -87,6 +148,14 @@
                     @error('whatsapp')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
+                    @if(!$vendor->canShowWhatsApp())
+                        <div class="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                            <p class="text-xs text-amber-700">
+                                <i class="fas fa-lock mr-1"></i>
+                                Your WhatsApp will only be visible to customers after you get <strong>verified</strong> or purchase a <strong>subscription</strong>.
+                            </p>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Website -->

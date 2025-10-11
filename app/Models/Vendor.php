@@ -35,6 +35,9 @@ class Vendor extends Model
         'verified_at',
         'verification_doc_path',
         'rating_cached',
+        'profile_photo',
+        'business_name_changes_count',
+        'last_business_name_change_at',
     ];
 
     /**
@@ -49,6 +52,7 @@ class Vendor extends Model
         'latitude' => 'decimal:7',
         'longitude' => 'decimal:7',
         'sample_work_images' => 'array',
+        'last_business_name_change_at' => 'datetime',
     ];
 
     /**
@@ -147,5 +151,47 @@ class Vendor extends Model
     public function town(): BelongsTo
     {
         return $this->belongsTo(Town::class);
+    }
+
+    /**
+     * Check if vendor can change business name
+     */
+    public function canChangeBusinessName(): bool
+    {
+        // Maximum 3 name changes per year
+        if ($this->business_name_changes_count >= 3) {
+            if (!$this->last_business_name_change_at || $this->last_business_name_change_at->addYear()->isFuture()) {
+                return false;
+            }
+            // Reset counter if a year has passed
+            $this->business_name_changes_count = 0;
+            $this->save();
+        }
+        return true;
+    }
+
+    /**
+     * Get remaining business name changes for the current period
+     */
+    public function remainingBusinessNameChanges(): int
+    {
+        if (!$this->last_business_name_change_at || $this->last_business_name_change_at->addYear()->isPast()) {
+            return 3;
+        }
+        return max(0, 3 - $this->business_name_changes_count);
+    }
+
+    /**
+     * Check if vendor can show WhatsApp contact
+     */
+    public function canShowWhatsApp(): bool
+    {
+        // Must be verified OR have an active subscription
+        if ($this->is_verified) {
+            return true;
+        }
+
+        $activeSubscription = $this->activeSubscription();
+        return $activeSubscription && $activeSubscription->plan !== 'Free';
     }
 }

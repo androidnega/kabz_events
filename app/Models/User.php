@@ -34,6 +34,9 @@ class User extends Authenticatable
         'search_radius_km',
         'total_searches',
         'total_vendor_views',
+        'profile_photo',
+        'name_changes_count',
+        'last_name_change_at',
     ];
 
     /**
@@ -92,6 +95,7 @@ class User extends Authenticatable
         'search_radius_km' => 'decimal:2',
         'total_searches' => 'integer',
         'total_vendor_views' => 'integer',
+        'last_name_change_at' => 'datetime',
     ];
 
     /**
@@ -100,6 +104,45 @@ class User extends Authenticatable
     public function vendor(): HasOne
     {
         return $this->hasOne(Vendor::class);
+    }
+
+    /**
+     * Check if user can change their name
+     */
+    public function canChangeName(): bool
+    {
+        // Maximum 3 name changes per year
+        if ($this->name_changes_count >= 3) {
+            if (!$this->last_name_change_at || $this->last_name_change_at->addYear()->isFuture()) {
+                return false;
+            }
+            // Reset counter if a year has passed
+            $this->name_changes_count = 0;
+            $this->save();
+        }
+        return true;
+    }
+
+    /**
+     * Get remaining name changes for the current period
+     */
+    public function remainingNameChanges(): int
+    {
+        if (!$this->last_name_change_at || $this->last_name_change_at->addYear()->isPast()) {
+            return 3;
+        }
+        return max(0, 3 - $this->name_changes_count);
+    }
+
+    /**
+     * Get next available name change date
+     */
+    public function nextNameChangeAvailableAt(): ?\Carbon\Carbon
+    {
+        if ($this->name_changes_count >= 3 && $this->last_name_change_at) {
+            return $this->last_name_change_at->addYear();
+        }
+        return null;
     }
 
     /**

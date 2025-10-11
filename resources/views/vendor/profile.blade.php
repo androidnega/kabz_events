@@ -143,8 +143,9 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Profile Photo</h3>
                     
                     <div class="flex flex-col items-center">
-                        @if($vendor->profile_photo)
-                            <img src="{{ $vendor->profile_photo }}" alt="{{ $vendor->business_name }}" 
+                        @if($vendor->profile_photo && !str_contains($vendor->profile_photo, 'picsum'))
+                            <img src="{{ asset('storage/' . $vendor->profile_photo) }}" 
+                                 alt="{{ $vendor->business_name }}" 
                                  class="w-32 h-32 rounded-full object-cover border-4 border-purple-100 mb-4">
                         @else
                             <div class="w-32 h-32 rounded-full bg-purple-100 flex items-center justify-center border-4 border-purple-200 mb-4">
@@ -154,6 +155,9 @@
                             </div>
                         @endif
                         <p class="text-sm text-gray-600 text-center">{{ $vendor->business_name }}</p>
+                        <a href="{{ route('vendor.profile.edit') }}" class="mt-2 text-xs text-purple-600 hover:text-purple-700 font-medium">
+                            Upload Photo
+                        </a>
                     </div>
                 </div>
 
