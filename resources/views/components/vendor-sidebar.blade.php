@@ -188,25 +188,113 @@
     </div>
   </div>
 
-  {{-- Message Modal (for authenticated users) --}}
+  {{-- Chat Sidebar (for authenticated users) --}}
   @auth
-    <div x-show="chatOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
-      <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" @click="chatOpen = false"></div>
-      <div class="relative bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl mx-auto">
-        <h4 class="font-semibold text-gray-900 mb-4 text-base sm:text-lg">Send a Message</h4>
-        <textarea x-model="chatMessage" placeholder="Write a short message to the vendor..." rows="4"
-                  class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 mb-4"></textarea>
-        <div class="flex justify-end space-x-2">
-          <button @click="chatOpen = false" class="text-sm text-gray-600 hover:text-gray-800 px-4 py-2 hover:bg-gray-100 rounded-lg transition">Cancel</button>
-          <button @click="sendMessage" :disabled="chatSending" class="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-5 py-2 rounded-lg text-sm font-medium transition shadow-sm">
-            <i class="fas fa-paper-plane mr-1"></i> Send
+    <div x-show="chatOpen" x-cloak class="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-white shadow-2xl transform transition-transform duration-300" style="display: none;">
+      <!-- Chat Header -->
+      <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-lg">Chat with Vendor</h3>
+          <button @click="chatOpen = false" class="text-white hover:text-gray-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
-        <template x-if="chatSent">
-          <div class="text-sm text-green-700 bg-green-50 p-3 rounded-lg border border-green-200 mt-3">
-            <i class="fas fa-check-circle mr-1"></i> Message sent successfully!
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-purple-600 font-bold">
+            {{ strtoupper(substr($vendor->business_name, 0, 2)) }}
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold">{{ $vendor->business_name }}</p>
+            <div class="flex items-center text-sm">
+              <div x-show="vendorStatus.is_online" class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+              <div x-show="!vendorStatus.is_online" class="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
+              <span x-text="vendorStatus.last_seen" class="text-purple-100"></span>
+            </div>
+          </div>
+        </div>
+        @if($averageResponseTime)
+        <div class="mt-2 text-xs bg-white bg-opacity-20 px-3 py-1 rounded-full inline-block">
+          <i class="fas fa-clock mr-1"></i> {{ $averageResponseTime }}
+        </div>
+        @endif
+      </div>
+
+      <!-- Messages Area -->
+      <div class="h-[calc(100vh-280px)] overflow-y-auto p-4 bg-gray-50" x-ref="messagesContainer">
+        <template x-if="messages.length === 0 && !loadingMessages">
+          <div class="text-center text-gray-500 py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <p class="mt-2">No messages yet</p>
+            <p class="text-sm">Start the conversation!</p>
           </div>
         </template>
+
+        <div class="space-y-3">
+          <template x-for="message in messages" :key="message.id">
+            <div :class="message.sender_id === {{ auth()->id() }} ? 'flex justify-end' : 'flex justify-start'">
+              <div :class="message.sender_id === {{ auth()->id() }} ? 'bg-purple-600 text-white' : 'bg-white text-gray-900'" class="max-w-[75%] rounded-lg px-4 py-2 shadow">
+                <template x-if="message.media_type === 'image'">
+                  <img :src="message.media_url" class="max-w-full rounded-lg mb-2" alt="Image">
+                </template>
+                <template x-if="message.media_type === 'audio'">
+                  <audio controls class="max-w-full mb-2">
+                    <source :src="message.media_url">
+                  </audio>
+                </template>
+                <template x-if="message.message">
+                  <p class="text-sm" x-text="message.message"></p>
+                </template>
+                <p :class="message.sender_id === {{ auth()->id() }} ? 'text-purple-100' : 'text-gray-500'" class="text-xs mt-1" x-text="message.time_ago || 'Just now'"></p>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <template x-if="loadingMessages">
+          <div class="text-center py-4">
+            <i class="fas fa-spinner fa-spin text-purple-600"></i>
+          </div>
+        </template>
+      </div>
+
+      <!-- Message Input -->
+      <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
+        <div x-show="attachmentPreview" x-cloak class="mb-2 p-2 bg-gray-100 rounded-lg text-sm" x-html="attachmentPreview"></div>
+        
+        <div class="flex items-end space-x-2">
+          <input type="file" x-ref="imageInput" @change="handleImageSelect" accept="image/*" class="hidden">
+          <input type="file" x-ref="audioInput" @change="handleAudioSelect" accept="audio/*" class="hidden">
+          
+          <button @click="$refs.imageInput.click()" type="button" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </button>
+          
+          <button @click="$refs.audioInput.click()" type="button" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            </svg>
+          </button>
+          
+          <textarea 
+            x-model="chatMessage" 
+            @keydown.enter.prevent="sendMessage"
+            rows="1" 
+            placeholder="Type a message..."
+            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+          ></textarea>
+          
+          <button @click="sendMessage" :disabled="chatSending || (!chatMessage.trim() && !selectedFile)" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-400 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -288,39 +376,157 @@ document.addEventListener('alpine:init', () => {
     reportMessage: '',
     reportSubmitted: false,
     reportSubmitting: false,
+    messages: [],
+    loadingMessages: false,
+    messagesInterval: null,
+    selectedFile: null,
+    selectedFileType: null,
+    attachmentPreview: '',
+    vendorStatus: {
+      is_online: false,
+      last_seen: 'Offline'
+    },
+    
+    init() {
+      // Update online status
+      this.updateOnlineStatus(true);
+      
+      // Watch for chat open
+      this.$watch('chatOpen', (value) => {
+        if (value) {
+          this.loadMessages();
+          this.startMessagesRefresh();
+        } else {
+          this.stopMessagesRefresh();
+        }
+      });
+      
+      // Update status to offline when leaving
+      window.addEventListener('beforeunload', () => {
+        this.updateOnlineStatus(false);
+      });
+    },
+    
+    async updateOnlineStatus(isOnline) {
+      try {
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        await fetch('/dashboard/status/online', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token
+          },
+          body: JSON.stringify({ is_online: isOnline })
+        });
+      } catch (e) {
+        console.error('Failed to update online status', e);
+      }
+    },
+    
+    async loadMessages() {
+      this.loadingMessages = true;
+      const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      
+      try {
+        const res = await fetch(`/dashboard/messages/vendor/${vendorId}`, {
+          headers: {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': token
+          }
+        });
+        
+        const data = await res.json();
+        this.messages = data.messages || [];
+        this.vendorStatus = data.vendor_status || { is_online: false, last_seen: 'Offline' };
+        
+        // Scroll to bottom
+        this.$nextTick(() => {
+          const container = this.$refs.messagesContainer;
+          if (container) {
+            container.scrollTop = container.scrollHeight;
+          }
+        });
+      } catch (e) {
+        console.error('Failed to load messages', e);
+      } finally {
+        this.loadingMessages = false;
+      }
+    },
+    
+    startMessagesRefresh() {
+      this.messagesInterval = setInterval(() => {
+        this.loadMessages();
+      }, 3000); // Refresh every 3 seconds
+    },
+    
+    stopMessagesRefresh() {
+      if (this.messagesInterval) {
+        clearInterval(this.messagesInterval);
+        this.messagesInterval = null;
+      }
+    },
+    
+    handleImageSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.selectedFile = file;
+        this.selectedFileType = 'image';
+        this.attachmentPreview = `<span class="text-sm text-gray-600">📷 ${file.name}</span>`;
+      }
+    },
+    
+    handleAudioSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.selectedFile = file;
+        this.selectedFileType = 'audio';
+        this.attachmentPreview = `<span class="text-sm text-gray-600">🎵 ${file.name}</span>`;
+      }
+    },
     
     async sendMessage() {
-      if (!this.chatMessage.trim()) {
-        alert('Please enter a message.');
+      if (!this.chatMessage.trim() && !this.selectedFile) {
         return;
       }
+      
       this.chatSending = true;
       const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
       
       try {
-        const res = await fetch(messagesRoute, {
+        const formData = new FormData();
+        formData.append('_token', token);
+        
+        if (this.chatMessage.trim()) {
+          formData.append('message', this.chatMessage);
+        }
+        
+        if (this.selectedFile) {
+          if (this.selectedFileType === 'image') {
+            formData.append('image', this.selectedFile);
+          } else if (this.selectedFileType === 'audio') {
+            formData.append('audio', this.selectedFile);
+          }
+        }
+        
+        const res = await fetch(`/dashboard/messages/vendor/${vendorId}`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
             'X-CSRF-TOKEN': token
           },
-          body: JSON.stringify({
-            vendor_id: vendorId,
-            message: this.chatMessage
-          })
+          body: formData
         });
         
         const json = await res.json();
-        if (json.ok) {
-          this.chatSent = true;
+        if (json.success) {
           this.chatMessage = '';
-          setTimeout(() => {
-            this.chatSent = false;
-            this.chatOpen = false;
-          }, 3000);
+          this.selectedFile = null;
+          this.selectedFileType = null;
+          this.attachmentPreview = '';
+          this.$refs.imageInput.value = '';
+          this.$refs.audioInput.value = '';
+          this.loadMessages();
         } else {
-          alert(json.error || 'Could not send message.');
+          alert(json.message || 'Could not send message.');
         }
       } catch (e) {
         console.error(e);

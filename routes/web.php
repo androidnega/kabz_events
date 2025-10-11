@@ -207,12 +207,24 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         // Vendor Tour
         Route::post('/tour/complete', [VendorDashboardControllerNew::class, 'completeTour'])->name('tour.complete');
         Route::post('/tour/restart', [VendorDashboardControllerNew::class, 'restartTour'])->name('tour.restart');
+        
+        // Chat System Routes
+        Route::get('/messages', [\App\Http\Controllers\Vendor\MessageController::class, 'index'])->name('messages');
+        Route::get('/messages/client/{clientId}', [\App\Http\Controllers\Vendor\MessageController::class, 'getConversation'])->name('messages.conversation');
+        Route::post('/messages/client/{clientId}', [\App\Http\Controllers\Vendor\MessageController::class, 'sendMessage'])->name('messages.send');
+        Route::delete('/messages/{messageId}', [\App\Http\Controllers\Vendor\MessageController::class, 'deleteMessage'])->name('messages.delete');
+        Route::post('/status/online', [\App\Http\Controllers\Vendor\MessageController::class, 'updateOnlineStatus'])->name('status.update');
     });
 
     // Client Routes
     // Note: Client dashboard is served via main /dashboard route
     Route::middleware(['role:client'])->name('client.')->group(function () {
-        // Client-specific routes can be added here
+        // Chat System Routes
+        Route::get('/conversations', [MessageController::class, 'getConversations'])->name('conversations');
+        Route::get('/messages/vendor/{vendorId}', [MessageController::class, 'getConversation'])->name('messages.conversation');
+        Route::post('/messages/vendor/{vendorId}', [MessageController::class, 'sendMessage'])->name('messages.send');
+        Route::delete('/messages/{messageId}', [MessageController::class, 'deleteMessage'])->name('messages.delete');
+        Route::post('/status/online', [MessageController::class, 'updateOnlineStatus'])->name('status.update');
     });
 
     // ============================================================

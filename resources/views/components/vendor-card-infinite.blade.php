@@ -4,17 +4,19 @@
 <a href="{{ route('vendors.show', $vendor->slug) }}" class="block group">
     <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
         {{-- Vendor Image/Logo --}}
-        @if($vendor->preview_image)
+        @php
+            $previewUrl = $vendor->getPreviewImageUrl();
+            if (!$previewUrl && $vendor->sample_work_images && count($vendor->sample_work_images) > 0) {
+                $previewUrl = $vendor->getImageUrl($vendor->sample_work_images[0]);
+            }
+        @endphp
+        
+        @if($previewUrl)
             <div class="h-48 bg-gray-100 overflow-hidden">
-                <img src="{{ asset('storage/' . $vendor->preview_image) }}" 
+                <img src="{{ $previewUrl }}" 
                      alt="{{ $vendor->business_name }}" 
-                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-            </div>
-        @elseif($vendor->sample_work_images && count($vendor->sample_work_images) > 0)
-            <div class="h-48 bg-gray-100 overflow-hidden">
-                <img src="{{ asset('storage/' . $vendor->sample_work_images[0]) }}" 
-                     alt="{{ $vendor->business_name }}" 
-                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                     loading="lazy">
             </div>
         @else
             <div class="h-48 bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center overflow-hidden">

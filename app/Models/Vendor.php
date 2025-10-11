@@ -163,6 +163,62 @@ class Vendor extends Model
     }
 
     /**
+     * Get image URL (handles both Cloudinary and local storage).
+     */
+    public function getImageUrl($imageData): ?string
+    {
+        if (is_array($imageData)) {
+            return $imageData['url'] ?? null;
+        }
+        // Legacy format (simple string path)
+        return $imageData ? asset('storage/' . $imageData) : null;
+    }
+
+    /**
+     * Get preview image URL.
+     */
+    public function getPreviewImageUrl(): ?string
+    {
+        if (!$this->preview_image) {
+            return null;
+        }
+        
+        if (is_array($this->preview_image)) {
+            // Cloudinary URL is already full URL
+            if ($this->preview_image['type'] === 'cloudinary') {
+                return $this->preview_image['url'];
+            }
+            // Local storage needs asset() helper
+            return asset('storage/' . $this->preview_image['url']);
+        }
+        
+        // Legacy format
+        return asset('storage/' . $this->preview_image);
+    }
+
+    /**
+     * Get video URL.
+     */
+    public function getVideoUrl(): ?string
+    {
+        if (!$this->sample_work_video) {
+            return null;
+        }
+        
+        if (is_array($this->sample_work_video)) {
+            // Cloudinary URL is already full URL
+            if ($this->sample_work_video['type'] === 'cloudinary') {
+                return $this->sample_work_video['url'];
+            }
+            // Local storage needs asset() helper
+            return asset('storage/' . $this->sample_work_video['url']);
+        }
+        
+        // Legacy format
+        return asset('storage/' . $this->sample_work_video);
+    }
+
+    /**
      * Get the region for the vendor.
      */
     public function region(): BelongsTo

@@ -3,160 +3,213 @@
 namespace App\Http\Controllers;
 
 use App\Models\Message;
+use App\Models\UserOnlineStatus;
 use App\Models\Vendor;
-use App\Models\User;
+use App\Models\VendorResponseTime;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class MessageController extends Controller
 {
-    public function __construct()
+    private $cloudinaryService;
+
+    public function __construct(CloudinaryService $cloudinaryService)
     {
         $this->middleware('auth');
+        $this->cloudinaryService = $cloudinaryService;
     }
 
     /**
-     * Store a message from current user to vendor (vendor.user).
-     * Request: vendor_id, message
+     * Get conversation messages between client and vendor.
      */
-    public function store(Request $request)
+    public function getConversation(Request $request, $vendorId)
+    {
+        $vendor = Vendor::findOrFail($vendorId);
+        $clientId = Auth::id();
+        $vendorUserId = $vendor->user_id;
+
+        $messages = Message::conversation($clientId, $vendorUserId, $vendorId)
+            ->where(function ($query) use ($clientId, $vendorUserId) {
+                $query->where(function ($q) use ($clientId) {
+                    $q->where('sender_id', $clientId)->where('deleted_by_sender', false);
+                })->orWhere(function ($q) use ($vendorUserId) {
+                    $q->where('sender_id', $vendorUserId)->where('deleted_by_receiver', false);
+                });
+            })
+            ->with(['sender', 'receiver'])
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Mark messages as read
+        Message::where('receiver_id', $clientId)
+            ->where('sender_id', $vendorUserId)
+            ->where('vendor_id', $vendorId)
+            ->where('is_read', false)
+            ->update(['is_read' => true, 'read_at' => now()]);
+
+        // Get vendor online status
+        $vendorStatus = UserOnlineStatus::where('user_id', $vendorUserId)->first();
+        
+        // Get average response time
+        $averageResponseTime = VendorResponseTime::getAverageResponseTime($vendorId);
+
+        return response()->json([
+            'messages' => $messages,
+            'vendor_status' => [
+                'is_online' => $vendorStatus?->is_online ?? false,
+                'last_seen' => $vendorStatus?->lastSeenText() ?? 'Offline',
+                'average_response_time' => $averageResponseTime,
+            ],
+        ]);
+    }
+
+    /**
+     * Send a message to vendor.
+     */
+    public function sendMessage(Request $request, $vendorId)
     {
         $request->validate([
-            'vendor_id' => 'required|exists:vendors,id',
-            'message'   => 'required|string|max:3000',
+            'message' => 'nullable|string|required_without_all:image,audio',
+            'image' => 'nullable|image|max:5120', // 5MB max
+            'audio' => 'nullable|mimes:mp3,wav,ogg,m4a|max:10240', // 10MB max
         ]);
 
-        // Spam protection: prevent links in messages
-        if (preg_match('/(http:\/\/|https:\/\/|www\.)/i', $request->message)) {
-            return response()->json(['error' => 'Links are not allowed in messages.'], 422);
+        $vendor = Vendor::findOrFail($vendorId);
+        $clientId = Auth::id();
+        $vendorUserId = $vendor->user_id;
+
+        $mediaType = null;
+        $mediaUrl = null;
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $uploadResult = $this->cloudinaryService->uploadImage($request->file('image'), 'chat/images');
+            if ($uploadResult) {
+                $mediaType = 'image';
+                $mediaUrl = $uploadResult['url'];
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to upload image. Please try again.',
+                ], 500);
+            }
         }
 
-        $vendor = Vendor::findOrFail($request->vendor_id);
-        $sender = Auth::user();
-        $receiverUser = $vendor->user; // vendor owner user
-
-        // Prevent self-messaging (vendor sending to their own vendor via client UI)
-        if ($sender->id === $receiverUser->id) {
-            return response()->json(['error' => 'Cannot message yourself.'], 422);
+        // Handle audio upload
+        if ($request->hasFile('audio')) {
+            $uploadResult = $this->cloudinaryService->uploadAudio($request->file('audio'), 'chat/audio');
+            if ($uploadResult) {
+                $mediaType = 'audio';
+                $mediaUrl = $uploadResult['url'];
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to upload audio. Please try again.',
+                ], 500);
+            }
         }
 
-        $msg = Message::create([
-            'sender_id'   => $sender->id,
-            'receiver_id' => $receiverUser->id,
-            'vendor_id'   => $vendor->id,
-            'message'     => $request->message,
-            'from_vendor' => $sender->id === $vendor->user_id,
+        $message = Message::create([
+            'sender_id' => $clientId,
+            'sender_type' => 'client',
+            'receiver_id' => $vendorUserId,
+            'receiver_type' => 'vendor',
+            'vendor_id' => $vendorId,
+            'message' => $request->message,
+            'media_type' => $mediaType,
+            'media_url' => $mediaUrl,
         ]);
 
-        // Send notification to receiver
-        try {
-            $receiverUser->notify(new \App\Notifications\NewMessageNotification($msg));
-        } catch (\Throwable $e) {
-            \Log::warning('Message notification failed: ' . $e->getMessage());
+        // Load relationships
+        $message->load(['sender', 'receiver']);
+
+        // Broadcast event (will implement later)
+        // broadcast(new MessageSent($message))->toOthers();
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+        ]);
+    }
+
+    /**
+     * Delete a message.
+     */
+    public function deleteMessage($messageId)
+    {
+        $message = Message::findOrFail($messageId);
+        $userId = Auth::id();
+
+        // Check if user is sender or receiver
+        if ($message->sender_id === $userId) {
+            $message->update(['deleted_by_sender' => true]);
+        } elseif ($message->receiver_id === $userId) {
+            $message->update(['deleted_by_receiver' => true]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized',
+            ], 403);
+        }
+
+        // If deleted by both, actually delete the record
+        if ($message->deleted_by_sender && $message->deleted_by_receiver) {
+            $message->delete();
         }
 
         return response()->json([
-            'ok' => true,
-            'message' => $msg->fresh('sender')
+            'success' => true,
+            'message' => 'Message deleted successfully',
         ]);
     }
 
     /**
-     * List conversations for the authenticated user (grouped by vendor)
+     * Get all conversations for the authenticated client.
      */
-    public function index(Request $request)
+    public function getConversations()
     {
-        $user = Auth::user();
+        $clientId = Auth::id();
 
-        // For vendors, show conversations for vendors they own
-        if ($user->hasRole('vendor')) {
-            $vendor = $user->vendor;
-            if (!$vendor) {
-                return view('vendor.messages.index', ['conversations' => collect(), 'vendor' => null]);
-            }
+        $conversations = Message::where(function ($query) use ($clientId) {
+            $query->where('sender_id', $clientId)
+                  ->orWhere('receiver_id', $clientId);
+        })
+        ->with(['sender', 'receiver', 'vendor'])
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->groupBy('vendor_id')
+        ->map(function ($messages) use ($clientId) {
+            $latestMessage = $messages->first();
+            $unreadCount = $messages->where('receiver_id', $clientId)
+                                   ->where('is_read', false)
+                                   ->count();
+            
+            return [
+                'vendor' => $latestMessage->vendor,
+                'latest_message' => $latestMessage,
+                'unread_count' => $unreadCount,
+            ];
+        })
+        ->values();
 
-            // Get distinct other user ids who've messaged this vendor
-            $conversations = Message::where('vendor_id', $vendor->id)
-                ->select('sender_id', 'receiver_id', 'vendor_id')
-                ->orderByDesc('created_at')
-                ->get()
-                ->groupBy(function ($m) use ($user, $vendor) {
-                    // group by the counterparty user id (not the vendor owner)
-                    return $m->sender_id === $user->id ? $m->receiver_id : $m->sender_id;
-                });
-
-            // flatten to conversation preview list: counterparty user + last message
-            $preview = $conversations->map(function ($msgs, $counterpartyId) {
-                $last = $msgs->sortByDesc('created_at')->first();
-                return [
-                    'counterparty' => User::find($counterpartyId),
-                    'last_message' => $last,
-                    'unread' => $msgs->whereNull('read_at')->where('receiver_id', auth()->id())->count()
-                ];
-            })->values();
-
-            return view('vendor.messages.index', ['conversations' => $preview, 'vendor' => $vendor]);
-        }
-
-        // For clients: conversations they are part of (group by vendor)
-        $conversations = Message::where('sender_id', $user->id)
-            ->orWhere('receiver_id', $user->id)
-            ->orderByDesc('created_at')
-            ->get()
-            ->groupBy('vendor_id')
-            ->map(function ($msgs, $vendorId) use ($user) {
-                $last = $msgs->sortByDesc('created_at')->first();
-                $vendor = Vendor::find($vendorId);
-                $counterpartyId = $msgs->where('sender_id', '!=', $user->id)->first()->sender_id ?? $msgs->where('receiver_id', '!=', $user->id)->first()->receiver_id ?? null;
-                return [
-                    'vendor' => $vendor,
-                    'last_message' => $last,
-                    'unread' => $msgs->whereNull('read_at')->where('receiver_id', $user->id)->count(),
-                ];
-            })->values();
-
-        return view('client.messages.index', ['conversations' => $conversations]);
+        return response()->json($conversations);
     }
 
     /**
-     * Return messages for a specific conversation (vendor + otherUser)
-     * GET /messages/conversation?vendor_id=XX&user_id=YY
+     * Update user's online status.
      */
-    public function conversation(Request $request)
+    public function updateOnlineStatus(Request $request)
     {
-        $request->validate([
-            'vendor_id' => 'required|exists:vendors,id',
-            'user_id'   => 'required|exists:users,id',
+        $userId = Auth::id();
+        $isOnline = $request->input('is_online', true);
+
+        UserOnlineStatus::updateStatus($userId, 'client', $isOnline);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status updated',
         ]);
-
-        $user = Auth::user();
-        $vendor = Vendor::findOrFail($request->vendor_id);
-        $otherUser = User::findOrFail($request->user_id);
-
-        // security: either authenticated user is buyer or vendor owner
-        if (!($user->id === $otherUser->id || $user->id === $vendor->user_id || $otherUser->id === $vendor->user_id || $user->hasRole('admin') || $user->hasRole('superadmin'))) {
-            abort(403);
-        }
-
-        $messages = Message::where('vendor_id', $vendor->id)
-            ->where(function ($q) use ($user, $otherUser) {
-                $q->where(function ($q2) use ($user, $otherUser) {
-                    $q2->where('sender_id', $user->id)->where('receiver_id', $otherUser->id);
-                })->orWhere(function ($q2) use ($user, $otherUser) {
-                    $q2->where('sender_id', $otherUser->id)->where('receiver_id', $user->id);
-                });
-            })
-            ->orderBy('created_at', 'asc')
-            ->with(['sender', 'receiver'])
-            ->get();
-
-        // mark messages received by current user as read
-        Message::where('vendor_id', $vendor->id)
-            ->where('receiver_id', $user->id)
-            ->whereNull('read_at')
-            ->update(['read_at' => now()]);
-
-        return response()->json(['messages' => $messages]);
     }
 }
-

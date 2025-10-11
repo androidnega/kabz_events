@@ -90,7 +90,15 @@
                                 <i class="fas fa-cloud-upload-alt text-4xl sm:text-5xl text-purple-500 mb-3"></i>
                             </div>
                             <p class="text-sm sm:text-base font-medium text-gray-700 mb-1">Click to upload or drag and drop</p>
-                            <p class="text-xs sm:text-sm text-gray-500">JPEG, JPG, PNG, WEBP (Max 1MB per image)</p>
+                            <p class="text-xs sm:text-sm text-gray-500">JPEG, JPG, PNG, WEBP (Up to 10MB - auto-compressed)</p>
+                            @php
+                                $useCloudinary = \App\Services\SettingsService::get('cloud_storage') === 'cloudinary';
+                            @endphp
+                            @if($useCloudinary)
+                                <p class="text-xs sm:text-sm text-blue-600 mt-1"><i class="fas fa-cloud mr-1"></i> Uploaded to Cloudinary with auto-compression</p>
+                            @else
+                                <p class="text-xs sm:text-sm text-gray-500 mt-1"><i class="fas fa-server mr-1"></i> Stored locally</p>
+                            @endif
                             <p class="text-xs sm:text-sm text-purple-600 mt-2">{{ $vendor->getMaxSampleImages() - ($vendor->sample_work_images ? count($vendor->sample_work_images) : 0) }} slots available</p>
                         </label>
                     </div>
@@ -120,16 +128,30 @@
                 <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Your Gallery ({{ count($vendor->sample_work_images) }} images)</h3>
                 
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" id="imageGallery">
-                    @foreach($vendor->sample_work_images as $index => $image)
-                        <div class="relative group" data-image="{{ $image }}">
+                    @foreach($vendor->sample_work_images as $index => $imageData)
+                        @php
+                            $imageUrl = $vendor->getImageUrl($imageData);
+                            $isPreview = $vendor->preview_image === $imageData || 
+                                        (is_array($vendor->preview_image) && is_array($imageData) && 
+                                         ($vendor->preview_image['url'] ?? null) === ($imageData['url'] ?? null));
+                        @endphp
+                        <div class="relative group" data-index="{{ $index }}">
                             <img 
-                                src="{{ asset('storage/' . $image) }}" 
+                                src="{{ $imageUrl }}" 
                                 alt="Sample work {{ $index + 1 }}"
-                                class="w-full h-32 sm:h-48 object-cover rounded-lg border-2 {{ $vendor->preview_image === $image ? 'border-purple-500' : 'border-gray-200' }}"
+                                class="w-full h-32 sm:h-48 object-cover rounded-lg border-2 {{ $isPreview ? 'border-purple-500' : 'border-gray-200' }}"
+                                loading="lazy"
                             />
                             
+                            {{-- Cloud Badge --}}
+                            @if(is_array($imageData) && $imageData['type'] === 'cloudinary')
+                                <div class="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                                    <i class="fas fa-cloud"></i>
+                                </div>
+                            @endif
+                            
                             {{-- Preview Badge --}}
-                            @if($vendor->preview_image === $image)
+                            @if($isPreview)
                                 <div class="absolute top-2 left-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-medium">
                                     <i class="fas fa-star mr-1"></i> Preview
                                 </div>
@@ -138,9 +160,9 @@
                             {{-- Action Buttons --}}
                             <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
                                 <div class="flex gap-2">
-                                    @if($vendor->preview_image !== $image)
+                                    @if(!$isPreview)
                                         <button 
-                                            onclick="setPreview('{{ $image }}')"
+                                            onclick="setPreview({{ $index }})"
                                             class="px-2 sm:px-3 py-1.5 sm:py-2 bg-purple-600 text-white text-xs rounded-lg hover:bg-purple-700 transition"
                                             title="Set as preview"
                                         >
@@ -148,7 +170,7 @@
                                         </button>
                                     @endif
                                     <button 
-                                        onclick="deleteImage('{{ $image }}')"
+                                        onclick="deleteImage({{ $index }})"
                                         class="px-2 sm:px-3 py-1.5 sm:py-2 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition"
                                         title="Delete"
                                     >
@@ -176,10 +198,21 @@
 
                 @if($vendor->sample_work_video)
                     <div class="space-y-4">
-                        <video controls class="w-full rounded-lg border border-gray-300 max-h-96">
-                            <source src="{{ asset('storage/' . $vendor->sample_work_video) }}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
+                        @php
+                            $videoUrl = $vendor->getVideoUrl();
+                            $isCloudinary = is_array($vendor->sample_work_video) && ($vendor->sample_work_video['type'] ?? null) === 'cloudinary';
+                        @endphp
+                        <div class="relative">
+                            <video controls class="w-full rounded-lg border border-gray-300 max-h-96">
+                                <source src="{{ $videoUrl }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            @if($isCloudinary)
+                                <div class="mt-2 text-center text-sm text-blue-600">
+                                    <i class="fas fa-cloud mr-1"></i> Hosted on Cloudinary
+                                </div>
+                            @endif
+                        </div>
                         <button 
                             onclick="deleteVideo()"
                             class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition"
@@ -227,10 +260,10 @@
             if (files.length === 0) return;
 
             // Validate file sizes
-            const maxSize = 1024 * 1024; // 1MB
+            const maxSize = 10 * 1024 * 1024; // 10MB (will be auto-compressed)
             const invalidFiles = files.filter(file => file.size > maxSize);
             if (invalidFiles.length > 0) {
-                alert(`${invalidFiles.length} file(s) exceed 1MB limit. Please choose smaller images.`);
+                alert(`${invalidFiles.length} file(s) exceed 10MB limit. Please choose smaller images.`);
                 return;
             }
 
@@ -266,7 +299,7 @@
         });
 
         // Delete Image
-        async function deleteImage(imagePath) {
+        async function deleteImage(imageIndex) {
             if (!confirm('Are you sure you want to delete this image?')) return;
 
             try {
@@ -276,7 +309,7 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken
                     },
-                    body: JSON.stringify({ image_path: imagePath })
+                    body: JSON.stringify({ image_index: imageIndex })
                 });
 
                 const data = await response.json();
@@ -294,7 +327,7 @@
         }
 
         // Set Preview Image
-        async function setPreview(imagePath) {
+        async function setPreview(imageIndex) {
             try {
                 const response = await fetch('{{ route('vendor.sample-work.preview') }}', {
                     method: 'POST',
@@ -302,7 +335,7 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken
                     },
-                    body: JSON.stringify({ image_path: imagePath })
+                    body: JSON.stringify({ image_index: imageIndex })
                 });
 
                 const data = await response.json();
