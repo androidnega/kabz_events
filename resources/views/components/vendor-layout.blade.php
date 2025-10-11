@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ sidebarOpen: true, mobileMenuOpen: false }">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,26 +18,22 @@
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-gray-50">
-    <div class="min-h-screen">
-        <!-- Top Navigation Bar -->
-        <x-vendor-topbar />
-        
-        <div class="flex">
-            <!-- Sidebar (Desktop) -->
-            <x-vendor-nav />
-            
-            <!-- Main Content -->
-            <main class="flex-1 overflow-x-hidden w-full pb-6 pt-16" :class="sidebarOpen ? 'ml-64' : 'ml-20'">
-                <div class="p-3 sm:p-4 md:p-6 w-full">
-                    {{ $slot }}
-                </div>
-            </main>
+<body class="font-sans antialiased bg-gray-50" x-data="{ sidebarOpen: true, mobileMenuOpen: false }">
+    <!-- Top Navigation Bar (Fixed) -->
+    <x-vendor-topbar />
+    
+    <!-- Sidebar (Fixed, Desktop only) -->
+    <x-vendor-nav />
+    
+    <!-- Main Content Area -->
+    <main class="min-h-screen pt-16 transition-all duration-300 pb-20 lg:pb-6" :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'">
+        <div class="p-4 sm:p-6">
+            {{ $slot }}
         </div>
+    </main>
 
-        <!-- Mobile Bottom Navigation -->
-        <x-vendor-mobile-nav />
-    </div>
+    <!-- Mobile Bottom Navigation -->
+    <x-vendor-mobile-nav />
     
     @stack('scripts')
 </body>
