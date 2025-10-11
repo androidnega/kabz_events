@@ -16,7 +16,7 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     
-                    @if(!Auth::user()->vendor && !Auth::user()->hasRole('vendor'))
+                    @if(!Auth::user()->vendor?->id && !Auth::user()->hasRole('vendor'))
                     <x-nav-link :href="route('vendor.register')" :active="request()->routeIs('vendor.register')">
                         {{ __('Become a Vendor') }}
                     </x-nav-link>
