@@ -76,7 +76,7 @@
                             <!-- Main Image -->
                             <div class="mb-4">
                                 <div class="relative">
-                                    <img src="{{ $vendor->sample_work_images[0] }}" 
+                                    <img src="{{ asset('storage/' . $vendor->sample_work_images[0]) }}" 
                                          alt="Sample work from {{ $vendor->business_name }}" 
                                          class="main-sample-image w-full h-64 md:h-80 object-cover rounded-lg shadow-lg">
                                     <div class="absolute top-4 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm image-counter">
@@ -92,8 +92,8 @@
                             @if(count($vendor->sample_work_images) > 1)
                             <div class="grid grid-cols-5 gap-2">
                                 @foreach($vendor->sample_work_images as $index => $image)
-                                <div class="relative cursor-pointer group" data-image-src="{{ $image }}" data-image-index="{{ $index + 1 }}" onclick="changeMainImage(this.getAttribute('data-image-src'), this.getAttribute('data-image-index'))">
-                                    <img src="{{ $image }}" 
+                                <div class="relative cursor-pointer group" data-image-src="{{ asset('storage/' . $image) }}" data-image-index="{{ $index + 1 }}" onclick="changeMainImage(this.getAttribute('data-image-src'), this.getAttribute('data-image-index'))">
+                                    <img src="{{ asset('storage/' . $image) }}" 
                                          alt="Sample work {{ $index + 1 }}" 
                                          class="w-full h-16 md:h-20 object-cover rounded-lg border-2 border-gray-200 group-hover:border-primary transition">
                                     @if($index == 4 && count($vendor->sample_work_images) > 5)
