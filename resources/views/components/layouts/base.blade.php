@@ -20,6 +20,11 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    <!-- Prevent Alpine.js content flash -->
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+
     @stack('styles')
 </head>
 <body class="min-h-screen bg-neutral text-gray-800 antialiased">

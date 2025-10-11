@@ -111,6 +111,24 @@
       </div>
     </div>
 
+    {{-- Stats Section in same card --}}
+    <div class="border-t border-gray-100 pt-3 pb-3">
+      <div class="grid grid-cols-3 gap-3 text-center">
+        <div>
+          <p class="text-xl font-bold text-primary">{{ $vendor->services->count() }}</p>
+          <p class="text-xs text-gray-500">Services</p>
+        </div>
+        <div>
+          <p class="text-xl font-bold text-accent">{{ number_format($averageRating, 1) }}</p>
+          <p class="text-xs text-gray-500">Rating</p>
+        </div>
+        <div>
+          <p class="text-xl font-bold text-secondary">{{ $totalReviews }}</p>
+          <p class="text-xs text-gray-500">Reviews</p>
+        </div>
+      </div>
+    </div>
+
     {{-- Business Details in same card --}}
     <div class="border-t border-gray-100 pt-3 space-y-2 text-[13px]">
       @if($vendor->address)
@@ -129,24 +147,15 @@
           <p class="text-gray-900">{{ $vendor->created_at->format('F Y') }}</p>
         </div>
       </div>
-    </div>
-  </div>
-
-  {{-- Stats Card --}}
-  <div class="bg-white p-3 rounded-2xl shadow">
-    <div class="grid grid-cols-3 gap-3 text-center">
-      <div>
-        <p class="text-xl font-bold text-primary">{{ $vendor->services->count() }}</p>
-        <p class="text-xs text-gray-500">Services</p>
-      </div>
-      <div>
-        <p class="text-xl font-bold text-accent">{{ number_format($averageRating, 1) }}</p>
-        <p class="text-xs text-gray-500">Rating</p>
-      </div>
-      <div>
-        <p class="text-xl font-bold text-secondary">{{ $totalReviews }}</p>
-        <p class="text-xs text-gray-500">Reviews</p>
-      </div>
+      @if($averageResponseTime)
+        <div class="flex items-start">
+          <i class="fas fa-reply text-gray-400 mr-2 mt-0.5 text-xs"></i>
+          <div>
+            <p class="text-xs text-gray-500">Response Time</p>
+            <p class="text-gray-900">Usually replies in {{ $averageResponseTime }}</p>
+          </div>
+        </div>
+      @endif
     </div>
   </div>
 

@@ -90,92 +90,21 @@
             </div>
 
             @if($featuredVendors->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div id="vendors-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach($featuredVendors as $vendor)
-                <x-card hoverable>
-                    <!-- Vendor Image -->
-                    @if($vendor->sample_work_images && count($vendor->sample_work_images) > 0)
-                        <div class="h-48 bg-gray-100 overflow-hidden">
-                            <img src="{{ asset('storage/' . $vendor->sample_work_images[0]) }}" 
-                                 alt="{{ $vendor->business_name }}" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                    @else
-                        <div class="h-48 bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
-                            <span class="text-6xl text-primary font-bold">
-                                {{ strtoupper(substr($vendor->business_name, 0, 1)) }}
-                            </span>
-                        </div>
-                    @endif
-
-                    <!-- Vendor Info -->
-                    <div class="p-6">
-                        <div class="flex items-start justify-between mb-2">
-                            <h3 class="text-xl font-bold text-gray-900">
-                                {{ $vendor->business_name }}
-                            </h3>
-                            @if($vendor->is_verified)
-                            <x-badge type="verified">
-                                <svg class="w-3 h-3 mr-1 inline" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                Verified
-                            </x-badge>
-                            @endif
-                        </div>
-
-                        <!-- Rating -->
-                        <div class="flex items-center mb-3">
-                            <div class="flex items-center">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <svg class="w-5 h-5 {{ $i <= round($vendor->rating_cached) ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                    </svg>
-                                @endfor
-                            </div>
-                            <span class="ml-2 text-sm text-gray-600">
-                                {{ number_format($vendor->rating_cached, 1) }}
-                            </span>
-                        </div>
-
-                        <!-- Categories -->
-                        @if($vendor->services->count() > 0)
-                        <div class="flex flex-wrap gap-2 mb-3">
-                            @foreach($vendor->services->pluck('category')->unique('id')->take(3) as $category)
-                            <x-badge type="primary">
-                                {{ $category->name }}
-                            </x-badge>
-                            @endforeach
-                        </div>
-                        @endif
-
-                        <!-- Description -->
-                        @if($vendor->description)
-                        <p class="text-sm text-gray-600 mb-4">
-                            {{ Str::limit($vendor->description, 100) }}
-                        </p>
-                        @endif
-
-                        <!-- Location -->
-                        @if($vendor->address)
-                        <div class="flex items-center text-sm text-gray-500 mb-4">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                            {{ Str::limit($vendor->address, 30) }}
-                        </div>
-                        @endif
-
-                        <!-- View Profile Button -->
-                        <a href="{{ route('vendors.show', $vendor->slug) }}" class="block w-full">
-                            <x-button variant="primary" class="w-full">
-                                View Profile
-                            </x-button>
-                        </a>
-                    </div>
-                </x-card>
+                    <x-vendor-card-infinite :vendor="$vendor" />
                 @endforeach
+            </div>
+            
+            <!-- Loading indicator -->
+            <div id="loading-indicator" class="text-center py-8 hidden">
+                <div class="inline-flex items-center px-4 py-2 text-sm text-gray-600">
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Loading more vendors...
+                </div>
             </div>
             @else
             <div class="text-center text-gray-500 py-12">
@@ -208,4 +137,73 @@
     </div>
 
 </x-layouts.base>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let currentPage = 2; // Start from page 2 since page 1 is already loaded
+    let isLoading = false;
+    let hasMore = true;
+    
+    const vendorsContainer = document.getElementById('vendors-container');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    
+    if (!vendorsContainer || !loadingIndicator) return;
+    
+    // Function to load more vendors
+    async function loadMoreVendors() {
+        if (isLoading || !hasMore) return;
+        
+        isLoading = true;
+        loadingIndicator.classList.remove('hidden');
+        
+        try {
+            const response = await fetch(`/api/load-more-vendors?page=${currentPage}`);
+            const data = await response.json();
+            
+            if (data.html) {
+                vendorsContainer.insertAdjacentHTML('beforeend', data.html);
+                currentPage = data.page;
+                hasMore = data.hasMore;
+            }
+            
+            if (!data.hasMore) {
+                // No more vendors to load
+                loadingIndicator.classList.add('hidden');
+            }
+        } catch (error) {
+            console.error('Error loading more vendors:', error);
+            loadingIndicator.classList.add('hidden');
+        } finally {
+            isLoading = false;
+        }
+    }
+    
+    // Intersection Observer for infinite scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && hasMore && !isLoading) {
+                loadMoreVendors();
+            }
+        });
+    }, {
+        rootMargin: '100px' // Start loading when 100px away from the loading indicator
+    });
+    
+    observer.observe(loadingIndicator);
+    
+    // Fallback: Load more on scroll near bottom
+    window.addEventListener('scroll', () => {
+        if (isLoading || !hasMore) return;
+        
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.offsetHeight;
+        
+        // Load more when user is 200px from bottom
+        if (scrollTop + windowHeight >= documentHeight - 200) {
+            loadMoreVendors();
+        }
+    });
+});
+</script>
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Vendor;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -35,5 +37,33 @@ class HomeController extends Controller
         }
 
         return view('home', compact('categories', 'featuredVendors'));
+    }
+
+    /**
+     * Load more vendors for infinite scroll.
+     */
+    public function loadMoreVendors(Request $request): JsonResponse
+    {
+        $page = $request->get('page', 1);
+        $perPage = 6;
+        $offset = ($page - 1) * $perPage;
+
+        $vendors = Vendor::where('is_verified', true)
+            ->orderBy('rating_cached', 'desc')
+            ->offset($offset)
+            ->limit($perPage)
+            ->with('services.category')
+            ->get();
+
+        $html = '';
+        foreach ($vendors as $vendor) {
+            $html .= view('components.vendor-card-infinite', compact('vendor'))->render();
+        }
+
+        return response()->json([
+            'html' => $html,
+            'hasMore' => $vendors->count() === $perPage,
+            'page' => $page + 1
+        ]);
     }
 }
