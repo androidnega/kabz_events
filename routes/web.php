@@ -191,6 +191,15 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::get('/verification', [VerificationController::class, 'index'])->name('verification');
         Route::post('/verification', [VerificationController::class, 'store'])->name('verification.store');
         
+        // Sample Work Management
+        Route::get('/sample-work', [\App\Http\Controllers\Vendor\SampleWorkController::class, 'index'])->name('sample-work');
+        Route::post('/sample-work/images', [\App\Http\Controllers\Vendor\SampleWorkController::class, 'uploadImages'])->name('sample-work.images.upload');
+        Route::delete('/sample-work/images', [\App\Http\Controllers\Vendor\SampleWorkController::class, 'deleteImage'])->name('sample-work.images.delete');
+        Route::post('/sample-work/preview', [\App\Http\Controllers\Vendor\SampleWorkController::class, 'setPreview'])->name('sample-work.preview');
+        Route::post('/sample-work/video', [\App\Http\Controllers\Vendor\SampleWorkController::class, 'uploadVideo'])->name('sample-work.video.upload');
+        Route::delete('/sample-work/video', [\App\Http\Controllers\Vendor\SampleWorkController::class, 'deleteVideo'])->name('sample-work.video.delete');
+        Route::post('/sample-work/title', [\App\Http\Controllers\Vendor\SampleWorkController::class, 'updateTitle'])->name('sample-work.title');
+        
         // Subscription Plans
         Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions');
         Route::post('/subscriptions/{plan}', [SubscriptionController::class, 'subscribe'])->name('subscriptions.subscribe');

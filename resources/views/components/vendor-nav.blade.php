@@ -22,6 +22,13 @@
                 <span x-show="sidebarOpen" class="ml-3 font-medium">Services</span>
             </a>
 
+            <!-- Sample Work -->
+            <a href="{{ route('vendor.sample-work') }}" 
+               class="flex items-center px-3 py-3 rounded-lg transition {{ request()->routeIs('vendor.sample-work*') ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-50' }}">
+                <i class="fas fa-images text-lg w-6"></i>
+                <span x-show="sidebarOpen" class="ml-3 font-medium">Sample Work</span>
+            </a>
+
             <!-- Payments (Coming Soon) -->
             <div class="flex items-center px-3 py-3 rounded-lg text-gray-400 cursor-not-allowed opacity-60">
                 <i class="fas fa-credit-card text-lg w-6"></i>

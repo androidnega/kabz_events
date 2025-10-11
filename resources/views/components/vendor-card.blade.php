@@ -4,7 +4,13 @@
 <a href="{{ route('vendors.show', $vendor->slug) }}" class="block group">
     <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
         {{-- Vendor Image/Logo --}}
-        @if($vendor->sample_work_images && count($vendor->sample_work_images) > 0)
+        @if($vendor->preview_image)
+            <div class="h-48 bg-gray-100 overflow-hidden">
+                <img src="{{ asset('storage/' . $vendor->preview_image) }}" 
+                     alt="{{ $vendor->business_name }}" 
+                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+            </div>
+        @elseif($vendor->sample_work_images && count($vendor->sample_work_images) > 0)
             <div class="h-48 bg-gray-100 overflow-hidden">
                 <img src="{{ asset('storage/' . $vendor->sample_work_images[0]) }}" 
                      alt="{{ $vendor->business_name }}" 

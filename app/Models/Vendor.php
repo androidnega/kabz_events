@@ -25,6 +25,8 @@ class Vendor extends Model
         'description',
         'sample_work_images',
         'sample_work_title',
+        'preview_image',
+        'sample_work_video',
         'phone',
         'whatsapp',
         'website',
@@ -129,6 +131,35 @@ class Vendor extends Model
             })
             ->latest('ends_at')
             ->first();
+    }
+
+    /**
+     * Check if vendor has VIP/Premium subscription.
+     */
+    public function hasVipSubscription(): bool
+    {
+        $subscription = $this->activeSubscription();
+        return $subscription && in_array(strtolower($subscription->plan), ['vip', 'premium', 'pro']);
+    }
+
+    /**
+     * Get maximum allowed sample work images based on subscription.
+     */
+    public function getMaxSampleImages(): int
+    {
+        // VIP/Verified vendors can upload more, free users limited to 5
+        if ($this->hasVipSubscription() || $this->is_verified) {
+            return 20; // VIP/Verified get 20 images
+        }
+        return 5; // Free users get 5 images
+    }
+
+    /**
+     * Check if vendor can upload videos.
+     */
+    public function canUploadVideo(): bool
+    {
+        return $this->hasVipSubscription();
     }
 
     /**
