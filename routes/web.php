@@ -211,6 +211,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 // ============================================================
 Route::middleware('auth')->group(function () {
     // Report Vendor (can be done from public vendor pages) - Legacy route maintained for compatibility
+    Route::post('/reports', [App\Http\Controllers\Admin\ReportController::class, 'store'])->name('reports.store');
     Route::post('/reports/vendor', [App\Http\Controllers\Admin\ReportController::class, 'store'])->name('reports.vendor.store');
     
     // Review Submission (authenticated users only)

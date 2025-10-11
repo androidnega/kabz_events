@@ -61,11 +61,19 @@
                     @foreach($vendors as $vendor)
                     <x-card hoverable>
                         <!-- Vendor Image -->
-                        <div class="h-48 bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
-                            <span class="text-6xl text-primary font-bold">
-                                {{ strtoupper(substr($vendor->business_name, 0, 1)) }}
-                            </span>
-                        </div>
+                        @if($vendor->sample_work_images && count($vendor->sample_work_images) > 0)
+                            <div class="h-48 bg-gray-100 overflow-hidden">
+                                <img src="{{ asset('storage/' . $vendor->sample_work_images[0]) }}" 
+                                     alt="{{ $vendor->business_name }}" 
+                                     class="w-full h-full object-cover">
+                            </div>
+                        @else
+                            <div class="h-48 bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
+                                <span class="text-6xl text-primary font-bold">
+                                    {{ strtoupper(substr($vendor->business_name, 0, 1)) }}
+                                </span>
+                            </div>
+                        @endif
 
                         <!-- Vendor Info -->
                         <div class="p-6">

@@ -1,36 +1,76 @@
-@props(['vendor'])
+@props(['vendor', 'averageRating' => 0, 'totalReviews' => 0])
 
-<div class="space-y-4">
-  {{-- Vendor Profile Card --}}
-  <div class="bg-white p-4 rounded-2xl shadow">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center border border-gray-200">
-            <span class="text-2xl font-bold text-purple-600">
-              {{ strtoupper(substr($vendor->business_name, 0, 1)) }}
+<div class="space-y-3">
+  {{-- Vendor Profile Card with Business Details --}}
+  <div class="bg-white p-3 rounded-2xl shadow">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="w-14 h-14 rounded-full bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center border border-gray-200">
+        <span class="text-xl font-bold text-purple-600">
+          {{ strtoupper(substr($vendor->business_name, 0, 1)) }}
+        </span>
+      </div>
+      <div class="flex-1">
+        <div class="flex items-center gap-1 mb-1">
+          <h3 class="font-semibold text-sm text-gray-900">{{ $vendor->business_name }}</h3>
+          @if($vendor->is_verified)
+            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 text-blue-800 border border-blue-200">
+              <i class="fas fa-check-circle mr-0.5"></i> Verified
             </span>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-semibold text-lg text-gray-900">{{ $vendor->business_name }}</h3>
-              @if($vendor->is_verified)
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
-                  <i class="fas fa-check-circle mr-1"></i> Verified
-                </span>
-              @endif
-            </div>
-            <p class="text-sm text-gray-500">{{ $vendor->services->first()?->category->name ?? 'Vendor' }}</p>
+          @endif
+        </div>
+        <p class="text-xs text-gray-500">{{ $vendor->services->first()?->category->name ?? 'Vendor' }}</p>
+      </div>
+    </div>
+
+    {{-- Business Details in same card --}}
+    <div class="border-t border-gray-100 pt-3 space-y-2 text-xs">
+      @if($vendor->address)
+        <div class="flex items-start">
+          <i class="fas fa-map-marker-alt text-gray-400 mr-2 mt-0.5 text-xs"></i>
+          <div>
+            <p class="text-[10px] text-gray-500">Location</p>
+            <p class="text-gray-900">{{ $vendor->address }}</p>
           </div>
         </div>
+      @endif
+      <div class="flex items-start">
+        <i class="fas fa-clock text-gray-400 mr-2 mt-0.5 text-xs"></i>
+        <div>
+          <p class="text-[10px] text-gray-500">Member Since</p>
+          <p class="text-gray-900">{{ $vendor->created_at->format('F Y') }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    {{-- Contact Buttons --}}
-    <div class="space-y-2" x-data="{ showLoginModal: false }">
+  {{-- Stats Card --}}
+  <div class="bg-white p-3 rounded-2xl shadow">
+    <div class="grid grid-cols-3 gap-3 text-center">
+      <div>
+        <p class="text-lg font-bold text-primary">{{ $vendor->services->count() }}</p>
+        <p class="text-[10px] text-gray-500">Services</p>
+      </div>
+      <div>
+        <p class="text-lg font-bold text-accent">{{ number_format($averageRating, 1) }}</p>
+        <p class="text-[10px] text-gray-500">Rating</p>
+      </div>
+      <div>
+        <p class="text-lg font-bold text-secondary">{{ $totalReviews }}</p>
+        <p class="text-[10px] text-gray-500">Reviews</p>
+      </div>
+    </div>
+  </div>
+
+  {{-- Action Buttons Card - 2 per row --}}
+  <div class="bg-white p-3 rounded-2xl shadow">
+    <div class="grid grid-cols-2 gap-2" x-data="{ showLoginModal: false }">
       @auth
         {{-- Authenticated users see real buttons --}}
         {{-- Call Button --}}
         @if($vendor->phone)
-          <a href="tel:{{ $vendor->phone }}" class="block w-full">
-            <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
-              <i class="fas fa-phone mr-2"></i> Call Vendor
+          <a href="tel:{{ $vendor->phone }}">
+            <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+              <i class="fas fa-phone mr-1 text-xs"></i> Call
             </button>
           </a>
         @endif
@@ -38,52 +78,49 @@
         {{-- WhatsApp Button --}}
         @if($vendor->whatsapp)
           @php
-            // Clean WhatsApp number (remove spaces, dashes, etc.)
             $whatsappNumber = preg_replace('/[^0-9+]/', '', $vendor->whatsapp);
-            // If starts with 0, replace with 233
             if (str_starts_with($whatsappNumber, '0')) {
               $whatsappNumber = '233' . substr($whatsappNumber, 1);
             }
-            // Remove + if present for WhatsApp link
             $whatsappNumber = ltrim($whatsappNumber, '+');
           @endphp
-          <a href="https://wa.me/{{ $whatsappNumber }}" target="_blank" class="block w-full">
-            <button class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
-              <i class="fab fa-whatsapp mr-2"></i> WhatsApp Vendor
+          <a href="https://wa.me/{{ $whatsappNumber }}" target="_blank">
+            <button class="w-full bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+              <i class="fab fa-whatsapp mr-1 text-xs"></i> WhatsApp
             </button>
           </a>
         @endif
 
-        {{-- Website Button (available to all) --}}
-        @if($vendor->website)
-          <a href="{{ $vendor->website }}" target="_blank" class="block w-full">
-            <button class="w-full bg-gray-600 hover:bg-gray-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
-              <i class="fas fa-globe mr-2"></i> Visit Website
-            </button>
-          </a>
-        @endif
+        {{-- Send Message Button --}}
+        <button x-data="vendorChat({{ $vendor->id }}, {{ auth()->id() }})" @click="open = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+          <i class="fas fa-comment-dots mr-1 text-xs"></i> Message
+        </button>
+
+        {{-- Report Button --}}
+        <button x-data="vendorReport({{ $vendor->id }})" @click="open = true" class="w-full bg-red-600 hover:bg-red-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+          <i class="fas fa-flag mr-1 text-xs"></i> Report
+        </button>
       @else
         {{-- Unauthenticated users see login prompts --}}
         @if($vendor->phone)
-          <button @click="showLoginModal = true" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
-            <i class="fas fa-phone mr-2"></i> Call Vendor
+          <button @click="showLoginModal = true" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+            <i class="fas fa-phone mr-1 text-xs"></i> Call
           </button>
         @endif
 
         @if($vendor->whatsapp)
-          <button @click="showLoginModal = true" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
-            <i class="fab fa-whatsapp mr-2"></i> WhatsApp Vendor
+          <button @click="showLoginModal = true" class="w-full bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+            <i class="fab fa-whatsapp mr-1 text-xs"></i> WhatsApp
           </button>
         @endif
 
-        {{-- Website Button (available to all) --}}
-        @if($vendor->website)
-          <a href="{{ $vendor->website }}" target="_blank" class="block w-full">
-            <button class="w-full bg-gray-600 hover:bg-gray-700 text-white px-4 py-2.5 rounded-lg font-medium transition flex items-center justify-center">
-              <i class="fas fa-globe mr-2"></i> Visit Website
-            </button>
-          </a>
-        @endif
+        <button @click="showLoginModal = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+          <i class="fas fa-comment-dots mr-1 text-xs"></i> Message
+        </button>
+
+        <button @click="showLoginModal = true" class="w-full bg-red-600 hover:bg-red-700 text-white px-2 py-2 rounded-lg text-xs font-medium transition flex items-center justify-center">
+          <i class="fas fa-flag mr-1 text-xs"></i> Report
+        </button>
       @endauth
 
       {{-- Login Modal --}}
