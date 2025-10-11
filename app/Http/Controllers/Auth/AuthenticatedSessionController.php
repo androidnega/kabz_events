@@ -29,18 +29,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Role-based redirection after login
-        $user = Auth::user();
-        
-        $redirectRoute = match (true) {
-            $user->hasRole('super_admin') => route('superadmin.dashboard'),
-            $user->hasRole('admin') => route('admin.dashboard'),
-            $user->hasRole('vendor') => route('vendor.dashboard'),
-            $user->hasRole('client') => route('client.dashboard'),
-            default => RouteServiceProvider::HOME,
-        };
-
-        return redirect()->intended($redirectRoute);
+        // Unified dashboard redirect - all authenticated users go to /dashboard
+        // The DashboardController automatically serves the correct view based on role
+        return redirect()->intended(route('dashboard'));
     }
 
     /**
