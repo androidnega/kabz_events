@@ -324,7 +324,7 @@
                                         </div>
                                         <div class="ml-3 flex-1">
                                             <p class="text-[13px] font-semibold text-gray-900 group-hover:text-primary">
-                                                {{ \Illuminate\Support\Str::limit($similar->business_name, 25) }}
+                                                {{ strlen($similar->business_name) > 25 ? substr($similar->business_name, 0, 25) . '...' : $similar->business_name }}
                                             </p>
                                             <div class="flex items-center">
                                                 @for($i = 1; $i <= 5; $i++)

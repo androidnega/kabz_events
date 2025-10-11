@@ -151,9 +151,11 @@
                                 </div>
 
                                 <div class="mt-4 flex justify-end space-x-2">
-                                    <x-button variant="outline" size="sm" onclick="window.location='{{ route('vendor.services.edit', $service) }}'">
-                                        Edit
-                                    </x-button>
+                                    <a href="{{ route('vendor.services.edit', $service) }}">
+                                        <x-button variant="outline" size="sm">
+                                            Edit
+                                        </x-button>
+                                    </a>
                                     <form action="{{ route('vendor.services.destroy', $service) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure?');">
                                         @csrf
                                         @method('DELETE')
@@ -173,12 +175,14 @@
                             <h3 class="mt-2 text-sm font-medium text-gray-900">No services yet</h3>
                             <p class="mt-1 text-sm text-gray-500">Get started by creating your first service.</p>
                             <div class="mt-6">
-                                <x-button variant="primary" onclick="window.location='{{ route('vendor.services.create') }}'">
-                                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                    </svg>
-                                    Add Your First Service
-                                </x-button>
+                                <a href="{{ route('vendor.services.create') }}">
+                                    <x-button variant="primary">
+                                        <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                        </svg>
+                                        Add Your First Service
+                                    </x-button>
+                                </a>
                             </div>
                         </div>
                 @endif

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ sidebarOpen: true }">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ sidebarOpen: true, mobileMenuOpen: false }">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,16 +24,19 @@
         <x-vendor-topbar />
         
         <div class="flex">
-            <!-- Sidebar -->
+            <!-- Sidebar (Desktop) -->
             <x-vendor-nav />
             
             <!-- Main Content -->
-            <main class="flex-1 overflow-x-hidden" :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'">
-                <div class="p-6">
+            <main class="flex-1 overflow-x-hidden w-full pb-20 lg:pb-6" :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'">
+                <div class="p-3 sm:p-4 md:p-6 max-w-7xl mx-auto">
                     {{ $slot }}
                 </div>
             </main>
         </div>
+
+        <!-- Mobile Bottom Navigation -->
+        <x-vendor-mobile-nav />
     </div>
     
     @stack('scripts')

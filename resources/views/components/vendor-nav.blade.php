@@ -3,7 +3,7 @@
 @endphp
 
 <!-- Sidebar Navigation -->
-<aside class="fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 transition-all duration-300 z-20"
+<aside class="hidden lg:fixed lg:block top-16 left-0 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 transition-all duration-300 z-20"
        :class="sidebarOpen ? 'w-64' : 'w-20'">
     <div class="h-full flex flex-col">
         <!-- Navigation Links -->
@@ -83,10 +83,10 @@
 
         <!-- Verification Status Card (collapsed sidebar shows icon only) -->
         <div class="border-t border-gray-200 p-4">
-            <div x-show="sidebarOpen" class="bg-gradient-to-r from-purple-50 to-yellow-50 rounded-lg p-3 border border-purple-200">
+            <div x-show="sidebarOpen" class="bg-purple-50 rounded-lg p-3 border border-purple-100">
                 @if($vendor->is_verified)
                     <div class="flex items-center">
-                        <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
                         <div class="ml-3">
                             <p class="text-sm font-semibold text-gray-900">Verified</p>
                             <p class="text-xs text-gray-600">Your account is verified</p>
@@ -94,7 +94,7 @@
                     </div>
                 @else
                     <div class="text-center">
-                        <i class="fas fa-star text-yellow-500 text-2xl mb-2"></i>
+                        <i class="fas fa-star text-amber-500 text-2xl mb-2"></i>
                         <p class="text-xs font-semibold text-gray-900 mb-1">Get Verified!</p>
                         <a href="{{ route('vendor.verification') }}" 
                            class="text-xs text-purple-600 hover:text-purple-700 font-medium">
@@ -107,9 +107,9 @@
             <!-- Collapsed view - just icon -->
             <div x-show="!sidebarOpen" class="flex justify-center">
                 @if($vendor->is_verified)
-                    <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                    <i class="fas fa-check-circle text-green-600 text-2xl"></i>
                 @else
-                    <i class="fas fa-star text-yellow-500 text-2xl"></i>
+                    <i class="fas fa-star text-amber-500 text-2xl"></i>
                 @endif
             </div>
         </div>

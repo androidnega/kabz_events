@@ -135,9 +135,11 @@
 
                         <!-- Form Actions -->
                         <div class="flex items-center justify-between gap-4 pt-4 border-t border-gray-200">
-                            <x-button variant="ghost" onclick="window.location='{{ route('vendor.services.index') }}'">
-                                Cancel
-                            </x-button>
+                            <a href="{{ route('vendor.services.index') }}">
+                                <x-button variant="ghost" type="button">
+                                    Cancel
+                                </x-button>
+                            </a>
                             <x-button type="submit" variant="primary">
                                 <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>

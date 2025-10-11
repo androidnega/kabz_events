@@ -36,8 +36,8 @@
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" 
                             class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-yellow-500 flex items-center justify-center">
-                            <span class="text-white font-semibold text-sm">
+                        <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center border border-purple-200">
+                            <span class="text-purple-700 font-semibold text-sm">
                                 {{ strtoupper(substr($vendor->business_name, 0, 1)) }}
                             </span>
                         </div>
