@@ -97,13 +97,13 @@
             </div>
             
             <!-- Loading indicator -->
-            <div id="loading-indicator" class="text-center py-8 hidden">
-                <div class="inline-flex items-center px-4 py-2 text-sm text-gray-600">
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <div id="loading-indicator" class="text-center py-8" style="display: none;">
+                <div class="inline-flex items-center justify-center px-4 py-3 text-sm text-gray-600 bg-gray-50 rounded-lg">
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Loading more vendors...
+                    <span>Loading more vendors...</span>
                 </div>
             </div>
             @else
@@ -119,28 +119,11 @@
         </div>
     </div>
 
-    <!-- Call to Action -->
-    <div class="bg-primary py-16">
-        <div class="container mx-auto text-center">
-            <h2 class="text-3xl font-bold text-white mb-4">
-                Ready to Grow Your Business?
-            </h2>
-            <p class="text-xl text-purple-100 mb-8">
-                Join hundreds of vendors reaching thousands of clients
-            </p>
-            <a href="{{ route('vendor.public.register') }}">
-                <x-button variant="accent" size="xl">
-                    Register as Vendor Now
-                </x-button>
-            </a>
-        </div>
-    </div>
-
 </x-layouts.base>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    let currentPage = 2; // Start from page 2 since page 1 is already loaded
+    let currentPage = 2;
     let isLoading = false;
     let hasMore = true;
     
@@ -154,56 +137,75 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isLoading || !hasMore) return;
         
         isLoading = true;
-        loadingIndicator.classList.remove('hidden');
+        loadingIndicator.style.display = 'block';
         
         try {
             const response = await fetch(`/api/load-more-vendors?page=${currentPage}`);
+            
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
             const data = await response.json();
             
-            if (data.html) {
+            if (data.html && data.html.trim() !== '') {
                 vendorsContainer.insertAdjacentHTML('beforeend', data.html);
                 currentPage = data.page;
                 hasMore = data.hasMore;
             }
             
             if (!data.hasMore) {
-                // No more vendors to load
-                loadingIndicator.classList.add('hidden');
+                loadingIndicator.style.display = 'none';
+                return;
             }
+            
         } catch (error) {
             console.error('Error loading more vendors:', error);
-            loadingIndicator.classList.add('hidden');
+            loadingIndicator.style.display = 'none';
+            hasMore = false;
         } finally {
             isLoading = false;
         }
     }
     
-    // Intersection Observer for infinite scroll
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && hasMore && !isLoading) {
+    // Standard infinite scroll implementation
+    let scrollTimeout;
+    
+    function handleScroll() {
+        if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
+        }
+        
+        scrollTimeout = setTimeout(() => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            
+            // Load more when user is 300px from bottom
+            if (scrollTop + windowHeight >= documentHeight - 300) {
                 loadMoreVendors();
             }
+        }, 100);
+    }
+    
+    // Use standard scroll event for better compatibility
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Also use Intersection Observer as backup
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && hasMore && !isLoading) {
+                    loadMoreVendors();
+                }
+            });
+        }, {
+            rootMargin: '50px',
+            threshold: 0.1
         });
-    }, {
-        rootMargin: '100px' // Start loading when 100px away from the loading indicator
-    });
-    
-    observer.observe(loadingIndicator);
-    
-    // Fallback: Load more on scroll near bottom
-    window.addEventListener('scroll', () => {
-        if (isLoading || !hasMore) return;
         
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.offsetHeight;
-        
-        // Load more when user is 200px from bottom
-        if (scrollTop + windowHeight >= documentHeight - 200) {
-            loadMoreVendors();
-        }
-    });
+        observer.observe(loadingIndicator);
+    }
 });
 </script>
 

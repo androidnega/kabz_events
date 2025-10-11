@@ -1,95 +1,6 @@
 @props(['vendor', 'averageRating' => 0, 'totalReviews' => 0, 'averageResponseTime' => null])
 
-<div class="space-y-3" x-data="{ 
-  showLoginModal: false,
-  chatOpen: false, 
-  reportOpen: false,
-  chatMessage: '',
-  chatSent: false,
-  chatSending: false,
-  reportCategory: '',
-  reportMessage: '',
-  reportSubmitted: false,
-  reportSubmitting: false,
-  async sendMessage() {
-    if (!this.chatMessage.trim()) {
-      alert('Please enter a message.');
-      return;
-    }
-    this.chatSending = true;
-    const token = document.querySelector('meta[name=\"csrf-token\"]').getAttribute('content');
-    try {
-      const res = await fetch('{{ route('messages.store') }}', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-CSRF-TOKEN': token
-        },
-        body: JSON.stringify({
-          vendor_id: {{ $vendor->id }},
-          message: this.chatMessage
-        })
-      });
-      const json = await res.json();
-      if (json.ok) {
-        this.chatSent = true;
-        this.chatMessage = '';
-        setTimeout(() => {
-          this.chatSent = false;
-          this.chatOpen = false;
-        }, 3000);
-      } else {
-        alert(json.error || 'Could not send message.');
-      }
-    } catch (e) {
-      console.error(e);
-      alert('Could not send message. Try again later.');
-    } finally {
-      this.chatSending = false;
-    }
-  },
-  async submitReport() {
-    if (!this.reportCategory || !this.reportMessage.trim()) {
-      alert('Please select a category and provide details.');
-      return;
-    }
-    this.reportSubmitting = true;
-    const token = document.querySelector('meta[name=\"csrf-token\"]').getAttribute('content');
-    try {
-      const res = await fetch('{{ route('reports.store') }}', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-CSRF-TOKEN': token
-        },
-        body: JSON.stringify({
-          vendor_id: {{ $vendor->id }},
-          category: this.reportCategory,
-          message: this.reportMessage
-        })
-      });
-      const json = await res.json();
-      if (json.ok) {
-        this.reportSubmitted = true;
-        this.reportCategory = '';
-        this.reportMessage = '';
-        setTimeout(() => {
-          this.reportSubmitted = false;
-          this.reportOpen = false;
-        }, 3000);
-      } else {
-        alert(json.message || 'Could not submit report.');
-      }
-    } catch (e) {
-      console.error(e);
-      alert('Could not submit report. Try again later.');
-    } finally {
-      this.reportSubmitting = false;
-    }
-  }
-}">
+<div class="space-y-3" x-data="vendorSidebar({{ $vendor->id }}, '{{ route('messages.store') }}', '{{ route('reports.store') }}')">
   {{-- Vendor Profile Card with Business Details --}}
   <div class="bg-white p-3 rounded-2xl shadow">
     <div class="flex items-center gap-3 mb-3">
@@ -369,3 +280,105 @@
   </div>
 </div>
 
+@push('scripts')
+<script>
+document.addEventListener('alpine:init', () => {
+  Alpine.data('vendorSidebar', (vendorId, messagesRoute, reportsRoute) => ({
+    showLoginModal: false,
+    chatOpen: false,
+    reportOpen: false,
+    chatMessage: '',
+    chatSent: false,
+    chatSending: false,
+    reportCategory: '',
+    reportMessage: '',
+    reportSubmitted: false,
+    reportSubmitting: false,
+    
+    async sendMessage() {
+      if (!this.chatMessage.trim()) {
+        alert('Please enter a message.');
+        return;
+      }
+      this.chatSending = true;
+      const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      
+      try {
+        const res = await fetch(messagesRoute, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': token
+          },
+          body: JSON.stringify({
+            vendor_id: vendorId,
+            message: this.chatMessage
+          })
+        });
+        
+        const json = await res.json();
+        if (json.ok) {
+          this.chatSent = true;
+          this.chatMessage = '';
+          setTimeout(() => {
+            this.chatSent = false;
+            this.chatOpen = false;
+          }, 3000);
+        } else {
+          alert(json.error || 'Could not send message.');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Could not send message. Try again later.');
+      } finally {
+        this.chatSending = false;
+      }
+    },
+    
+    async submitReport() {
+      if (!this.reportCategory || !this.reportMessage.trim()) {
+        alert('Please select a category and provide details.');
+        return;
+      }
+      this.reportSubmitting = true;
+      const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      
+      try {
+        const res = await fetch(reportsRoute, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': token
+          },
+          body: JSON.stringify({
+            vendor_id: vendorId,
+            category: this.reportCategory,
+            message: this.reportMessage
+          })
+        });
+        
+        const json = await res.json();
+        if (json.ok) {
+          this.reportSubmitted = true;
+          this.reportCategory = '';
+          this.reportMessage = '';
+          setTimeout(() => {
+            this.reportSubmitted = false;
+            this.reportOpen = false;
+          }, 3000);
+        } else {
+          alert(json.message || 'Could not submit report.');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Could not submit report. Try again later.');
+      } finally {
+        this.reportSubmitting = false;
+      }
+    }
+  }));
+});
+</script>
+@endpush
