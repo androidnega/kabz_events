@@ -4,27 +4,27 @@
 @endphp
 
 <nav class="bg-white border-b border-gray-200 fixed w-full z-30 top-0">
-    <div class="px-4 py-3">
+    <div class="px-3 sm:px-4 py-3">
         <div class="flex items-center justify-between">
             <!-- Left: Logo & Toggle -->
-            <div class="flex items-center space-x-4">
-                <!-- Sidebar Toggle -->
-                <button @click="sidebarOpen = !sidebarOpen" class="text-gray-600 hover:text-gray-900 focus:outline-none">
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <!-- Sidebar Toggle (Desktop only) -->
+                <button @click="sidebarOpen = !sidebarOpen" class="hidden lg:block text-gray-600 hover:text-gray-900 focus:outline-none">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
                 
                 <!-- Logo -->
                 <a href="{{ route('dashboard') }}" class="flex items-center">
-                    <x-application-logo class="h-8 w-auto" />
-                    <span class="ml-2 text-xl font-bold text-purple-600">KABZS</span>
+                    <x-application-logo class="h-6 sm:h-8 w-auto" />
+                    <span class="ml-2 text-lg sm:text-xl font-bold text-purple-600">KABZS</span>
                 </a>
             </div>
 
             <!-- Right: Quick Actions, Notifications, Profile -->
-            <div class="flex items-center space-x-3">
-                <!-- Quick Action: Add Service -->
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Quick Action: Add Service (Desktop only) -->
                 <a href="{{ route('vendor.services.create') }}" 
-                   class="hidden md:flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                   class="hidden lg:flex items-center px-3 sm:px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition text-sm">
                     <i class="fas fa-plus mr-2"></i>
                     <span class="font-medium">Add Service</span>
                 </a>
@@ -32,8 +32,8 @@
                 <!-- Notifications Bell -->
                 <x-notification-bell />
 
-                <!-- Profile Dropdown -->
-                <div x-data="{ open: false }" class="relative">
+                <!-- Profile Dropdown (Desktop only) -->
+                <div x-data="{ open: false }" class="relative hidden lg:block">
                     <button @click="open = !open" 
                             class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
                         <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center border border-purple-200">
