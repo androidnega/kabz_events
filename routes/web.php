@@ -259,6 +259,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/reports', [App\Http\Controllers\Admin\ReportController::class, 'store'])->name('reports.store');
     Route::post('/reports/vendor', [App\Http\Controllers\Admin\ReportController::class, 'store'])->name('reports.vendor.store');
     
+    // Generic message store route (for vendor-sidebar and similar components)
+    Route::post('/messages', [MessageController::class, 'sendMessage'])->name('messages.store');
+    
     // Review Submission (authenticated users only)
     Route::post('/vendors/{vendor}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     

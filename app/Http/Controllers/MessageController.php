@@ -66,10 +66,20 @@ class MessageController extends Controller
     }
 
     /**
-     * Send a message to vendor.
+     * Send a message to vendor (supports both route parameter and request body).
      */
-    public function sendMessage(Request $request, $vendorId)
+    public function sendMessage(Request $request, $vendorId = null)
     {
+        // Support vendorId from route parameter or request body
+        $vendorId = $vendorId ?? $request->input('vendor_id');
+        
+        if (!$vendorId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vendor ID is required',
+            ], 400);
+        }
+
         $request->validate([
             'message' => 'nullable|string|required_without_all:image,audio',
             'image' => 'nullable|image|max:5120', // 5MB max
