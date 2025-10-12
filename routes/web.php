@@ -233,10 +233,6 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::post('/messages/typing/{vendorId}', [\App\Http\Controllers\Client\MessageController::class, 'typing'])->name('messages.typing');
         Route::post('/messages/stop-typing/{vendorId}', [\App\Http\Controllers\Client\MessageController::class, 'stopTyping'])->name('messages.stop-typing');
 
-        // Payments & Invoices
-        Route::get('/payments', [\App\Http\Controllers\Client\PaymentController::class, 'index'])->name('payments.index');
-        Route::get('/payments/{id}', [\App\Http\Controllers\Client\PaymentController::class, 'show'])->name('payments.show');
-
         // Support
         Route::get('/support', [\App\Http\Controllers\Client\SupportController::class, 'index'])->name('support.index');
         Route::post('/support', [\App\Http\Controllers\Client\SupportController::class, 'store'])->name('support.store');

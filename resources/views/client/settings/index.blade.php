@@ -1,12 +1,10 @@
 <x-client-layout>
     <x-slot name="header">
-        <h2 class="text-2xl font-bold text-gray-800">
-            Account Settings
-        </h2>
+        <h2 class="text-2xl font-bold text-gray-800">Account Settings</h2>
         <p class="text-sm text-gray-600 mt-1">Manage your account preferences and settings</p>
     </x-slot>
 
-    <div class="space-y-6">
+    <div class="space-y-4">
         {{-- Notification Settings --}}
         <div class="bg-white rounded-lg shadow-md p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">

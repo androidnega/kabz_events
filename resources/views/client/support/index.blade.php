@@ -1,12 +1,10 @@
 <x-client-layout>
     <x-slot name="header">
-        <h2 class="text-2xl font-bold text-gray-800">
-            Help & Support
-        </h2>
+        <h2 class="text-2xl font-bold text-gray-800">Help & Support</h2>
         <p class="text-sm text-gray-600 mt-1">Get help or submit a support request</p>
     </x-slot>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {{-- Support Form --}}
         <div class="lg:col-span-2">
             <div class="bg-white rounded-lg shadow-md p-6">
