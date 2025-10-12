@@ -100,9 +100,10 @@
           </a>
         @endif
 
-        {{-- Send Message Button --}}
-        <button @click="chatOpen = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-2 py-2 rounded-lg text-[13px] font-medium transition flex items-center justify-center">
-          <i class="fas fa-comment-dots mr-1 text-xs"></i> Message
+        {{-- Start Chat Button --}}
+        <button @click="toggleChat" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-2 py-2 rounded-lg text-[13px] font-medium transition flex items-center justify-center">
+          <i class="fas fa-comment-dots mr-1 text-xs"></i> 
+          <span x-text="chatOpen ? 'Close Chat' : 'Start Chat'"></span>
         </button>
 
         {{-- Report Button --}}
@@ -124,7 +125,7 @@
         @endif
 
         <button @click="showLoginModal = true" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-2 py-2 rounded-lg text-[13px] font-medium transition flex items-center justify-center">
-          <i class="fas fa-comment-dots mr-1 text-xs"></i> Message
+          <i class="fas fa-comment-dots mr-1 text-xs"></i> Start Chat
         </button>
 
         <button @click="showLoginModal = true" class="w-full bg-red-600 hover:bg-red-700 text-white px-2 py-2 rounded-lg text-[13px] font-medium transition flex items-center justify-center">
@@ -188,65 +189,55 @@
     </div>
   </div>
 
-  {{-- Chat Sidebar (for authenticated users) --}}
+  {{-- Inline Chat Form (for authenticated users) --}}
   @auth
-    <div x-show="chatOpen" x-cloak class="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-white shadow-2xl transform transition-transform duration-300" style="display: none;">
+    <div x-show="chatOpen" x-cloak class="mt-3 bg-white p-3 rounded-2xl shadow" style="display: none;">
       <!-- Chat Header -->
-      <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="font-bold text-lg">Chat with Vendor</h3>
-          <button @click="chatOpen = false" class="text-white hover:text-gray-200">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-purple-600 font-bold">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-6 h-6 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
             {{ strtoupper(substr($vendor->business_name, 0, 2)) }}
           </div>
-          <div class="flex-1">
-            <p class="font-semibold">{{ $vendor->business_name }}</p>
-            <div class="flex items-center text-sm">
-              <div x-show="vendorStatus.is_online" class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-              <div x-show="!vendorStatus.is_online" class="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
-              <span x-text="vendorStatus.last_seen" class="text-purple-100"></span>
+          <div>
+            <p class="text-sm font-semibold text-gray-900">{{ $vendor->business_name }}</p>
+            <div class="flex items-center text-xs">
+              <div x-show="vendorStatus.is_online" class="w-1.5 h-1.5 bg-green-400 rounded-full mr-1"></div>
+              <div x-show="!vendorStatus.is_online" class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1"></div>
+              <span x-text="vendorStatus.last_seen" class="text-gray-500"></span>
             </div>
           </div>
         </div>
         @if($averageResponseTime)
-        <div class="mt-2 text-xs bg-white bg-opacity-20 px-3 py-1 rounded-full inline-block">
+        <div class="text-xs text-gray-500">
           <i class="fas fa-clock mr-1"></i> {{ $averageResponseTime }}
         </div>
         @endif
       </div>
 
       <!-- Messages Area -->
-      <div class="h-[calc(100vh-280px)] overflow-y-auto p-4 bg-gray-50" x-ref="messagesContainer">
+      <div class="h-48 overflow-y-auto p-2 bg-gray-50 rounded-lg mb-3" x-ref="messagesContainer">
         <template x-if="messages.length === 0 && !loadingMessages">
-          <div class="text-center text-gray-500 py-12">
-            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-            <p class="mt-2">No messages yet</p>
-            <p class="text-sm">Start the conversation!</p>
+          <div class="text-center text-gray-500 py-6">
+            <i class="fas fa-comments text-gray-400 text-2xl mb-2"></i>
+            <p class="text-sm">No messages yet</p>
+            <p class="text-xs">Start the conversation!</p>
           </div>
         </template>
 
-        <div class="space-y-3">
+        <div class="space-y-2">
           <template x-for="message in messages" :key="message.id">
             <div :class="message.sender_id === {{ auth()->id() }} ? 'flex justify-end' : 'flex justify-start'">
-              <div :class="message.sender_id === {{ auth()->id() }} ? 'bg-purple-600 text-white' : 'bg-white text-gray-900'" class="max-w-[75%] rounded-lg px-4 py-2 shadow">
+              <div :class="message.sender_id === {{ auth()->id() }} ? 'bg-purple-600 text-white' : 'bg-white text-gray-900 border'" class="max-w-[80%] rounded-lg px-3 py-2 text-sm">
                 <template x-if="message.media_type === 'image'">
-                  <img :src="message.media_url" class="max-w-full rounded-lg mb-2" alt="Image">
+                  <img :src="message.media_url" class="max-w-full rounded mb-1" alt="Image">
                 </template>
                 <template x-if="message.media_type === 'audio'">
-                  <audio controls class="max-w-full mb-2">
+                  <audio controls class="max-w-full mb-1">
                     <source :src="message.media_url">
                   </audio>
                 </template>
                 <template x-if="message.message">
-                  <p class="text-sm" x-text="message.message"></p>
+                  <p x-text="message.message"></p>
                 </template>
                 <p :class="message.sender_id === {{ auth()->id() }} ? 'text-purple-100' : 'text-gray-500'" class="text-xs mt-1" x-text="message.time_ago || 'Just now'"></p>
               </div>
@@ -255,46 +246,38 @@
         </div>
 
         <template x-if="loadingMessages">
-          <div class="text-center py-4">
+          <div class="text-center py-2">
             <i class="fas fa-spinner fa-spin text-purple-600"></i>
           </div>
         </template>
       </div>
 
       <!-- Message Input -->
-      <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
-        <div x-show="attachmentPreview" x-cloak class="mb-2 p-2 bg-gray-100 rounded-lg text-sm" x-html="attachmentPreview"></div>
+      <div x-show="attachmentPreview" x-cloak class="mb-2 p-2 bg-gray-100 rounded text-xs" x-html="attachmentPreview"></div>
+      
+      <div class="flex items-end space-x-1">
+        <input type="file" x-ref="imageInput" @change="handleImageSelect" accept="image/*" class="hidden">
+        <input type="file" x-ref="audioInput" @change="handleAudioSelect" accept="audio/*" class="hidden">
         
-        <div class="flex items-end space-x-2">
-          <input type="file" x-ref="imageInput" @change="handleImageSelect" accept="image/*" class="hidden">
-          <input type="file" x-ref="audioInput" @change="handleAudioSelect" accept="audio/*" class="hidden">
-          
-          <button @click="$refs.imageInput.click()" type="button" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </button>
-          
-          <button @click="$refs.audioInput.click()" type="button" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-            </svg>
-          </button>
-          
-          <textarea 
-            x-model="chatMessage" 
-            @keydown.enter.prevent="sendMessage"
-            rows="1" 
-            placeholder="Type a message..."
-            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-          ></textarea>
-          
-          <button @click="sendMessage" :disabled="chatSending || (!chatMessage.trim() && !selectedFile)" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-400 transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
-          </button>
-        </div>
+        <button @click="$refs.imageInput.click()" type="button" class="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded">
+          <i class="fas fa-image text-sm"></i>
+        </button>
+        
+        <button @click="$refs.audioInput.click()" type="button" class="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded">
+          <i class="fas fa-microphone text-sm"></i>
+        </button>
+        
+        <textarea 
+          x-model="chatMessage" 
+          @keydown.enter.prevent="sendMessage"
+          rows="2" 
+          placeholder="Type a message..."
+          class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent resize-none text-sm"
+        ></textarea>
+        
+        <button @click="sendMessage" :disabled="chatSending || (!chatMessage.trim() && !selectedFile)" class="p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-400 transition">
+          <i class="fas fa-paper-plane text-sm"></i>
+        </button>
       </div>
     </div>
 
@@ -388,9 +371,6 @@ document.addEventListener('alpine:init', () => {
     },
     
     init() {
-      // Update online status
-      this.updateOnlineStatus(true);
-      
       // Watch for chat open
       this.$watch('chatOpen', (value) => {
         if (value) {
@@ -400,28 +380,12 @@ document.addEventListener('alpine:init', () => {
           this.stopMessagesRefresh();
         }
       });
-      
-      // Update status to offline when leaving
-      window.addEventListener('beforeunload', () => {
-        this.updateOnlineStatus(false);
-      });
     },
     
-    async updateOnlineStatus(isOnline) {
-      try {
-        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        await fetch('/dashboard/status/online', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': token
-          },
-          body: JSON.stringify({ is_online: isOnline })
-        });
-      } catch (e) {
-        console.error('Failed to update online status', e);
-      }
+    toggleChat() {
+      this.chatOpen = !this.chatOpen;
     },
+    
     
     async loadMessages() {
       this.loadingMessages = true;
