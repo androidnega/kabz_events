@@ -1,7 +1,13 @@
-@extends('layouts.app')
-
-@section('content')
-<div class="min-h-screen bg-gray-50 py-8">
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Messages') }}
+        </h2>
+    </x-slot>
+<div class="min-h-screen bg-gray-50 py-8" 
+     data-has-conversations="{{ count($conversations) > 0 ? '1' : '0' }}"
+     data-user-id="{{ Auth::id() }}"
+     data-csrf-token="{{ csrf_token() }}">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="mb-8">
@@ -144,25 +150,16 @@
     </div>
 </div>
 
-@push('scripts')
+
 <script>
+    // Get data from HTML attributes
+    const pageContainer = document.querySelector('[data-has-conversations]');
+    const hasConversations = pageContainer.dataset.hasConversations === '1';
+    const currentUserId = parseInt(pageContainer.dataset.userId);
+    const csrfToken = pageContainer.dataset.csrfToken;
+    
     let currentClientId = null;
     let messagesRefreshInterval = null;
-    
-    // Update online status on page load
-    fetch('{{ route('vendor.status.update') }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ is_online: true })
-    });
-    
-    // Update status to offline when leaving page
-    window.addEventListener('beforeunload', function() {
-        navigator.sendBeacon('{{ route('vendor.status.update') }}', new Blob([JSON.stringify({ is_online: false })], { type: 'application/json' }));
-    });
     
     // Handle conversation selection
     document.querySelectorAll('.conversation-item').forEach(item => {
@@ -194,13 +191,17 @@
     });
     
     // Load first conversation if exists
-    @if(count($conversations) > 0)
-        document.querySelector('.conversation-item')?.click();
-    @endif
-    
+    document.addEventListener('DOMContentLoaded', function () {
+        if (hasConversations) {
+            let firstConversation = document.querySelector('.conversation-item');
+            if (firstConversation) {
+                firstConversation.click();
+            }
+        }
+    });
+
     function loadMessages() {
         if (!currentClientId) return;
-        
         fetch(`/dashboard/messages/client/${currentClientId}`)
             .then(response => response.json())
             .then(data => {
@@ -214,7 +215,7 @@
         const scrollAtBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
         
         container.innerHTML = messages.map(msg => {
-            const isVendor = msg.sender_id === {{ Auth::id() }};
+            const isVendor = msg.sender_id === currentUserId;
             const alignClass = isVendor ? 'justify-end' : 'justify-start';
             const bgClass = isVendor ? 'bg-blue-600 text-white' : 'bg-white text-gray-900';
             
@@ -254,7 +255,7 @@
         if (!message && !imageInput.files.length && !audioInput.files.length) return;
         
         const formData = new FormData();
-        formData.append('_token', '{{ csrf_token() }}');
+        formData.append('_token', csrfToken);
         
         if (message) formData.append('message', message);
         if (imageInput.files.length) formData.append('image', imageInput.files[0]);
@@ -301,5 +302,4 @@
         }
     });
 </script>
-@endpush
-@endsection
+</x-app-layout>

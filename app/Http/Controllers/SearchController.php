@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class SearchController extends Controller
 {
@@ -203,7 +204,7 @@ class SearchController extends Controller
                     'id' => $vendor->id,
                     'business_name' => $vendor->business_name,
                     'slug' => $vendor->slug,
-                    'description' => \Str::limit($vendor->description, 100),
+                    'description' => Str::limit($vendor->description, 100),
                     'address' => $vendor->address,
                     'rating' => number_format($vendor->rating_cached, 1),
                     'review_count' => $vendor->reviews->count(),

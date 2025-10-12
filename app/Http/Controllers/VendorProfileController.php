@@ -104,57 +104,6 @@ class VendorProfileController extends Controller
      */
     private function calculateAverageResponseTime(Vendor $vendor): ?string
     {
-        // Get vendor's user ID
-        $vendorUserId = $vendor->user_id;
-        
-        if (!$vendorUserId) {
-            return null;
-        }
-
-        // Get all messages for this vendor ordered by time
-        $messages = \App\Models\Message::where('vendor_id', $vendor->id)
-            ->orderBy('created_at')
-            ->get(['sender_id', 'created_at', 'from_vendor']);
-
-        if ($messages->count() < 2) {
-            return null; // Not enough data
-        }
-
-        $responseTimes = [];
-        
-        // Loop through messages to find vendor replies to client messages
-        for ($i = 0; $i < $messages->count() - 1; $i++) {
-            $currentMessage = $messages[$i];
-            $nextMessage = $messages[$i + 1];
-            
-            // If current message is from client and next is from vendor
-            if (!$currentMessage->from_vendor && $nextMessage->from_vendor) {
-                $timeDiff = $nextMessage->created_at->diffInMinutes($currentMessage->created_at);
-                if ($timeDiff > 0 && $timeDiff < 10080) { // Less than a week
-                    $responseTimes[] = $timeDiff;
-                }
-            }
-        }
-
-        if (empty($responseTimes)) {
-            return null;
-        }
-
-        $avgMinutes = array_sum($responseTimes) / count($responseTimes);
-
-        // Format the response time
-        if ($avgMinutes < 5) {
-            return 'a few minutes';
-        } elseif ($avgMinutes < 60) {
-            return round($avgMinutes) . ' minutes';
-        } elseif ($avgMinutes < 120) {
-            return 'an hour';
-        } elseif ($avgMinutes < 1440) {
-            $hours = round($avgMinutes / 60);
-            return $hours . ' hours';
-        } else {
-            $days = round($avgMinutes / 1440);
-            return $days . ' ' . ($days == 1 ? 'day' : 'days');
-        }
+        return \App\Models\VendorResponseTime::getAverageResponseTime($vendor->id);
     }
 }

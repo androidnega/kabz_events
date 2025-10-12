@@ -162,7 +162,8 @@
                                 <div class="flex gap-2">
                                     @if(!$isPreview)
                                         <button 
-                                            onclick="setPreview({{ $index }})"
+                                            data-action="setPreview"
+                                            data-image-index="{{ $index }}"
                                             class="px-2 sm:px-3 py-1.5 sm:py-2 bg-purple-600 text-white text-xs rounded-lg hover:bg-purple-700 transition"
                                             title="Set as preview"
                                         >
@@ -170,7 +171,8 @@
                                         </button>
                                     @endif
                                     <button 
-                                        onclick="deleteImage({{ $index }})"
+                                        data-action="deleteImage"
+                                        data-image-index="{{ $index }}"
                                         class="px-2 sm:px-3 py-1.5 sm:py-2 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition"
                                         title="Delete"
                                     >
@@ -214,7 +216,7 @@
                             @endif
                         </div>
                         <button 
-                            onclick="deleteVideo()"
+                            data-action="deleteVideo"
                             class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition"
                         >
                             <i class="fas fa-trash mr-2"></i> Delete Video
@@ -254,6 +256,26 @@
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
+        // Event delegation for image actions
+        document.getElementById('imageGallery')?.addEventListener('click', function(e) {
+            const button = e.target.closest('button[data-action]');
+            if (!button) return;
+
+            const action = button.dataset.action;
+            const imageIndex = parseInt(button.dataset.imageIndex);
+
+            if (action === 'deleteImage') {
+                deleteImage(imageIndex);
+            } else if (action === 'setPreview') {
+                setPreview(imageIndex);
+            }
+        });
+
+        // Event listener for video delete button
+        document.querySelector('button[data-action="deleteVideo"]')?.addEventListener('click', function() {
+            deleteVideo();
+        });
+
         // Image Upload
         document.getElementById('imageInput')?.addEventListener('change', async function(e) {
             const files = Array.from(e.target.files);
@@ -273,7 +295,7 @@
             document.getElementById('uploadProgress').classList.remove('hidden');
 
             try {
-                const response = await fetch('{{ route('vendor.sample-work.images.upload') }}', {
+                const response = await fetch(`{{ route('vendor.sample-work.images.upload') }}`, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken
@@ -303,7 +325,7 @@
             if (!confirm('Are you sure you want to delete this image?')) return;
 
             try {
-                const response = await fetch('{{ route('vendor.sample-work.images.delete') }}', {
+                const response = await fetch(`{{ route('vendor.sample-work.images.delete') }}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -329,7 +351,7 @@
         // Set Preview Image
         async function setPreview(imageIndex) {
             try {
-                const response = await fetch('{{ route('vendor.sample-work.preview') }}', {
+                const response = await fetch(`{{ route('vendor.sample-work.preview') }}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -370,7 +392,7 @@
             document.getElementById('videoUploadProgress').classList.remove('hidden');
 
             try {
-                const response = await fetch('{{ route('vendor.sample-work.video.upload') }}', {
+                const response = await fetch(`{{ route('vendor.sample-work.video.upload') }}`, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken
@@ -400,7 +422,7 @@
             if (!confirm('Are you sure you want to delete this video?')) return;
 
             try {
-                const response = await fetch('{{ route('vendor.sample-work.video.delete') }}', {
+                const response = await fetch(`{{ route('vendor.sample-work.video.delete') }}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken

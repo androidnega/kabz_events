@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Setting;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\UploadedFile;
@@ -16,11 +15,9 @@ class CloudinaryService
 
     public function __construct()
     {
-        $settings = Setting::first();
-        
-        $this->cloudName = $settings?->cloudinary_cloud_name;
-        $this->apiKey = $settings?->cloudinary_api_key;
-        $this->apiSecret = $settings?->cloudinary_api_secret;
+        $this->cloudName = SettingsService::get('cloudinary_cloud_name');
+        $this->apiKey = SettingsService::get('cloudinary_api_key');
+        $this->apiSecret = SettingsService::get('cloudinary_api_secret');
         
         if ($this->cloudName) {
             $this->uploadUrl = "https://api.cloudinary.com/v1_1/{$this->cloudName}/upload";

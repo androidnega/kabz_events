@@ -240,13 +240,6 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::get('/vendor-register', [VendorRegistrationController::class, 'create'])->name('vendor.register');
     Route::post('/vendor-register', [VendorRegistrationController::class, 'store'])->name('vendor.store');
     
-    // Message System (Phase K: Chat with Rate Limiting)
-    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
-    Route::get('/messages/conversation', [MessageController::class, 'conversation'])->name('messages.conversation');
-    Route::middleware('message.rate')->group(function () {
-        Route::post('/messages/send', [MessageController::class, 'store'])->name('messages.store');
-    });
-    
     // Notifications (Phase K2)
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
