@@ -93,9 +93,12 @@ class NotificationController extends Controller
         }
         $url = '#';
 
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         switch ($notification->type) {
             case 'message_received':
-                if (Auth::user()->hasRole('vendor')) {
+                if ($user && $user->hasRole('vendor')) {
                     $url = route('vendor.messages');
                 } else {
                     $url = route('client.conversations');
