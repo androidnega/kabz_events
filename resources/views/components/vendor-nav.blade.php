@@ -44,8 +44,8 @@
             </div>
 
             <!-- Messages -->
-            <a href="{{ route('messages.index') }}" 
-               class="flex items-center px-3 py-3 rounded-lg transition {{ request()->routeIs('messages.*') ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-50' }}">
+            <a href="{{ route('vendor.messages') }}" 
+               class="flex items-center px-3 py-3 rounded-lg transition {{ request()->routeIs('vendor.messages*') ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i class="fas fa-envelope text-lg w-6"></i>
                 <span x-show="sidebarOpen" class="ml-3 font-medium">Messages</span>
             </a>

@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
         title: 'Client Messages',
         text: 'Respond to client inquiries quickly here. Fast responses improve your reputation and increase bookings!',
         attachTo: {
-            element: 'a[href="{{ route("messages.index") }}"]',
+            element: 'a[href="{{ route("vendor.messages") }}"]',
             on: 'right'
         },
         buttons: [

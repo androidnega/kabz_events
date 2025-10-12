@@ -83,13 +83,11 @@
                 <span>Browse Services</span>
             </a>
 
-            <!-- Messages -->
-            <a href="{{ route('messages.index') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
-                      {{ request()->routeIs('messages.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+            <!-- Messages (Admin view - coming soon) -->
+            <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 cursor-not-allowed">
                 <i class="fas fa-envelope text-lg w-5"></i>
                 <span>Messages</span>
-            </a>
+            </div>
 
             <!-- Users -->
             <a href="{{ route('admin.users.index') }}" 

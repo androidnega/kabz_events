@@ -30,7 +30,7 @@ $notifications = auth()->user()->unreadNotifications()->take(5)->get();
     {{-- Notifications List --}}
     <div class="max-h-96 overflow-y-auto">
       @forelse($notifications as $notification)
-        <a href="{{ route('messages.index') }}" 
+        <a href="{{ auth()->user()->hasRole('vendor') ? route('vendor.messages') : '#' }}" 
            onclick="markAsRead('{{ $notification->id }}')"
            class="block px-4 py-3 hover:bg-gray-50 border-b border-gray-100 transition">
           <div class="flex items-start">
@@ -61,7 +61,7 @@ $notifications = auth()->user()->unreadNotifications()->take(5)->get();
     {{-- Footer --}}
     @if($notifications->count())
       <div class="bg-gray-50 px-4 py-3 border-t border-gray-200">
-        <a href="{{ route('messages.index') }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+        <a href="{{ auth()->user()->hasRole('vendor') ? route('vendor.messages') : '#' }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
           View all messages →
         </a>
       </div>

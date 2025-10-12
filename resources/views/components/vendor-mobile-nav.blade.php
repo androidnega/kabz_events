@@ -28,8 +28,8 @@
         </a>
 
         <!-- Messages -->
-        <a href="{{ route('messages.index') }}" 
-           class="flex flex-col items-center justify-center {{ request()->routeIs('messages.*') ? 'text-purple-600' : 'text-gray-600' }}">
+        <a href="{{ route('vendor.messages') }}" 
+           class="flex flex-col items-center justify-center {{ request()->routeIs('vendor.messages*') ? 'text-purple-600' : 'text-gray-600' }}">
             <i class="fas fa-envelope text-xl mb-1"></i>
             <span class="text-xs font-medium">Messages</span>
         </a>

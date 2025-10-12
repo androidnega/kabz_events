@@ -96,8 +96,8 @@
             <span>My Services</span>
         </a>
         
-        <a href="{{ route('messages.index') }}" 
-           class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition {{ request()->routeIs('messages.*') ? 'bg-primary bg-opacity-10 text-primary' : 'text-gray-700 hover:bg-gray-50' }}">
+        <a href="{{ route('vendor.messages') }}" 
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition {{ request()->routeIs('vendor.messages*') ? 'bg-primary bg-opacity-10 text-primary' : 'text-gray-700 hover:bg-gray-50' }}">
             <i class="fas fa-envelope text-lg w-5"></i>
             <span>Messages</span>
         </a>
@@ -125,8 +125,8 @@
             <span>Find Vendors</span>
         </a>
         
-        <a href="{{ route('messages.index') }}" 
-           class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition {{ request()->routeIs('messages.*') ? 'bg-primary bg-opacity-10 text-primary' : 'text-gray-700 hover:bg-gray-50' }}">
+        <a href="{{ route('client.conversations') }}" 
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition {{ request()->routeIs('client.messages*') || request()->routeIs('client.conversations') ? 'bg-primary bg-opacity-10 text-primary' : 'text-gray-700 hover:bg-gray-50' }}">
             <i class="fas fa-comments text-lg w-5"></i>
             <span>Messages</span>
         </a>
