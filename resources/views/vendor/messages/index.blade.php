@@ -16,7 +16,7 @@
             </div>
   </div>
 
-        <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden" style="height: calc(100vh - 200px); min-height: 500px;">
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden" style="height: calc(100vh - 200px); min-height: 500px; max-height: calc(100vh - 200px);">
             <div class="flex h-full flex-col md:flex-row">
                 <!-- Conversations List -->
                 <div class="w-full md:w-1/3 border-r border-gray-200 overflow-y-auto">
@@ -89,9 +89,9 @@
         </div>
 
                     <!-- Chat Container (hidden initially on mobile) -->
-                    <div id="chat-container" class="flex-1 flex-col hidden h-full" style="min-height: 0;">
-                        <!-- Chat Header -->
-                        <div class="p-4 border-b border-gray-200 bg-white flex-shrink-0">
+                    <div id="chat-container" class="flex flex-col hidden" style="height: 100%; width: 100%;">
+                        <!-- Chat Header (Fixed) -->
+                        <div class="p-3 md:p-4 border-b border-gray-200 bg-white flex-shrink-0">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <!-- Back button (mobile only) -->
@@ -111,13 +111,15 @@
                 </div>
               </div>
 
-                        <!-- Messages Area -->
-                        <div id="messages-area" class="flex-1 overflow-y-auto p-4 bg-gray-50">
-                            <!-- Messages will be loaded here -->
+                        <!-- Messages Area (Scrollable Only) -->
+                        <div class="flex-1 overflow-hidden bg-gray-50" style="min-height: 0;">
+                            <div id="messages-area" class="h-full overflow-y-auto p-3 md:p-4">
+                                <!-- Messages will be loaded here -->
+                            </div>
                         </div>
 
-                        <!-- Typing Indicator -->
-                        <div id="typing-indicator" class="hidden px-4 py-2 bg-gray-50 border-t border-gray-200 flex-shrink-0">
+                        <!-- Typing Indicator (Fixed) -->
+                        <div id="typing-indicator" class="hidden px-3 md:px-4 py-2 bg-gray-50 border-t border-gray-200 flex-shrink-0">
                             <div class="flex items-center space-x-2">
                                 <div class="flex space-x-1">
                                     <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
@@ -128,8 +130,8 @@
                             </div>
           </div>
 
-                        <!-- Message Input -->
-                        <div class="p-4 border-t border-gray-200 bg-white flex-shrink-0">
+                        <!-- Message Input (Fixed at Bottom) -->
+                        <div class="p-3 md:p-4 border-t border-gray-200 bg-white flex-shrink-0">
                             <form id="message-form" enctype="multipart/form-data">
                                 @csrf
                                 <div class="flex items-end space-x-1 md:space-x-2">
@@ -294,7 +296,7 @@
     
     function displayMessages(messages) {
         const container = document.getElementById('messages-area');
-        const scrollAtBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
+        const scrollAtBottom = (container.scrollHeight - container.scrollTop - container.clientHeight) < 50;
         
         container.innerHTML = messages.map(msg => {
             const isVendor = msg.sender_id === currentUserId;
