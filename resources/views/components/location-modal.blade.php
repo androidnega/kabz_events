@@ -1,5 +1,27 @@
 {{-- Location Selection Modal --}}
-<div id="locationModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto h-full w-full z-50">
+@php
+    $locationsData = [
+        'Greater Accra' => ['Accra Metropolitan', 'Tema Metropolitan', 'Ga East', 'Ga West', 'Ga South', 'Adenta', 'Ashiaman', 'Dome', 'Madina', 'Kasoa'],
+        'Ashanti' => ['Kumasi Metropolitan', 'Obuasi Municipal', 'Ejisu', 'Mampong Municipal', 'Asokore Mampong', 'Bantama', 'Suame', 'Adum'],
+        'Western' => ['Sekondi-Takoradi', 'Tarkwa', 'Prestea', 'Axim', 'Effiakuma', 'Takoradi Market Circle'],
+        'Central' => ['Cape Coast Metropolitan', 'Kasoa', 'Winneba', 'Agona Swedru', 'University of Cape Coast', 'Elmina'],
+        'Northern' => ['Tamale Metropolitan', 'Yendi', 'Savelugu', 'Gumani', 'Tolon', 'Kpandai'],
+        'Eastern' => ['Koforidua', 'New Juaben', 'Akropong', 'Nsawam', 'Suhum', 'Akim Oda'],
+        'Volta' => ['Ho Municipal', 'Hohoe', 'Keta', 'Aflao', 'Sogakope', 'Denu'],
+        'Upper East' => ['Bolgatanga Municipal', 'Bongo', 'Navrongo', 'Bawku', 'Paga'],
+        'Upper West' => ['Wa Municipal', 'Wechiau', 'Lawra', 'Jirapa', 'Tumu'],
+        'Bono' => ['Sunyani Municipal', 'Berekum', 'Techiman', 'Wenchi', 'Dormaa Ahenkro'],
+    ];
+    
+    $modalConfig = [
+        'isAuthenticated' => auth()->check(),
+        'apiRoute' => route('api.location.update'),
+        'csrfToken' => csrf_token()
+    ];
+@endphp
+<div id="locationModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto h-full w-full z-50" 
+     data-locations="{{ json_encode($locationsData) }}"
+     data-config="{{ json_encode($modalConfig) }}">
     <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-lg bg-white">
         {{-- Modal Header --}}
         <div class="flex items-center justify-between pb-4 border-b border-gray-200">
@@ -43,24 +65,11 @@
 
             {{-- Regions List --}}
             <div id="regionsList" class="space-y-2 max-h-96 overflow-y-auto">
-                @php
-                    $locations = [
-                        'Greater Accra' => ['Accra Metropolitan', 'Tema Metropolitan', 'Ga East', 'Ga West', 'Ga South', 'Adenta', 'Ashiaman', 'Dome', 'Madina', 'Kasoa'],
-                        'Ashanti' => ['Kumasi Metropolitan', 'Obuasi Municipal', 'Ejisu', 'Mampong Municipal', 'Asokore Mampong', 'Bantama', 'Suame', 'Adum'],
-                        'Western' => ['Sekondi-Takoradi', 'Tarkwa', 'Prestea', 'Axim', 'Effiakuma', 'Takoradi Market Circle'],
-                        'Central' => ['Cape Coast Metropolitan', 'Kasoa', 'Winneba', 'Agona Swedru', 'University of Cape Coast', 'Elmina'],
-                        'Northern' => ['Tamale Metropolitan', 'Yendi', 'Savelugu', 'Gumani', 'Tolon', 'Kpandai'],
-                        'Eastern' => ['Koforidua', 'New Juaben', 'Akropong', 'Nsawam', 'Suhum', 'Akim Oda'],
-                        'Volta' => ['Ho Municipal', 'Hohoe', 'Keta', 'Aflao', 'Sogakope', 'Denu'],
-                        'Upper East' => ['Bolgatanga Municipal', 'Bongo', 'Navrongo', 'Bawku', 'Paga'],
-                        'Upper West' => ['Wa Municipal', 'Wechiau', 'Lawra', 'Jirapa', 'Tumu'],
-                        'Bono' => ['Sunyani Municipal', 'Berekum', 'Techiman', 'Wenchi', 'Dormaa Ahenkro'],
-                    ];
-                @endphp
-
-                @foreach($locations as $region => $towns)
+                @foreach($locationsData as $region => $towns)
                     <div class="region-item border-2 border-gray-200 hover:border-purple-500 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:shadow-md" 
-                         onclick="showTowns('{{ $region }}', {{ json_encode($towns) }})">
+                         data-region="{{ $region }}"
+                         data-towns="{{ json_encode($towns) }}"
+                         onclick="showTownsFromData(this)">
                         <div class="flex items-center justify-between">
                             <div>
                                 <h4 class="font-semibold text-gray-900 text-lg">{{ $region }}</h4>
@@ -113,9 +122,25 @@
 
 {{-- JavaScript for Location Modal --}}
 <script>
+    let CONFIG = {};
     let currentRegion = null;
     let currentTown = null;
-    let allLocations = @json($locations ?? []);
+    let allLocations = {};
+    
+    // Load configuration and locations from data attributes
+    try {
+        const modalElement = document.getElementById('locationModal');
+        if (modalElement) {
+            if (modalElement.dataset.config) {
+                CONFIG = JSON.parse(modalElement.dataset.config);
+            }
+            if (modalElement.dataset.locations) {
+                allLocations = JSON.parse(modalElement.dataset.locations);
+            }
+        }
+    } catch (e) {
+        console.error('Error loading modal data:', e);
+    }
 
     function openLocationModal() {
         document.getElementById('locationModal').classList.remove('hidden');
@@ -125,6 +150,12 @@
     function closeLocationModal() {
         document.getElementById('locationModal').classList.add('hidden');
         document.body.style.overflow = 'auto';
+    }
+
+    function showTownsFromData(element) {
+        const region = element.getAttribute('data-region');
+        const towns = JSON.parse(element.getAttribute('data-towns'));
+        showTowns(region, towns);
     }
 
     function showTowns(region, towns) {
@@ -239,19 +270,19 @@
                     document.getElementById('locationDisplay').classList.add('text-gray-900', 'font-medium');
                     
                     // Save to server if logged in
-                    @auth
-                    fetch('{{ route("api.location.update") }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({
-                            latitude: lat,
-                            longitude: lng
-                        })
-                    });
-                    @endauth
+                    if (CONFIG.isAuthenticated) {
+                        fetch(CONFIG.apiRoute, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': CONFIG.csrfToken
+                            },
+                            body: JSON.stringify({
+                                latitude: lat,
+                                longitude: lng
+                            })
+                        });
+                    }
                     
                     // Close modal
                     closeLocationModal();
