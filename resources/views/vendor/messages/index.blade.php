@@ -1,24 +1,25 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Messages') }}
-        </h2>
-    </x-slot>
-<div class="min-h-screen bg-gray-50 py-8" 
-     data-has-conversations="{{ count($conversations) > 0 ? '1' : '0' }}"
-     data-user-id="{{ Auth::id() }}"
-     data-csrf-token="{{ csrf_token() }}">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<x-vendor-layout>
+    <x-slot name="title">Messages</x-slot>
+    
+    <div data-has-conversations="{{ count($conversations) > 0 ? '1' : '0' }}"
+         data-user-id="{{ Auth::id() }}"
+         data-csrf-token="{{ csrf_token() }}">
+        
         <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Messages</h1>
-            <p class="mt-2 text-gray-600">Communicate with your clients</p>
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">Messages</h2>
+                <p class="mt-1 text-sm text-gray-600">Communicate with your clients</p>
+            </div>
+            <div class="text-sm text-gray-500">
+                <i class="fas fa-circle text-green-500 mr-1"></i> Online
+            </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-sm overflow-hidden" style="height: calc(100vh - 200px);">
-            <div class="flex h-full">
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden" style="height: calc(100vh - 280px);">
+            <div class="flex h-full flex-col md:flex-row">
                 <!-- Conversations List -->
-                <div class="w-1/3 border-r border-gray-200 overflow-y-auto">
+                <div class="w-full md:w-1/3 border-r border-gray-200 overflow-y-auto">
                     <div class="p-4 border-b border-gray-200">
                         <h2 class="text-lg font-semibold text-gray-900">Conversations</h2>
                     </div>
@@ -75,8 +76,8 @@
                 </div>
 
                 <!-- Chat Area -->
-                <div class="flex-1 flex flex-col">
-                    <div id="no-conversation" class="flex-1 flex items-center justify-center text-gray-500 {{ count($conversations) > 0 ? 'hidden' : '' }}">
+                <div class="flex-1 flex flex-col hidden md:flex">
+                    <div id="no-conversation" class="flex-1 flex items-center justify-center text-gray-500 {{ count($conversations) > 0 ? 'hidden md:flex' : '' }}">
                         <div class="text-center">
                             <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -86,11 +87,17 @@
                         </div>
                     </div>
 
-                    <div id="chat-container" class="flex-1 flex-col {{ count($conversations) > 0 ? 'flex' : 'hidden' }}">
+                    <div id="chat-container" class="flex-1 flex-col {{ count($conversations) > 0 ? 'hidden md:flex' : 'hidden' }}">
                         <!-- Chat Header -->
                         <div class="p-4 border-b border-gray-200 bg-white">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
+                                    <!-- Back button (mobile only) -->
+                                    <button onclick="showConversationsList()" class="md:hidden p-2 hover:bg-gray-100 rounded-lg transition">
+                                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                        </svg>
+                                    </button>
                                     <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
                                         <span id="chat-avatar"></span>
                                     </div>
@@ -148,8 +155,6 @@
             </div>
         </div>
     </div>
-</div>
-
 
 <script>
     // Get data from HTML attributes
@@ -160,6 +165,19 @@
     
     let currentClientId = null;
     let messagesRefreshInterval = null;
+    
+    // Show conversations list (mobile back button)
+    function showConversationsList() {
+        document.getElementById('conversations-list').parentElement.classList.remove('hidden');
+        document.getElementById('chat-container').classList.add('hidden');
+        document.getElementById('chat-container').classList.remove('flex');
+        
+        // Stop auto-refresh when going back
+        if (messagesRefreshInterval) {
+            clearInterval(messagesRefreshInterval);
+            messagesRefreshInterval = null;
+        }
+    }
     
     // Handle conversation selection
     document.querySelectorAll('.conversation-item').forEach(item => {
@@ -173,7 +191,14 @@
             
             // Show chat container
             document.getElementById('no-conversation').classList.add('hidden');
-            document.getElementById('chat-container').classList.remove('hidden');
+            document.getElementById('chat-container').classList.remove('hidden', 'md:flex');
+            document.getElementById('chat-container').classList.add('flex');
+            
+            // On mobile, hide conversation list and show chat
+            if (window.innerWidth < 768) {
+                document.getElementById('conversations-list').parentElement.classList.add('hidden');
+                document.getElementById('chat-container').classList.remove('hidden');
+            }
             
             // Update chat header
             document.getElementById('chat-avatar').textContent = clientName.substring(0, 2).toUpperCase();
