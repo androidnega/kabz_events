@@ -28,6 +28,9 @@ class MessageController extends Controller
     {
         $vendor = Vendor::where('user_id', Auth::id())->firstOrFail();
         $vendorUserId = Auth::id();
+        
+        // Ensure vendor's online status is current
+        UserOnlineStatus::updateStatus($vendorUserId, 'vendor', true);
 
         // Get all unique conversations
         $conversations = Message::where('vendor_id', $vendor->id)

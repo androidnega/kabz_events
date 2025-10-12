@@ -76,18 +76,20 @@
                 </div>
 
                 <!-- Chat Area -->
-                <div class="flex-1 flex flex-col hidden md:flex">
-                                <div id="no-conversation" class="flex-1 flex items-center justify-center text-gray-500 {{ count($conversations) > 0 ? 'hidden' : '' }}">
-                                    <div class="text-center">
-                                        <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                        </svg>
-                                        <h3 class="mt-4 text-lg font-medium text-gray-900">Select a conversation</h3>
-                                        <p class="mt-2">Choose a conversation from the list to start messaging</p>
-              </div>
-        </div>
+                <div class="flex-1 flex flex-col">
+                    <!-- No conversation selected (desktop only) -->
+                    <div id="no-conversation" class="flex-1 hidden md:flex items-center justify-center text-gray-500">
+                        <div class="text-center">
+                            <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                            <h3 class="mt-4 text-lg font-medium text-gray-900">Select a conversation</h3>
+                            <p class="mt-2">Choose a conversation from the list to start messaging</p>
+                        </div>
+                    </div>
 
-                    <div id="chat-container" class="flex-1 flex-col {{ count($conversations) > 0 ? 'flex' : 'hidden' }}">
+                    <!-- Chat Container (hidden initially on mobile) -->
+                    <div id="chat-container" class="flex-1 flex-col hidden">
                         <!-- Chat Header -->
                         <div class="p-4 border-b border-gray-200 bg-white">
                             <div class="flex items-center justify-between">
@@ -182,9 +184,14 @@
     
     // Show conversations list (mobile back button)
     function showConversationsList() {
-        document.getElementById('conversations-list').parentElement.classList.remove('hidden');
-        document.getElementById('chat-container').classList.add('hidden');
-        document.getElementById('chat-container').classList.remove('flex');
+        const conversationsList = document.getElementById('conversations-list').parentElement;
+        const chatContainer = document.getElementById('chat-container');
+        
+        conversationsList.classList.remove('hidden', 'md:block');
+        conversationsList.classList.add('block');
+        chatContainer.classList.add('hidden');
+        chatContainer.classList.remove('flex');
+        chatContainer.parentElement.classList.add('hidden');
         
         // Stop auto-refresh when going back
         if (messagesRefreshInterval) {
@@ -205,12 +212,16 @@
             
             // Show chat container
             document.getElementById('no-conversation').classList.add('hidden');
+            document.getElementById('no-conversation').classList.remove('md:flex');
             document.getElementById('chat-container').classList.remove('hidden');
             document.getElementById('chat-container').classList.add('flex');
             
             // On mobile, hide conversation list and show chat
             if (window.innerWidth < 768) {
-                document.getElementById('conversations-list').parentElement.classList.add('hidden');
+                const conversationsList = document.getElementById('conversations-list').parentElement;
+                conversationsList.classList.add('hidden', 'md:block');
+                document.getElementById('chat-container').parentElement.classList.remove('hidden');
+                document.getElementById('chat-container').parentElement.classList.add('flex');
             }
             
             // Update chat header
