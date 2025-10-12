@@ -144,12 +144,10 @@ function updateNotificationsList(notifications) {
   }).join('');
 }
 
+const notificationUrl = '{{ auth()->user()->hasRole("vendor") ? route("vendor.messages") : route("client.conversations") }}';
+
 function getNotificationUrl(type) {
-  @if(auth()->user()->hasRole('vendor'))
-    return '{{ route("vendor.messages") }}';
-  @else
-    return '{{ route("client.conversations") }}';
-  @endif
+  return notificationUrl;
 }
 
 function ucfirst(str) {

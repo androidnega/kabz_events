@@ -23,7 +23,11 @@ class NotificationController extends Controller
             ->limit(10)
             ->get()
             ->map(function ($notification) {
-                $data = json_decode($notification->data, true);
+                if (is_string($notification->data)) {
+                    $data = json_decode((string)$notification->data, true);
+                } else {
+                    $data = is_array($notification->data) ? $notification->data : [];
+                }
                 
                 return [
                     'id' => $notification->id,
@@ -82,7 +86,11 @@ class NotificationController extends Controller
             ->where('notifiable_id', Auth::id())
             ->findOrFail($notificationId);
 
-        $data = json_decode($notification->data, true);
+        if (is_string($notification->data)) {
+            $data = json_decode((string)$notification->data, true);
+        } else {
+            $data = is_array($notification->data) ? $notification->data : [];
+        }
         $url = '#';
 
         switch ($notification->type) {
