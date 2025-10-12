@@ -207,11 +207,6 @@
             </div>
           </div>
         </div>
-        @if($averageResponseTime)
-        <div class="text-xs text-gray-500">
-          <i class="fas fa-clock mr-1"></i> {{ $averageResponseTime }}
-        </div>
-        @endif
       </div>
 
       <!-- Messages Area -->
