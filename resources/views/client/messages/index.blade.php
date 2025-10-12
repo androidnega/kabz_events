@@ -1,133 +1,373 @@
 <x-app-layout>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-      <h2 class="text-2xl font-bold text-gray-800 flex items-center">
-        <i class="fas fa-comments text-indigo-600 mr-3"></i> Messages
-      </h2>
-      <p class="text-gray-600 mt-1">Chat with vendors you're interested in</p>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('My Messages') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <!-- Header -->
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">My Messages</h2>
+                            <p class="mt-1 text-sm text-gray-600">Chat with vendors about your event needs</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden" style="height: calc(100vh - 280px);">
+                        <div class="flex h-full flex-col md:flex-row">
+                            <!-- Conversations List -->
+                            <div class="w-full md:w-1/3 border-r border-gray-200 overflow-y-auto">
+                                <div class="p-4 border-b border-gray-200">
+                                    <h3 class="text-lg font-semibold text-gray-900">Conversations</h3>
+                                </div>
+                                
+                                <div id="conversations-list" class="divide-y divide-gray-200">
+                                    @forelse($conversations ?? [] as $conversation)
+                                    <div class="conversation-item p-4 hover:bg-gray-50 cursor-pointer transition-colors {{ $loop->first ? 'bg-blue-50' : '' }}" 
+                                         data-vendor-id="{{ $conversation['vendor']->id }}"
+                                         data-vendor-name="{{ $conversation['vendor']->business_name }}">
+                                        <div class="flex items-start space-x-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                                    {{ strtoupper(substr($conversation['vendor']->business_name, 0, 2)) }}
+                                                </div>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between">
+                                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                                        {{ $conversation['vendor']->business_name }}
+                                                    </p>
+                                                    @if($conversation['unread_count'] > 0)
+                                                    <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                                                        {{ $conversation['unread_count'] }}
+                                                    </span>
+                                                    @endif
+                                                </div>
+                                                <div class="flex items-center mt-1">
+                                                    <div class="w-2 h-2 rounded-full mr-2 bg-gray-400"></div>
+                                                    <span class="text-xs text-gray-500">Vendor</span>
+                                                </div>
+                                                <p class="text-sm text-gray-600 truncate mt-1">
+                                                    @if($conversation['latest_message']->media_type === 'image')
+                                                        📷 Photo
+                                                    @elseif($conversation['latest_message']->media_type === 'audio')
+                                                        🎵 Audio
+                                                    @else
+                                                        {{ Str::limit($conversation['latest_message']->message, 30) }}
+                                                    @endif
+                                                </p>
+                                                <p class="text-xs text-gray-400 mt-1">{{ $conversation['latest_message']->timeAgo() }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @empty
+                                    <div class="p-8 text-center text-gray-500">
+                                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                        </svg>
+                                        <p class="mt-2">No conversations yet</p>
+                                        <p class="text-sm">Start chatting with vendors from their profile pages</p>
+                                    </div>
+                                    @endforelse
+                                </div>
+                            </div>
+
+                            <!-- Chat Area -->
+                            <div class="flex-1 flex flex-col hidden md:flex">
+                                <div id="no-conversation" class="flex-1 flex items-center justify-center text-gray-500 {{ count($conversations ?? []) > 0 ? 'hidden md:flex' : '' }}">
+                                    <div class="text-center">
+                                        <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                        </svg>
+                                        <h3 class="mt-4 text-lg font-medium text-gray-900">Select a conversation</h3>
+                                        <p class="mt-2">Choose a conversation from the list to start messaging</p>
+                                    </div>
+                                </div>
+
+                                <div id="chat-container" class="flex-1 flex-col {{ count($conversations ?? []) > 0 ? 'hidden md:flex' : 'hidden' }}">
+                                    <!-- Chat Header -->
+                                    <div class="p-4 border-b border-gray-200 bg-white">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-3">
+                                                <!-- Back button (mobile only) -->
+                                                <button onclick="showConversationsList()" class="md:hidden p-2 hover:bg-gray-100 rounded-lg transition">
+                                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                                    </svg>
+                                                </button>
+                                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                                    <span id="chat-avatar"></span>
+                                                </div>
+                                                <div>
+                                                    <h3 id="chat-vendor-name" class="text-lg font-semibold text-gray-900"></h3>
+                                                    <p id="chat-vendor-status" class="text-sm text-gray-600">Vendor</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Messages Area -->
+                                    <div id="messages-area" class="flex-1 overflow-y-auto p-4 bg-gray-50" style="max-height: calc(100vh - 400px);">
+                                        <!-- Messages will be loaded here -->
+                                    </div>
+
+                                    <!-- Typing Indicator -->
+                                    <div id="typing-indicator" class="hidden px-4 py-2 bg-gray-50 border-t border-gray-200">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="flex space-x-1">
+                                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                                            </div>
+                                            <span class="text-sm text-gray-500">Vendor is typing...</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Message Input -->
+                                    <div class="p-4 border-t border-gray-200 bg-white">
+                                        <form id="message-form" enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="flex items-end space-x-2">
+                                                <input type="file" id="image-input" accept="image/*" class="hidden">
+                                                <input type="file" id="audio-input" accept="audio/*" class="hidden">
+                                                
+                                                <button type="button" id="attach-image-btn" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                </button>
+                                                
+                                                <button type="button" id="attach-audio-btn" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                                                    </svg>
+                                                </button>
+                                                
+                                                <div class="flex-1">
+                                                    <textarea 
+                                                        id="message-input" 
+                                                        rows="1" 
+                                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" 
+                                                        placeholder="Type a message..."
+                                                    ></textarea>
+                                                    <div id="attachment-preview" class="mt-2 hidden"></div>
+                                                </div>
+                                                
+                                                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                                    Send
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    @if($conversations->count() > 0)
-      <div class="grid md:grid-cols-4 gap-6" x-data="clientMessages({{ auth()->id() }})">
-        {{-- Conversations List --}}
-        <div class="md:col-span-1 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <h3 class="font-semibold mb-3 text-gray-800">Conversations</h3>
-          @foreach($conversations as $conv)
-            @if($conv['vendor'])
-              <a href="#" @click.prevent="openConversation({{ $conv['vendor']->id }})" 
-                 class="block py-3 border-b border-gray-100 hover:bg-gray-50 rounded transition">
-                <div class="flex items-center gap-3">
-                  <img src="{{ $conv['vendor']->cover_image ?? asset('images/vendor-placeholder.png') }}" 
-                       alt="{{ $conv['vendor']->business_name }}" 
-                       class="w-10 h-10 rounded object-cover border border-gray-200">
-                  <div class="flex-1 min-w-0">
-                    <div class="font-medium text-gray-900 truncate">{{ $conv['vendor']->business_name }}</div>
-                    <div class="text-xs text-gray-500 truncate">{{ \Str::limit($conv['last_message']->message ?? '', 40) }}</div>
-                  </div>
-                  @if($conv['unread'])
-                    <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-medium">{{ $conv['unread'] }}</span>
-                  @endif
-                </div>
-              </a>
-            @endif
-          @endforeach
-        </div>
-
-        {{-- Messages Display --}}
-        <div class="md:col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <div id="messagesContainer" class="h-96 overflow-y-auto mb-4 border border-gray-200 rounded-lg p-4 bg-gray-50">
-            <template x-if="messages.length === 0">
-              <div class="text-center text-gray-500 py-12">
-                <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
-                <p>Select a conversation to view messages</p>
-              </div>
-            </template>
-            <template x-for="m in messages" :key="m.id">
-              <div class="mb-4">
-                <div :class="{'text-right': m.sender_id == authUserId}">
-                  <div class="inline-block max-w-xs md:max-w-md lg:max-w-lg p-3 rounded-lg"
-                       :class="m.sender_id == authUserId ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-200 text-gray-900'">
-                    <p x-text="m.message" class="whitespace-pre-wrap"></p>
-                  </div>
-                  <div class="text-xs text-gray-400 mt-1" x-text="m.sender.name + ' • ' + new Date(m.created_at).toLocaleString()"></div>
-                </div>
-              </div>
-            </template>
-          </div>
-
-          <div>
-            <textarea x-model="newMessage" rows="3" 
-                      class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
-                      placeholder="Message vendor..."></textarea>
-            <div class="flex justify-end mt-2">
-              <button @click="send()" :disabled="!currentVendorId || !newMessage.trim()"
-                      class="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white px-6 py-2 rounded-lg font-medium transition flex items-center">
-                <i class="fas fa-paper-plane mr-2"></i> Send
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <script>
-        function clientMessages(authUserId) {
-          return {
-            messages: [],
-            newMessage: '',
-            currentVendorId: null,
-            authUserId: authUserId,
-            async openConversation(vendorId) {
-              this.currentVendorId = vendorId;
-              await this.loadMessages(vendorId);
-            },
-            async loadMessages(vendorId) {
-              const url = "{{ route('messages.conversation') }}?vendor_id=" + vendorId + "&user_id=" + this.authUserId;
-              const res = await fetch(url, {
-                headers: {
-                  'X-Requested-With':'XMLHttpRequest',
-                  'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+    <script>
+        const hasConversations = @json(count($conversations ?? []) > 0);
+        const currentUserId = @json(Auth::id());
+        const csrfToken = @json(csrf_token());
+        
+        let currentVendorId = null;
+        let messagesRefreshInterval = null;
+        let typingTimeout = null;
+        let isTyping = false;
+        
+        // Handle conversation selection
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.addEventListener('click', function() {
+                currentVendorId = this.dataset.vendorId;
+                const vendorName = this.dataset.vendorName;
+                
+                // Update active state
+                document.querySelectorAll('.conversation-item').forEach(el => el.classList.remove('bg-blue-50'));
+                this.classList.add('bg-blue-50');
+                
+                // Show chat container
+                document.getElementById('no-conversation').classList.add('hidden');
+                document.getElementById('chat-container').classList.remove('hidden', 'md:flex');
+                document.getElementById('chat-container').classList.add('flex');
+                
+                // On mobile, hide conversation list and show chat
+                if (window.innerWidth < 768) {
+                    document.getElementById('conversations-list').parentElement.classList.add('hidden');
+                    document.getElementById('chat-container').classList.remove('hidden');
                 }
-              });
-              const json = await res.json();
-              this.messages = json.messages;
-              setTimeout(() => {
-                const container = document.getElementById('messagesContainer');
-                if (container) container.scrollTop = container.scrollHeight;
-              }, 100);
-            },
-            async send() {
-              if (!this.newMessage.trim() || !this.currentVendorId) return;
-              const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-              const res = await fetch("{{ route('messages.store') }}", {
-                method: "POST",
-                headers: {'Content-Type':'application/json','X-CSRF-TOKEN': token},
-                body: JSON.stringify({ vendor_id: this.currentVendorId, message: this.newMessage })
-              });
-              const json = await res.json();
-              if (json.ok) {
-                this.messages.push(json.message);
-                this.newMessage = '';
-                setTimeout(() => {
-                  const container = document.getElementById('messagesContainer');
-                  if (container) container.scrollTop = container.scrollHeight;
-                }, 100);
-              } else {
-                alert('Could not send message');
-              }
+                
+                // Update chat header
+                document.getElementById('chat-avatar').textContent = vendorName.substring(0, 2).toUpperCase();
+                document.getElementById('chat-vendor-name').textContent = vendorName;
+                
+                // Load messages
+                loadMessages();
+                
+                // Start auto-refresh
+                if (messagesRefreshInterval) {
+                    clearInterval(messagesRefreshInterval);
+                }
+                messagesRefreshInterval = setInterval(loadMessages, 3000);
+            });
+        });
+        
+        // Load first conversation if exists
+        document.addEventListener('DOMContentLoaded', function () {
+            if (hasConversations) {
+                let firstConversation = document.querySelector('.conversation-item');
+                if (firstConversation) {
+                    firstConversation.click();
+                }
             }
-          }
-        }
-      </script>
-    @else
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-        <i class="fas fa-inbox text-gray-300 text-6xl mb-4"></i>
-        <p class="text-gray-500 text-lg">No conversations yet.</p>
-        <p class="text-gray-400 mt-2">Start a conversation by visiting a vendor profile and clicking "Send Message".</p>
-        <a href="{{ route('search.index') }}" class="inline-block mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition">
-          <i class="fas fa-search mr-2"></i> Browse Vendors
-        </a>
-      </div>
-    @endif
-  </div>
-</x-app-layout>
+        });
 
+        function showConversationsList() {
+            document.getElementById('conversations-list').parentElement.classList.remove('hidden');
+            document.getElementById('chat-container').classList.add('hidden');
+            document.getElementById('chat-container').classList.remove('flex');
+            
+            // Stop auto-refresh when going back
+            if (messagesRefreshInterval) {
+                clearInterval(messagesRefreshInterval);
+                messagesRefreshInterval = null;
+            }
+        }
+        
+        function loadMessages() {
+            if (!currentVendorId) return;
+            
+            fetch(`/dashboard/messages/vendor/${currentVendorId}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayMessages(data.messages || []);
+                });
+        }
+        
+        function displayMessages(messages) {
+            const container = document.getElementById('messages-area');
+            const scrollAtBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
+            
+            container.innerHTML = messages.map(msg => {
+                const isClient = msg.sender_id === currentUserId;
+                const alignClass = isClient ? 'justify-end' : 'justify-start';
+                const bgClass = isClient ? 'bg-blue-600 text-white' : 'bg-white text-gray-900';
+                
+                let content = '';
+                if (msg.media_type === 'image') {
+                    content = `<img src="${msg.media_url}" class="max-w-xs rounded-lg" alt="Image">`;
+                } else if (msg.media_type === 'audio') {
+                    content = `<audio controls class="max-w-xs"><source src="${msg.media_url}"></audio>`;
+                } else {
+                    content = `<p>${msg.message}</p>`;
+                }
+                
+                return `
+                    <div class="flex ${alignClass} mb-4">
+                        <div class="${bgClass} rounded-lg px-4 py-2 max-w-md shadow-sm">
+                            ${content}
+                            <p class="text-xs mt-1 ${isClient ? 'text-blue-100' : 'text-gray-500'}">${msg.time_ago || 'Just now'}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            if (scrollAtBottom || messages.length === 0) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+        
+        // Handle message sending
+        document.getElementById('message-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            const imageInput = document.getElementById('image-input');
+            const audioInput = document.getElementById('audio-input');
+            
+            if (!message && !imageInput.files.length && !audioInput.files.length) return;
+            
+            const formData = new FormData();
+            formData.append('_token', csrfToken);
+            
+            if (message) formData.append('message', message);
+            if (imageInput.files.length) formData.append('image', imageInput.files[0]);
+            if (audioInput.files.length) formData.append('audio', audioInput.files[0]);
+            
+            fetch(`/dashboard/messages/vendor/${currentVendorId}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    messageInput.value = '';
+                    imageInput.value = '';
+                    audioInput.value = '';
+                    document.getElementById('attachment-preview').classList.add('hidden');
+                    loadMessages();
+                }
+            });
+        });
+        
+        // Handle file attachments
+        document.getElementById('attach-image-btn').addEventListener('click', function() {
+            document.getElementById('image-input').click();
+        });
+        
+        document.getElementById('attach-audio-btn').addEventListener('click', function() {
+            document.getElementById('audio-input').click();
+        });
+        
+        document.getElementById('image-input').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const preview = document.getElementById('attachment-preview');
+                preview.innerHTML = `<span class="text-sm text-gray-600">📷 ${e.target.files[0].name}</span>`;
+                preview.classList.remove('hidden');
+            }
+        });
+        
+        document.getElementById('audio-input').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const preview = document.getElementById('attachment-preview');
+                preview.innerHTML = `<span class="text-sm text-gray-600">🎵 ${e.target.files[0].name}</span>`;
+                preview.classList.remove('hidden');
+            }
+        });
+        
+        // Typing indicator
+        document.getElementById('message-input').addEventListener('input', function() {
+            if (!isTyping) {
+                isTyping = true;
+                // Send typing signal to server
+                fetch(`/dashboard/messages/typing/${currentVendorId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+            }
+            
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                isTyping = false;
+                // Send stop typing signal
+                fetch(`/dashboard/messages/stop-typing/${currentVendorId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+            }, 1000);
+        });
+    </script>
+</x-app-layout>

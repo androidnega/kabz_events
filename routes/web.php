@@ -213,6 +213,8 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::get('/messages/client/{clientId}', [\App\Http\Controllers\Vendor\MessageController::class, 'getConversation'])->name('messages.conversation');
         Route::post('/messages/client/{clientId}', [\App\Http\Controllers\Vendor\MessageController::class, 'sendMessage'])->name('messages.send');
         Route::delete('/messages/{messageId}', [\App\Http\Controllers\Vendor\MessageController::class, 'deleteMessage'])->name('messages.delete');
+        Route::post('/messages/typing/{clientId}', [\App\Http\Controllers\Vendor\MessageController::class, 'typing'])->name('messages.typing');
+        Route::post('/messages/stop-typing/{clientId}', [\App\Http\Controllers\Vendor\MessageController::class, 'stopTyping'])->name('messages.stop-typing');
         Route::post('/status/online', [\App\Http\Controllers\Vendor\MessageController::class, 'updateOnlineStatus'])->name('status.update');
     });
 
@@ -224,7 +226,19 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::get('/messages/vendor/{vendorId}', [MessageController::class, 'getConversation'])->name('messages.conversation');
         Route::post('/messages/vendor/{vendorId}', [MessageController::class, 'sendMessage'])->name('messages.send');
         Route::delete('/messages/{messageId}', [MessageController::class, 'deleteMessage'])->name('messages.delete');
+        Route::post('/messages/typing/{vendorId}', [\App\Http\Controllers\Client\MessageController::class, 'typing'])->name('messages.typing');
+        Route::post('/messages/stop-typing/{vendorId}', [\App\Http\Controllers\Client\MessageController::class, 'stopTyping'])->name('messages.stop-typing');
         Route::post('/status/online', [MessageController::class, 'updateOnlineStatus'])->name('status.update');
+    });
+
+    // ============================================================
+    // Notification Routes (All Authenticated Users)
+    // ============================================================
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/notifications/unread', [App\Http\Controllers\NotificationController::class, 'getUnreadNotifications']);
+        Route::post('/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead']);
+        Route::post('/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllAsRead']);
+        Route::get('/notifications/{id}/redirect', [App\Http\Controllers\NotificationController::class, 'getRedirectUrl']);
     });
 
     // ============================================================

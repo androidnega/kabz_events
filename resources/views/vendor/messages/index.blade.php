@@ -77,17 +77,17 @@
 
                 <!-- Chat Area -->
                 <div class="flex-1 flex flex-col hidden md:flex">
-                    <div id="no-conversation" class="flex-1 flex items-center justify-center text-gray-500 {{ count($conversations) > 0 ? 'hidden md:flex' : '' }}">
-                        <div class="text-center">
-                            <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                            </svg>
-                            <h3 class="mt-4 text-lg font-medium text-gray-900">Select a conversation</h3>
-                            <p class="mt-2">Choose a conversation from the list to start messaging</p>
-                        </div>
-                    </div>
+                                <div id="no-conversation" class="flex-1 flex items-center justify-center text-gray-500 {{ count($conversations) > 0 ? 'hidden' : '' }}">
+                                    <div class="text-center">
+                                        <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                        </svg>
+                                        <h3 class="mt-4 text-lg font-medium text-gray-900">Select a conversation</h3>
+                                        <p class="mt-2">Choose a conversation from the list to start messaging</p>
+                                    </div>
+                                </div>
 
-                    <div id="chat-container" class="flex-1 flex-col {{ count($conversations) > 0 ? 'hidden md:flex' : 'hidden' }}">
+                    <div id="chat-container" class="flex-1 flex-col {{ count($conversations) > 0 ? 'flex' : 'hidden' }}">
                         <!-- Chat Header -->
                         <div class="p-4 border-b border-gray-200 bg-white">
                             <div class="flex items-center justify-between">
@@ -112,6 +112,18 @@
                         <!-- Messages Area -->
                         <div id="messages-area" class="flex-1 overflow-y-auto p-4 bg-gray-50" style="max-height: calc(100vh - 400px);">
                             <!-- Messages will be loaded here -->
+                        </div>
+
+                        <!-- Typing Indicator -->
+                        <div id="typing-indicator" class="hidden px-4 py-2 bg-gray-50 border-t border-gray-200">
+                            <div class="flex items-center space-x-2">
+                                <div class="flex space-x-1">
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                                </div>
+                                <span class="text-sm text-gray-500">Client is typing...</span>
+                            </div>
                         </div>
 
                         <!-- Message Input -->
@@ -163,8 +175,10 @@
     const currentUserId = parseInt(pageContainer.dataset.userId);
     const csrfToken = pageContainer.dataset.csrfToken;
     
-    let currentClientId = null;
-    let messagesRefreshInterval = null;
+        let currentClientId = null;
+        let messagesRefreshInterval = null;
+        let typingTimeout = null;
+        let isTyping = false;
     
     // Show conversations list (mobile back button)
     function showConversationsList() {
@@ -191,13 +205,12 @@
             
             // Show chat container
             document.getElementById('no-conversation').classList.add('hidden');
-            document.getElementById('chat-container').classList.remove('hidden', 'md:flex');
+            document.getElementById('chat-container').classList.remove('hidden');
             document.getElementById('chat-container').classList.add('flex');
             
             // On mobile, hide conversation list and show chat
             if (window.innerWidth < 768) {
                 document.getElementById('conversations-list').parentElement.classList.add('hidden');
-                document.getElementById('chat-container').classList.remove('hidden');
             }
             
             // Update chat header
@@ -319,12 +332,42 @@
         }
     });
     
-    document.getElementById('audio-input').addEventListener('change', function(e) {
-        if (e.target.files.length > 0) {
-            const preview = document.getElementById('attachment-preview');
-            preview.innerHTML = `<span class="text-sm text-gray-600">🎵 ${e.target.files[0].name}</span>`;
-            preview.classList.remove('hidden');
-        }
-    });
+        document.getElementById('audio-input').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const preview = document.getElementById('attachment-preview');
+                preview.innerHTML = `<span class="text-sm text-gray-600">🎵 ${e.target.files[0].name}</span>`;
+                preview.classList.remove('hidden');
+            }
+        });
+        
+        // Typing indicator
+        document.getElementById('message-input').addEventListener('input', function() {
+            if (!isTyping && currentClientId) {
+                isTyping = true;
+                // Send typing signal to server
+                fetch(`/dashboard/messages/typing/${currentClientId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+            }
+            
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                isTyping = false;
+                if (currentClientId) {
+                    // Send stop typing signal
+                    fetch(`/dashboard/messages/stop-typing/${currentClientId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        }
+                    });
+                }
+            }, 1000);
+        });
 </script>
 </x-app-layout>

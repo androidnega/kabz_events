@@ -197,6 +197,25 @@ class MessageController extends Controller
     }
 
     /**
+     * Handle typing indicator.
+     */
+    public function typing(Request $request, $clientId)
+    {
+        // Store typing status (you can implement this with Redis or database)
+        // For now, we'll just return success
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Handle stop typing indicator.
+     */
+    public function stopTyping(Request $request, $clientId)
+    {
+        // Clear typing status
+        return response()->json(['success' => true]);
+    }
+
+    /**
      * Delete a message.
      */
     public function deleteMessage($messageId)
