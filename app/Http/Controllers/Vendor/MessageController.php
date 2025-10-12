@@ -104,12 +104,16 @@ class MessageController extends Controller
         // Get client online status
         $clientStatus = UserOnlineStatus::where('user_id', $clientId)->first();
 
+        // Check if client is typing
+        $isTyping = \App\Models\TypingIndicator::isUserTyping($clientId, Auth::id());
+
         return response()->json([
             'messages' => $messages,
             'client_status' => [
                 'is_online' => $clientStatus?->is_online ?? false,
                 'last_seen' => $clientStatus?->lastSeenText() ?? 'Offline',
             ],
+            'is_typing' => $isTyping,
         ]);
     }
 
@@ -223,8 +227,8 @@ class MessageController extends Controller
      */
     public function typing(Request $request, $clientId)
     {
-        // Store typing status (you can implement this with Redis or database)
-        // For now, we'll just return success
+        $vendor = Auth::user()->vendor;
+        \App\Models\TypingIndicator::setTyping(Auth::id(), $clientId, $vendor->id);
         return response()->json(['success' => true]);
     }
 
@@ -233,7 +237,7 @@ class MessageController extends Controller
      */
     public function stopTyping(Request $request, $clientId)
     {
-        // Clear typing status
+        \App\Models\TypingIndicator::setNotTyping(Auth::id(), $clientId);
         return response()->json(['success' => true]);
     }
 

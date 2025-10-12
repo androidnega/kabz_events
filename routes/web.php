@@ -235,6 +235,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::get('/notifications/unread', [App\Http\Controllers\NotificationController::class, 'getUnreadNotifications']);
     Route::post('/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead']);
     Route::post('/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllAsRead']);
+    Route::post('/notifications/messages/read-all', [App\Http\Controllers\NotificationController::class, 'markMessageNotificationsAsRead']);
     Route::get('/notifications/{id}/redirect', [App\Http\Controllers\NotificationController::class, 'getRedirectUrl']);
 
     // ============================================================

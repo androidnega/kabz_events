@@ -163,7 +163,7 @@
                             </form>
                         </div>
                     </div>
-                </div>
+            </div>
           </div>
         </div>
       </div>
@@ -230,6 +230,15 @@
     
     // Load first conversation if exists (desktop only)
     document.addEventListener('DOMContentLoaded', function () {
+        // Mark message notifications as read
+        fetch('/dashboard/notifications/messages/read-all', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+            }
+        });
+        
         if (hasConversations && window.innerWidth >= 768) {
             let firstConversation = document.querySelector('.conversation-item');
             if (firstConversation) {
@@ -245,6 +254,14 @@
             .then(data => {
                 displayMessages(data.messages);
                 document.getElementById('chat-client-status').textContent = data.client_status.last_seen;
+                
+                // Show/hide typing indicator
+                const typingIndicator = document.getElementById('typing-indicator');
+                if (data.is_typing) {
+                    typingIndicator.classList.remove('hidden');
+                } else {
+                    typingIndicator.classList.add('hidden');
+                }
             });
     }
     

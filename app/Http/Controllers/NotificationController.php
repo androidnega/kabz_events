@@ -78,6 +78,20 @@ class NotificationController extends Controller
     }
 
     /**
+     * Mark all message notifications as read.
+     */
+    public function markMessageNotificationsAsRead()
+    {
+        Notification::where('notifiable_type', 'App\Models\User')
+            ->where('notifiable_id', Auth::id())
+            ->where('type', 'message_received')
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
      * Get notification redirect URL.
      */
     public function getRedirectUrl($notificationId)

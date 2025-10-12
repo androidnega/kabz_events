@@ -87,12 +87,16 @@ class MessageController extends Controller
         // Get vendor online status
         $vendorStatus = UserOnlineStatus::where('user_id', $vendorUserId)->first();
 
+        // Check if vendor is typing
+        $isTyping = \App\Models\TypingIndicator::isUserTyping($vendorUserId, Auth::id());
+
         return response()->json([
             'messages' => $messages,
             'vendor_status' => [
                 'is_online' => $vendorStatus?->is_online ?? false,
                 'last_seen' => $vendorStatus?->lastSeenText() ?? 'Offline',
             ],
+            'is_typing' => $isTyping,
         ]);
     }
 
@@ -170,8 +174,8 @@ class MessageController extends Controller
      */
     public function typing(Request $request, $vendorId)
     {
-        // Store typing status (you can implement this with Redis or database)
-        // For now, we'll just return success
+        $vendor = Vendor::findOrFail($vendorId);
+        \App\Models\TypingIndicator::setTyping(Auth::id(), $vendor->user_id, $vendorId);
         return response()->json(['success' => true]);
     }
 
@@ -180,7 +184,8 @@ class MessageController extends Controller
      */
     public function stopTyping(Request $request, $vendorId)
     {
-        // Clear typing status
+        $vendor = Vendor::findOrFail($vendorId);
+        \App\Models\TypingIndicator::setNotTyping(Auth::id(), $vendor->user_id);
         return response()->json(['success' => true]);
     }
 

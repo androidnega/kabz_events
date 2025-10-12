@@ -2,7 +2,7 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('My Messages') }}
-        </h2>
+      </h2>
     </x-slot>
 
     <div class="py-12">
@@ -19,7 +19,7 @@
                             <h2 class="text-2xl font-bold text-gray-900">My Messages</h2>
                             <p class="mt-1 text-sm text-gray-600">Chat with vendors about your event needs</p>
                         </div>
-                    </div>
+    </div>
 
                     <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden" style="height: calc(100vh - 280px);">
                         <div class="flex h-full flex-col md:flex-row">
@@ -40,7 +40,7 @@
                                                     {{ strtoupper(substr($conversation['vendor']->business_name, 0, 2)) }}
                                                 </div>
                                             </div>
-                                            <div class="flex-1 min-w-0">
+                  <div class="flex-1 min-w-0">
                                                 <div class="flex items-center justify-between">
                                                     <p class="text-sm font-medium text-gray-900 truncate">
                                                         {{ $conversation['vendor']->business_name }}
@@ -49,8 +49,8 @@
                                                     <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
                                                         {{ $conversation['unread_count'] }}
                                                     </span>
-                                                    @endif
-                                                </div>
+                  @endif
+                </div>
                                                 <div class="flex items-center mt-1">
                                                     <div class="w-2 h-2 rounded-full mr-2 bg-gray-400"></div>
                                                     <span class="text-xs text-gray-500">Vendor</span>
@@ -62,7 +62,7 @@
                                                         🎵 Audio
                                                     @else
                                                         {{ Str::limit($conversation['latest_message']->message, 30) }}
-                                                    @endif
+            @endif
                                                 </p>
                                                 <p class="text-xs text-gray-400 mt-1">{{ $conversation['latest_message']->timeAgo() }}</p>
                                             </div>
@@ -90,7 +90,7 @@
                                         <h3 class="mt-4 text-lg font-medium text-gray-900">Select a conversation</h3>
                                         <p class="mt-2">Choose a conversation from the list to start messaging</p>
                                     </div>
-                                </div>
+        </div>
 
                                 <div id="chat-container" class="flex-1 flex-col {{ count($conversations ?? []) > 0 ? 'hidden md:flex' : 'hidden' }}">
                                     <!-- Chat Header -->
@@ -109,10 +109,10 @@
                                                 <div>
                                                     <h3 id="chat-vendor-name" class="text-lg font-semibold text-gray-900"></h3>
                                                     <p id="chat-vendor-status" class="text-sm text-gray-600">Vendor</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+              </div>
+                  </div>
+                </div>
+              </div>
 
                                     <!-- Messages Area -->
                                     <div id="messages-area" class="flex-1 overflow-y-auto p-4 bg-gray-50" style="max-height: calc(100vh - 400px);">
@@ -129,7 +129,7 @@
                                             </div>
                                             <span class="text-sm text-gray-500">Vendor is typing...</span>
                                         </div>
-                                    </div>
+          </div>
 
                                     <!-- Message Input -->
                                     <div class="p-4 border-t border-gray-200 bg-white">
@@ -163,7 +163,7 @@
                                                 
                                                 <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
                                                     Send
-                                                </button>
+              </button>
                                             </div>
                                         </form>
                                     </div>
@@ -172,11 +172,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <script>
+      <script>
         const pageContainer = document.getElementById('page-container');
         const hasConversations = pageContainer.dataset.hasConversations === '1';
         const currentUserId = parseInt(pageContainer.dataset.userId);
@@ -225,6 +225,15 @@
         
         // Load first conversation if exists (desktop only)
         document.addEventListener('DOMContentLoaded', function () {
+            // Mark message notifications as read
+            fetch('/dashboard/notifications/messages/read-all', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                }
+            });
+            
             if (hasConversations && window.innerWidth >= 768) {
                 let firstConversation = document.querySelector('.conversation-item');
                 if (firstConversation) {
@@ -252,6 +261,14 @@
                 .then(response => response.json())
                 .then(data => {
                     displayMessages(data.messages || []);
+                    
+                    // Show/hide typing indicator
+                    const typingIndicator = document.getElementById('typing-indicator');
+                    if (data.is_typing) {
+                        typingIndicator.classList.remove('hidden');
+                    } else {
+                        typingIndicator.classList.add('hidden');
+                    }
                 });
         }
         
@@ -278,8 +295,8 @@
                         <div class="${bgClass} rounded-lg px-4 py-2 max-w-md shadow-sm">
                             ${content}
                             <p class="text-xs mt-1 ${isClient ? 'text-blue-100' : 'text-gray-500'}">${msg.time_ago || 'Just now'}</p>
-                        </div>
-                    </div>
+      </div>
+  </div>
                 `;
             }).join('');
             
