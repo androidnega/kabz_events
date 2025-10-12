@@ -39,9 +39,8 @@ class SearchController extends Controller
             ]));
         }
         
-        // Start with verified vendors only
-        $query = Vendor::with(['services.category', 'reviews'])
-            ->where('is_verified', true);
+        // Start with all vendors (verified and non-verified)
+        $query = Vendor::with(['services.category', 'reviews']);
 
         // Keyword search (business name, description, address)
         if ($request->filled('q')) {
@@ -112,11 +111,10 @@ class SearchController extends Controller
     {
         $user = auth()->user();
         
-        // Start with verified vendors only
+        // Start with all vendors (verified and non-verified)
         $query = Vendor::with(['services.category', 'reviews' => function ($q) {
                 $q->where('approved', true)->latest()->take(2);
-            }])
-            ->where('is_verified', true);
+            }]);
 
         // Keyword search
         if ($request->filled('q')) {
@@ -167,10 +165,25 @@ class SearchController extends Controller
                 ->havingRaw("distance <= ?", [$radius]);
         }
 
-        // Sorting
+        // Sorting with premium vendors prioritized
         $sortBy = $request->input('sort', 'rating');
+        
+        // Load active subscriptions for premium sorting
+        if ($sortBy === 'premium' || $sortBy === 'rating') {
+            $query->with(['subscriptions' => function ($q) {
+                $q->where('status', 'active')
+                  ->where(function ($query) {
+                      $query->whereNull('ends_at')
+                          ->orWhere('ends_at', '>=', now());
+                  });
+            }]);
+        }
+        
         match ($sortBy) {
-            'rating' => $query->orderByDesc('rating_cached'),
+            'premium' => $query->orderByRaw('(SELECT COUNT(*) FROM vendor_subscriptions WHERE vendor_subscriptions.vendor_id = vendors.id AND status = "active" AND (ends_at IS NULL OR ends_at >= NOW())) DESC')
+                              ->orderByDesc('rating_cached'),
+            'rating' => $query->orderByDesc('rating_cached')
+                             ->orderByRaw('(SELECT COUNT(*) FROM vendor_subscriptions WHERE vendor_subscriptions.vendor_id = vendors.id AND status = "active" AND (ends_at IS NULL OR ends_at >= NOW())) DESC'),
             'recent' => $query->latest('created_at'),
             'name' => $query->orderBy('business_name'),
             'distance' => $request->filled(['lat', 'lng']) ? $query->orderBy('distance') : $query->orderByDesc('rating_cached'),
@@ -200,6 +213,13 @@ class SearchController extends Controller
         return response()->json([
             'success' => true,
             'vendors' => $vendors->map(function ($vendor) {
+                // Get subscription status
+                $subscription = $vendor->activeSubscription();
+                $subscriptionType = null;
+                if ($subscription) {
+                    $subscriptionType = $subscription->plan_name ?? 'subscribed';
+                }
+                
                 return [
                     'id' => $vendor->id,
                     'business_name' => $vendor->business_name,
@@ -212,6 +232,8 @@ class SearchController extends Controller
                     'categories' => $vendor->services->pluck('category.name')->unique()->values()->toArray(),
                     'url' => route('vendors.show', $vendor->slug),
                     'verified' => $vendor->is_verified,
+                    'subscription_type' => $subscriptionType,
+                    'is_premium' => $subscription && in_array(strtolower($subscription->plan_name ?? ''), ['premium', 'vip']),
                 ];
             }),
             'count' => $vendors->count(),

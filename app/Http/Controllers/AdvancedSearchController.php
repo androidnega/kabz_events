@@ -41,8 +41,8 @@ class AdvancedSearchController extends Controller
             ]));
         }
         
-        // Start with verified vendors only
-        $query = Vendor::query()->where('is_verified', true);
+        // Start with all vendors (verified and non-verified)
+        $query = Vendor::query();
         
         // Keyword search (business name, description, address)
         if ($request->filled('q')) {

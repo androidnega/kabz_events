@@ -80,6 +80,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
                         <select id="sortFilter" class="w-full border-2 border-gray-300 rounded-lg p-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-colors">
                             <option value="rating" @selected(request('sort') == 'rating' || !request('sort'))>Top Rated</option>
+                            <option value="premium" @selected(request('sort') == 'premium')>Premium First</option>
                             <option value="recent" @selected(request('sort') == 'recent')>Most Recent</option>
                             <option value="name" @selected(request('sort') == 'name')>Alphabetical</option>
                             <option value="distance" @selected(request('sort') == 'distance')>Nearest First</option>
@@ -251,19 +252,33 @@
                 return;
             }
 
-            container.innerHTML = vendors.map(vendor => `
-                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6">
+            container.innerHTML = vendors.map(vendor => {
+                // Generate badge HTML
+                let badgeHTML = '';
+                if (vendor.is_premium) {
+                    badgeHTML = '<span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-md">⭐ Premium</span>';
+                } else if (vendor.subscription_type) {
+                    badgeHTML = '<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">📦 Subscribed</span>';
+                }
+                if (vendor.verified) {
+                    badgeHTML += '<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">✓ Verified</span>';
+                }
+                
+                return `
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 ${vendor.is_premium ? 'ring-2 ring-yellow-400' : ''}">
                     <a href="${vendor.url}" class="block">
+                        ${vendor.is_premium ? '<div class="absolute top-0 right-0 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg shadow-lg">FEATURED</div>' : ''}
+                        
                         <h3 class="text-xl font-bold text-gray-900 mb-2">${vendor.business_name}</h3>
                         
-                        <!-- Rating -->
-                        <div class="flex items-center mb-3">
+                        <!-- Rating and Badges -->
+                        <div class="flex items-center flex-wrap mb-3">
                             <div class="flex items-center text-yellow-400 mr-2">
                                 ${generateStars(vendor.rating)}
                             </div>
                             <span class="text-sm font-semibold text-gray-700">${vendor.rating}</span>
                             <span class="text-sm text-gray-500 ml-1">(${vendor.review_count} review${vendor.review_count !== 1 ? 's' : ''})</span>
-                            ${vendor.verified ? '<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">✓ Verified</span>' : ''}
+                            ${badgeHTML}
                         </div>
 
                         <!-- Categories -->
@@ -286,7 +301,8 @@
                         ${vendor.description ? `<p class="text-sm text-gray-600 line-clamp-2">${vendor.description}</p>` : ''}
                     </a>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         // Generate star rating HTML
