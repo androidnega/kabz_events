@@ -1,6 +1,6 @@
 <x-vendor-layout>
-    <x-slot name="title">Messages</x-slot>
-    
+  <x-slot name="title">Messages</x-slot>
+
     <div data-has-conversations="{{ count($conversations) > 0 ? '1' : '0' }}"
          data-user-id="{{ Auth::id() }}"
          data-csrf-token="{{ csrf_token() }}">
@@ -14,7 +14,7 @@
             <div class="text-sm text-gray-500">
                 <i class="fas fa-circle text-green-500 mr-1"></i> Online
             </div>
-        </div>
+  </div>
 
         <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden" style="height: calc(100vh - 280px);">
             <div class="flex h-full flex-col md:flex-row">
@@ -35,7 +35,7 @@
                                         {{ strtoupper(substr($conversation['client']->name, 0, 2)) }}
                                     </div>
                                 </div>
-                                <div class="flex-1 min-w-0">
+                <div class="flex-1 min-w-0">
                                     <div class="flex items-center justify-between">
                                         <p class="text-sm font-medium text-gray-900 truncate">
                                             {{ $conversation['client']->name }}
@@ -84,8 +84,8 @@
                                         </svg>
                                         <h3 class="mt-4 text-lg font-medium text-gray-900">Select a conversation</h3>
                                         <p class="mt-2">Choose a conversation from the list to start messaging</p>
-                                    </div>
-                                </div>
+              </div>
+        </div>
 
                     <div id="chat-container" class="flex-1 flex-col {{ count($conversations) > 0 ? 'flex' : 'hidden' }}">
                         <!-- Chat Header -->
@@ -104,10 +104,10 @@
                                     <div>
                                         <h3 id="chat-client-name" class="text-lg font-semibold text-gray-900"></h3>
                                         <p id="chat-client-status" class="text-sm text-gray-600"></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+              </div>
+                  </div>
+                </div>
+              </div>
 
                         <!-- Messages Area -->
                         <div id="messages-area" class="flex-1 overflow-y-auto p-4 bg-gray-50" style="max-height: calc(100vh - 400px);">
@@ -124,7 +124,7 @@
                                 </div>
                                 <span class="text-sm text-gray-500">Client is typing...</span>
                             </div>
-                        </div>
+          </div>
 
                         <!-- Message Input -->
                         <div class="p-4 border-t border-gray-200 bg-white">
@@ -158,17 +158,17 @@
                                     
                                     <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
                                         Send
-                                    </button>
+              </button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
-            </div>
+          </div>
         </div>
-    </div>
+      </div>
 
-<script>
+      <script>
     // Get data from HTML attributes
     const pageContainer = document.querySelector('[data-has-conversations]');
     const hasConversations = pageContainer.dataset.hasConversations === '1';
@@ -228,9 +228,9 @@
         });
     });
     
-    // Load first conversation if exists
+    // Load first conversation if exists (desktop only)
     document.addEventListener('DOMContentLoaded', function () {
-        if (hasConversations) {
+        if (hasConversations && window.innerWidth >= 768) {
             let firstConversation = document.querySelector('.conversation-item');
             if (firstConversation) {
                 firstConversation.click();
@@ -262,7 +262,7 @@
                 content = `<img src="${msg.media_url}" class="max-w-xs rounded-lg" alt="Image">`;
             } else if (msg.media_type === 'audio') {
                 content = `<audio controls class="max-w-xs"><source src="${msg.media_url}"></audio>`;
-            } else {
+              } else {
                 content = `<p>${msg.message}</p>`;
             }
             
@@ -369,5 +369,5 @@
                 }
             }, 1000);
         });
-</script>
+      </script>
 </x-app-layout>

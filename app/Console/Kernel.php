@@ -19,6 +19,11 @@ class Kernel extends ConsoleKernel
             ->dailyAt('03:00')
             ->withoutOverlapping()
             ->runInBackground();
+        
+        // Set inactive users offline every minute
+        $schedule->command('users:set-offline')
+            ->everyMinute()
+            ->withoutOverlapping();
     }
 
     /**

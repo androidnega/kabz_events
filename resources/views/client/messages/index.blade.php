@@ -223,9 +223,9 @@
             });
         });
         
-        // Load first conversation if exists
+        // Load first conversation if exists (desktop only)
         document.addEventListener('DOMContentLoaded', function () {
-            if (hasConversations) {
+            if (hasConversations && window.innerWidth >= 768) {
                 let firstConversation = document.querySelector('.conversation-item');
                 if (firstConversation) {
                     firstConversation.click();
