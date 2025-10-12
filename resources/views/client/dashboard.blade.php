@@ -1,14 +1,12 @@
-<x-app-layout>
-    {{-- Client Dashboard Header --}}
-    <div class="bg-gradient-to-r from-teal-600 to-blue-500 text-white py-8 mb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 class="text-3xl font-bold">Welcome, {{ auth()->user()->name }}!</h1>
-            <p class="text-teal-100 mt-1">Find and review trusted event vendors in Ghana</p>
-        </div>
-    </div>
+<x-client-layout>
+    <x-slot name="header">
+        <h2 class="text-2xl font-bold text-gray-800">
+            Dashboard Overview
+        </h2>
+        <p class="text-sm text-gray-600 mt-1">Welcome back, {{ auth()->user()->name }}!</p>
+    </x-slot>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Key Metrics --}}
+    {{-- Key Metrics --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <x-card class="bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-600">
                 <div class="flex items-center justify-between">
@@ -116,6 +114,5 @@
                 </a>
             </div>
         </x-card>
-    </div>
-</x-app-layout>
+</x-client-layout>
 

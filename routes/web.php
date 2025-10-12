@@ -221,12 +221,31 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     // Client Routes
     // Note: Client dashboard is served via main /dashboard route
     Route::middleware(['role:client'])->name('client.')->group(function () {
-        // Chat System Routes
+        // Favorites/Bookmarks
+        Route::get('/favorites', [\App\Http\Controllers\Client\FavoriteController::class, 'index'])->name('favorites.index');
+        Route::post('/favorites/{vendorId}', [\App\Http\Controllers\Client\FavoriteController::class, 'store'])->name('favorites.store');
+        Route::delete('/favorites/{vendorId}', [\App\Http\Controllers\Client\FavoriteController::class, 'destroy'])->name('favorites.destroy');
+
+        // Chat System Routes (Messages)
         Route::get('/conversations', [\App\Http\Controllers\Client\MessageController::class, 'index'])->name('conversations');
         Route::get('/messages/vendor/{vendorId}', [\App\Http\Controllers\Client\MessageController::class, 'getConversation'])->name('messages.conversation');
         Route::post('/messages/vendor/{vendorId}', [\App\Http\Controllers\Client\MessageController::class, 'sendMessage'])->name('messages.send');
         Route::post('/messages/typing/{vendorId}', [\App\Http\Controllers\Client\MessageController::class, 'typing'])->name('messages.typing');
         Route::post('/messages/stop-typing/{vendorId}', [\App\Http\Controllers\Client\MessageController::class, 'stopTyping'])->name('messages.stop-typing');
+
+        // Payments & Invoices
+        Route::get('/payments', [\App\Http\Controllers\Client\PaymentController::class, 'index'])->name('payments.index');
+        Route::get('/payments/{id}', [\App\Http\Controllers\Client\PaymentController::class, 'show'])->name('payments.show');
+
+        // Support
+        Route::get('/support', [\App\Http\Controllers\Client\SupportController::class, 'index'])->name('support.index');
+        Route::post('/support', [\App\Http\Controllers\Client\SupportController::class, 'store'])->name('support.store');
+
+        // Settings
+        Route::get('/settings', [\App\Http\Controllers\Client\SettingsController::class, 'index'])->name('settings.index');
+        Route::post('/settings/notifications', [\App\Http\Controllers\Client\SettingsController::class, 'updateNotifications'])->name('settings.notifications');
+        Route::post('/settings/privacy', [\App\Http\Controllers\Client\SettingsController::class, 'updatePrivacy'])->name('settings.privacy');
+        Route::post('/settings/password', [\App\Http\Controllers\Client\SettingsController::class, 'updatePassword'])->name('settings.password');
     });
 
     // ============================================================
