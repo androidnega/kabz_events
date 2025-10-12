@@ -222,13 +222,11 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     // Note: Client dashboard is served via main /dashboard route
     Route::middleware(['role:client'])->name('client.')->group(function () {
         // Chat System Routes
-        Route::get('/conversations', [MessageController::class, 'getConversations'])->name('conversations');
-        Route::get('/messages/vendor/{vendorId}', [MessageController::class, 'getConversation'])->name('messages.conversation');
-        Route::post('/messages/vendor/{vendorId}', [MessageController::class, 'sendMessage'])->name('messages.send');
-        Route::delete('/messages/{messageId}', [MessageController::class, 'deleteMessage'])->name('messages.delete');
+        Route::get('/conversations', [\App\Http\Controllers\Client\MessageController::class, 'index'])->name('conversations');
+        Route::get('/messages/vendor/{vendorId}', [\App\Http\Controllers\Client\MessageController::class, 'getConversation'])->name('messages.conversation');
+        Route::post('/messages/vendor/{vendorId}', [\App\Http\Controllers\Client\MessageController::class, 'sendMessage'])->name('messages.send');
         Route::post('/messages/typing/{vendorId}', [\App\Http\Controllers\Client\MessageController::class, 'typing'])->name('messages.typing');
         Route::post('/messages/stop-typing/{vendorId}', [\App\Http\Controllers\Client\MessageController::class, 'stopTyping'])->name('messages.stop-typing');
-        Route::post('/status/online', [MessageController::class, 'updateOnlineStatus'])->name('status.update');
     });
 
     // ============================================================
