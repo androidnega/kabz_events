@@ -16,7 +16,7 @@
             </div>
   </div>
 
-        <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden" style="height: calc(100vh - 280px);">
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden" style="height: calc(100vh - 200px); min-height: 500px;">
             <div class="flex h-full flex-col md:flex-row">
                 <!-- Conversations List -->
                 <div class="w-full md:w-1/3 border-r border-gray-200 overflow-y-auto">
@@ -85,13 +85,13 @@
                             </svg>
                             <h3 class="mt-4 text-lg font-medium text-gray-900">Select a conversation</h3>
                             <p class="mt-2">Choose a conversation from the list to start messaging</p>
-                        </div>
-                    </div>
+              </div>
+        </div>
 
                     <!-- Chat Container (hidden initially on mobile) -->
-                    <div id="chat-container" class="flex-1 flex-col hidden">
+                    <div id="chat-container" class="flex-1 flex-col hidden h-full">
                         <!-- Chat Header -->
-                        <div class="p-4 border-b border-gray-200 bg-white">
+                        <div class="p-4 border-b border-gray-200 bg-white flex-shrink-0">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <!-- Back button (mobile only) -->
@@ -112,12 +112,12 @@
               </div>
 
                         <!-- Messages Area -->
-                        <div id="messages-area" class="flex-1 overflow-y-auto p-4 bg-gray-50" style="max-height: calc(100vh - 400px);">
+                        <div id="messages-area" class="flex-1 overflow-y-auto p-4 bg-gray-50">
                             <!-- Messages will be loaded here -->
                         </div>
 
                         <!-- Typing Indicator -->
-                        <div id="typing-indicator" class="hidden px-4 py-2 bg-gray-50 border-t border-gray-200">
+                        <div id="typing-indicator" class="hidden px-4 py-2 bg-gray-50 border-t border-gray-200 flex-shrink-0">
                             <div class="flex items-center space-x-2">
                                 <div class="flex space-x-1">
                                     <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
@@ -129,37 +129,40 @@
           </div>
 
                         <!-- Message Input -->
-                        <div class="p-4 border-t border-gray-200 bg-white">
+                        <div class="p-4 border-t border-gray-200 bg-white flex-shrink-0">
                             <form id="message-form" enctype="multipart/form-data">
                                 @csrf
-                                <div class="flex items-end space-x-2">
+                                <div class="flex items-end space-x-1 md:space-x-2">
                                     <input type="file" id="image-input" accept="image/*" class="hidden">
                                     <input type="file" id="audio-input" accept="audio/*" class="hidden">
                                     
-                                    <button type="button" id="attach-image-btn" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button type="button" id="attach-image-btn" class="p-1.5 md:p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0">
+                                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                     </button>
                                     
-                                    <button type="button" id="attach-audio-btn" class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button type="button" id="attach-audio-btn" class="p-1.5 md:p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0">
+                                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                                         </svg>
                                     </button>
                                     
-                                    <div class="flex-1">
+                                    <div class="flex-1 min-w-0">
                                         <textarea 
                                             id="message-input" 
                                             rows="1" 
-                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" 
+                                            class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" 
                                             placeholder="Type a message..."
                                         ></textarea>
-                                        <div id="attachment-preview" class="mt-2 hidden"></div>
+                                        <div id="attachment-preview" class="mt-2 hidden text-xs"></div>
                                     </div>
                                     
-                                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                                        Send
+                                    <button type="submit" class="px-4 md:px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm md:text-base flex-shrink-0">
+                                        <span class="hidden md:inline">Send</span>
+                                        <svg class="w-5 h-5 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                        </svg>
               </button>
                                 </div>
                             </form>
@@ -244,7 +247,7 @@
         // Mark message notifications as read
         fetch('/dashboard/notifications/messages/read-all', {
             method: 'POST',
-            headers: {
+                headers: {
                 'X-CSRF-TOKEN': csrfToken,
                 'Accept': 'application/json',
             }
