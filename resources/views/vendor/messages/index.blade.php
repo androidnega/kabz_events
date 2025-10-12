@@ -89,7 +89,7 @@
         </div>
 
                     <!-- Chat Container (hidden initially on mobile) -->
-                    <div id="chat-container" class="flex-1 flex-col hidden h-full">
+                    <div id="chat-container" class="flex-1 flex-col hidden h-full" style="min-height: 0;">
                         <!-- Chat Header -->
                         <div class="p-4 border-b border-gray-200 bg-white flex-shrink-0">
                             <div class="flex items-center justify-between">
@@ -190,11 +190,10 @@
         const conversationsList = document.getElementById('conversations-list').parentElement;
         const chatContainer = document.getElementById('chat-container');
         
-        conversationsList.classList.remove('hidden', 'md:block');
-        conversationsList.classList.add('block');
+        // Show conversation list, hide chat
+        conversationsList.classList.remove('hidden');
         chatContainer.classList.add('hidden');
         chatContainer.classList.remove('flex');
-        chatContainer.parentElement.classList.add('hidden');
         
         // Stop auto-refresh when going back
         if (messagesRefreshInterval) {
@@ -214,17 +213,21 @@
             this.classList.add('bg-blue-50');
             
             // Show chat container
-            document.getElementById('no-conversation').classList.add('hidden');
-            document.getElementById('no-conversation').classList.remove('md:flex');
-            document.getElementById('chat-container').classList.remove('hidden');
-            document.getElementById('chat-container').classList.add('flex');
+            const noConv = document.getElementById('no-conversation');
+            const chatContainer = document.getElementById('chat-container');
             
-            // On mobile, hide conversation list and show chat
+            // Hide "no conversation" message
+            noConv.classList.add('hidden');
+            
+            // Show chat container with flex layout
+            chatContainer.classList.remove('hidden');
+            chatContainer.classList.add('flex');
+            chatContainer.style.display = 'flex'; // Force display
+            
+            // On mobile, hide conversation list
             if (window.innerWidth < 768) {
                 const conversationsList = document.getElementById('conversations-list').parentElement;
-                conversationsList.classList.add('hidden', 'md:block');
-                document.getElementById('chat-container').parentElement.classList.remove('hidden');
-                document.getElementById('chat-container').parentElement.classList.add('flex');
+                conversationsList.classList.add('hidden');
             }
             
             // Update chat header
@@ -239,6 +242,16 @@
                 clearInterval(messagesRefreshInterval);
             }
             messagesRefreshInterval = setInterval(loadMessages, 3000);
+            
+            // Ensure input remains visible (safeguard)
+            setTimeout(() => {
+                if (chatContainer.classList.contains('flex')) {
+                    const messageInput = document.getElementById('message-input');
+                    if (messageInput) {
+                        messageInput.closest('.p-4').style.display = 'block';
+                    }
+                }
+            }, 100);
         });
     });
     
