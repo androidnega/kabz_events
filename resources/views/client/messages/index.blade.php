@@ -8,7 +8,11 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
+                <div class="p-6 text-gray-900" 
+                     data-has-conversations="{{ count($conversations ?? []) > 0 ? '1' : '0' }}"
+                     data-user-id="{{ Auth::id() }}"
+                     data-csrf-token="{{ csrf_token() }}"
+                     id="page-container">
                     <!-- Header -->
                     <div class="flex justify-between items-center mb-6">
                         <div>
@@ -173,9 +177,10 @@
     </div>
 
     <script>
-        const hasConversations = @json(count($conversations ?? []) > 0);
-        const currentUserId = @json(Auth::id());
-        const csrfToken = @json(csrf_token());
+        const pageContainer = document.getElementById('page-container');
+        const hasConversations = pageContainer.dataset.hasConversations === '1';
+        const currentUserId = parseInt(pageContainer.dataset.userId);
+        const csrfToken = pageContainer.dataset.csrfToken;
         
         let currentVendorId = null;
         let messagesRefreshInterval = null;
