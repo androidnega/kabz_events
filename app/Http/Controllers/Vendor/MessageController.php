@@ -190,9 +190,31 @@ class MessageController extends Controller
         // Load relationships
         $message->load(['sender', 'receiver']);
 
+        // Create notification for client
+        $this->createMessageNotification($clientId, Auth::id(), $vendor->id, $message);
+
         return response()->json([
             'success' => true,
             'message' => $message,
+        ]);
+    }
+
+    /**
+     * Create notification for new message.
+     */
+    private function createMessageNotification($clientId, $vendorId, $vendorIdRecord, $message)
+    {
+        // Create notification in database
+        \App\Models\Notification::create([
+            'type' => 'message_received',
+            'notifiable_type' => 'App\Models\User',
+            'notifiable_id' => $clientId,
+            'data' => [
+                'message_id' => $message->id,
+                'vendor_id' => $vendorIdRecord,
+                'message_preview' => $message->message ? \Illuminate\Support\Str::limit($message->message, 50) : 'Sent a photo/audio',
+                'sender_name' => Auth::user()->vendor->business_name ?? Auth::user()->name,
+            ],
         ]);
     }
 

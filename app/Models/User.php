@@ -107,6 +107,27 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all notifications for the user.
+     */
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'notifiable_id')
+                    ->where('notifiable_type', 'App\Models\User')
+                    ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get unread notifications for the user.
+     */
+    public function unreadNotifications(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'notifiable_id')
+                    ->where('notifiable_type', 'App\Models\User')
+                    ->whereNull('read_at')
+                    ->orderBy('created_at', 'desc');
+    }
+
+    /**
      * Check if user can change their name
      */
     public function canChangeName(): bool
