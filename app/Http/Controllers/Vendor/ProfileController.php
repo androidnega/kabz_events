@@ -92,7 +92,7 @@ class ProfileController extends Controller
             $cloudinaryService = new CloudinaryService();
             $result = $cloudinaryService->uploadImage(
                 $request->file('profile_photo'),
-                'kabz_vendors/profiles'
+                'profile_photos'
             );
             
             if ($result['success']) {

@@ -63,7 +63,7 @@ class SampleWorkController extends Controller
             // Use CloudinaryService which handles both Cloudinary and local storage
             $result = $this->cloudinaryService->uploadImage(
                 $image,
-                'kabz_vendors/sample_work',
+                'vendor_sample_work',
                 [
                     'width' => 1920, // Max width
                     'crop' => 'limit', // Don't upscale, only downscale if larger
@@ -240,7 +240,7 @@ class SampleWorkController extends Controller
         // Upload new video using CloudinaryService
         $result = $this->cloudinaryService->uploadVideo(
             $video,
-            'kabz_vendors/sample_work/videos'
+            'promo_videos'
         );
         
         if ($result['success']) {

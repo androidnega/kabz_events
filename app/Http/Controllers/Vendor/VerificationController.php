@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Vendor;
 
 use App\Http\Controllers\Controller;
 use App\Models\VerificationRequest;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -67,21 +68,34 @@ class VerificationController extends Controller
             return response()->json(['message' => 'You have already submitted a verification request.'], 400);
         }
 
-        // Store files
-        $idDocPath = $request->file('id_document')->store('verification/id_documents', 'public');
-        $logoPath = $request->file('business_logo')->store('verification/logos', 'public');
-        $profilePicPath = $request->file('profile_picture')->store('verification/profiles', 'public');
+        // Store files using CloudinaryService
+        $cloudinaryService = new CloudinaryService();
         
+        // Upload ID document
+        $idResult = $cloudinaryService->uploadImage($request->file('id_document'), 'Ghana_card_verifications');
+        $idDocPath = $idResult['url'] ?? $idResult['path'];
+        
+        // Upload business logo
+        $logoResult = $cloudinaryService->uploadImage($request->file('business_logo'), 'profile_photos');
+        $logoPath = $logoResult['url'] ?? $logoResult['path'];
+        
+        // Upload profile picture
+        $profileResult = $cloudinaryService->uploadImage($request->file('profile_picture'), 'profile_photos');
+        $profilePicPath = $profileResult['url'] ?? $profileResult['path'];
+        
+        // Upload reference letter (if provided)
         $referenceLetterPath = null;
         if ($request->hasFile('reference_letter')) {
-            $referenceLetterPath = $request->file('reference_letter')->store('verification/references', 'public');
+            $refResult = $cloudinaryService->uploadImage($request->file('reference_letter'), 'Ghana_card_verifications');
+            $referenceLetterPath = $refResult['url'] ?? $refResult['path'];
         }
 
-        // Store proof of events
+        // Upload proof of events
         $proofPaths = [];
         if ($request->hasFile('proof_of_events')) {
             foreach ($request->file('proof_of_events') as $file) {
-                $proofPaths[] = $file->store('verification/proof_events', 'public');
+                $proofResult = $cloudinaryService->uploadImage($file, 'Ghana_card_verifications');
+                $proofPaths[] = $proofResult['url'] ?? $proofResult['path'];
             }
         }
 

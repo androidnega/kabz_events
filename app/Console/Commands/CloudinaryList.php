@@ -8,7 +8,7 @@ use Cloudinary\Cloudinary;
 
 class CloudinaryList extends Command
 {
-    protected $signature = 'cloudinary:list {--folder=kabz_test : Folder to list images from}';
+    protected $signature = 'cloudinary:list {--folder=vendor_sample_work : Folder to list images from}';
     protected $description = 'List images in your Cloudinary account';
 
     public function handle()

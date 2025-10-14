@@ -107,7 +107,7 @@ class TestCloudinaryUpload extends Command
         foreach ($testImages as $imagePath) {
             try {
                 $response = $cloudinary->uploadApi()->upload($imagePath, [
-                    'folder' => 'kabz_test',
+                    'folder' => 'vendor_sample_work',
                     'resource_type' => 'image',
                     'use_filename' => true,
                     'unique_filename' => true
@@ -161,7 +161,7 @@ class TestCloudinaryUpload extends Command
             $this->newLine();
             $this->info('Next steps:');
             $this->line('   1. Log into your Cloudinary dashboard');
-            $this->line('   2. Check the "kabz_test" folder');
+            $this->line('   2. Check the "vendor_sample_work" folder');
             $this->line('   3. Your uploaded images should be visible there');
             $this->line('   4. You can now register as a vendor and upload images - they will go to Cloudinary!');
         }
