@@ -25,9 +25,9 @@
                         id="searchKeyword"
                         value="{{ request('q') }}" 
                         placeholder="Search vendors..." 
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 md:px-4 md:py-3 pr-10 text-sm md:text-base focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
+                        class="w-full border border-gray-300 rounded-lg pl-3 pr-10 py-2 md:py-2.5 text-sm md:text-base focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
                     >
-                    <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
@@ -35,9 +35,9 @@
                 {{-- Filter Row --}}
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-3">
                     {{-- Category Filter --}}
-                    <div class="col-span-2 md:col-span-1">
-                        <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Category</label>
-                        <select id="categoryFilter" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs md:text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors">
+                    <div class="col-span-2 md:col-span-1 min-w-0">
+                        <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1 truncate">Category</label>
+                        <select id="categoryFilter" class="w-full border border-gray-300 rounded-lg pl-2 pr-6 py-2 text-xs md:text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors truncate">
                             <option value="">All Categories</option>
                             @foreach($categories as $cat)
                                 <option value="{{ $cat->slug }}" @selected(request('category') == $cat->slug)>
@@ -48,24 +48,24 @@
                     </div>
 
                     {{-- Location Filter (Opens Modal) --}}
-                    <div>
-                        <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <div class="min-w-0">
+                        <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1 truncate">Location</label>
                         <button 
                             type="button"
                             onclick="openLocationModal()"
-                            class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs md:text-sm text-left hover:border-purple-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors flex items-center justify-between gap-1 overflow-hidden"
+                            class="w-full border border-gray-300 rounded-lg pl-2 pr-7 py-2 text-xs md:text-sm text-left hover:border-purple-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors relative overflow-hidden"
                         >
-                            <span id="locationDisplay" class="text-gray-400 truncate flex-1 min-w-0">Select</span>
-                            <svg class="w-3 h-3 md:w-4 md:h-4 text-gray-400 flex-shrink-0 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <span id="locationDisplay" class="text-gray-400 truncate block pr-1">Select</span>
+                            <svg class="w-3 h-3 text-gray-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                             </svg>
                         </button>
                     </div>
 
                     {{-- Rating Filter --}}
-                    <div>
-                        <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Rating</label>
-                        <select id="ratingFilter" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs md:text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors">
+                    <div class="min-w-0">
+                        <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1 truncate">Rating</label>
+                        <select id="ratingFilter" class="w-full border border-gray-300 rounded-lg pl-2 pr-6 py-2 text-xs md:text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors">
                             <option value="">Any</option>
                             <option value="4.5" @selected(request('min_rating') == '4.5')>4.5+</option>
                             <option value="4.0" @selected(request('min_rating') == '4.0')>4.0+</option>
@@ -75,9 +75,9 @@
                     </div>
 
                     {{-- Sort Filter --}}
-                    <div>
-                        <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Sort</label>
-                        <select id="sortFilter" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs md:text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors">
+                    <div class="min-w-0">
+                        <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1 truncate">Sort</label>
+                        <select id="sortFilter" class="w-full border border-gray-300 rounded-lg pl-2 pr-6 py-2 text-xs md:text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors">
                             <option value="rating" @selected(request('sort') == 'rating' || !request('sort'))>Top Rated</option>
                             <option value="premium" @selected(request('sort') == 'premium')>Premium</option>
                             <option value="recent" @selected(request('sort') == 'recent')>Recent</option>
@@ -87,11 +87,11 @@
                     </div>
 
                     {{-- Clear Filters Button --}}
-                    <div class="flex items-end col-span-2 md:col-span-1">
+                    <div class="flex items-end col-span-2 md:col-span-1 min-w-0">
                         <button 
                             type="button"
                             onclick="clearAllFilters()"
-                            class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-3 rounded-lg transition-colors text-xs md:text-sm"
+                            class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-2 rounded-lg transition-colors text-xs md:text-sm truncate"
                         >
                             Clear All
                         </button>
