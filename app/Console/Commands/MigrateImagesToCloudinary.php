@@ -81,13 +81,13 @@ class MigrateImagesToCloudinary extends Command
                 }
 
                 // Get the full path
-                $fullPath = Storage::disk('public')->path($localPath);
+                $fullPath = storage_path('app/public/' . $localPath);
                 
                 // Create a temporary UploadedFile instance
                 $file = new \Illuminate\Http\UploadedFile(
                     $fullPath,
                     basename($localPath),
-                    Storage::disk('public')->mimeType($localPath),
+                    mime_content_type($fullPath),
                     null,
                     true
                 );
@@ -143,12 +143,12 @@ class MigrateImagesToCloudinary extends Command
                         continue;
                     }
 
-                    $fullPath = Storage::disk('public')->path($localPath);
+                    $fullPath = storage_path('app/public/' . $localPath);
                     
                     $file = new \Illuminate\Http\UploadedFile(
                         $fullPath,
                         basename($localPath),
-                        Storage::disk('public')->mimeType($localPath),
+                        mime_content_type($fullPath),
                         null,
                         true
                     );
@@ -229,12 +229,12 @@ class MigrateImagesToCloudinary extends Command
                         continue;
                     }
 
-                    $fullPath = Storage::disk('public')->path($imagePath);
+                    $fullPath = storage_path('app/public/' . $imagePath);
                     
                     $file = new \Illuminate\Http\UploadedFile(
                         $fullPath,
                         basename($imagePath),
-                        Storage::disk('public')->mimeType($imagePath),
+                        mime_content_type($fullPath),
                         null,
                         true
                     );
@@ -314,12 +314,12 @@ class MigrateImagesToCloudinary extends Command
                     continue;
                 }
 
-                $fullPath = Storage::disk('public')->path($videoPath);
+                $fullPath = storage_path('app/public/' . $videoPath);
                 
                 $file = new \Illuminate\Http\UploadedFile(
                     $fullPath,
                     basename($videoPath),
-                    Storage::disk('public')->mimeType($videoPath),
+                    mime_content_type($fullPath),
                     null,
                     true
                 );
