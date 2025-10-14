@@ -110,25 +110,25 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 // All dashboard sub-routes under unified /dashboard prefix
 Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 
-    // Super Admin Routes
+    // Super Admin Routes (MUST be defined BEFORE client routes to take precedence)
     Route::middleware(['role:super_admin'])->name('superadmin.')->group(function () {
-        // Configuration Center (Phase K6) - Using /config path to avoid conflict with client /settings
-        Route::get('/config', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'index'])->name('settings.index');
+        // Configuration Center (Phase K6)
+        Route::get('/settings', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'index'])->name('settings.index');
         
-        Route::get('/config/paystack', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'paystack'])->name('settings.paystack');
-        Route::post('/config/paystack', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updatePaystack'])->name('settings.paystack.update');
+        Route::get('/settings/paystack', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'paystack'])->name('settings.paystack');
+        Route::post('/settings/paystack', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updatePaystack'])->name('settings.paystack.update');
         
-        Route::get('/config/cloudinary', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'cloudinary'])->name('settings.cloudinary');
-        Route::post('/config/cloudinary', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateCloudinary'])->name('settings.cloudinary.update');
+        Route::get('/settings/cloudinary', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'cloudinary'])->name('settings.cloudinary');
+        Route::post('/settings/cloudinary', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateCloudinary'])->name('settings.cloudinary.update');
         
-        Route::get('/config/sms', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'sms'])->name('settings.sms');
-        Route::post('/config/sms', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateSms'])->name('settings.sms.update');
+        Route::get('/settings/sms', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'sms'])->name('settings.sms');
+        Route::post('/settings/sms', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateSms'])->name('settings.sms.update');
         
-        Route::get('/config/smtp', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'smtp'])->name('settings.smtp');
-        Route::post('/config/smtp', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateSmtp'])->name('settings.smtp.update');
+        Route::get('/settings/smtp', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'smtp'])->name('settings.smtp');
+        Route::post('/settings/smtp', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateSmtp'])->name('settings.smtp.update');
         
-        Route::get('/config/system', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'system'])->name('settings.system');
-        Route::post('/config/system', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateSystem'])->name('settings.system.update');
+        Route::get('/settings/system', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'system'])->name('settings.system');
+        Route::post('/settings/system', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateSystem'])->name('settings.system.update');
         
         // SMS Test Interface
         Route::get('/sms-test', [SMSTestController::class, 'index'])->name('sms.test');
@@ -235,11 +235,11 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::get('/support', [\App\Http\Controllers\Client\SupportController::class, 'index'])->name('support.index');
         Route::post('/support', [\App\Http\Controllers\Client\SupportController::class, 'store'])->name('support.store');
 
-        // Settings
-        Route::get('/settings', [\App\Http\Controllers\Client\SettingsController::class, 'index'])->name('settings.index');
-        Route::post('/settings/notifications', [\App\Http\Controllers\Client\SettingsController::class, 'updateNotifications'])->name('settings.notifications');
-        Route::post('/settings/privacy', [\App\Http\Controllers\Client\SettingsController::class, 'updatePrivacy'])->name('settings.privacy');
-        Route::post('/settings/password', [\App\Http\Controllers\Client\SettingsController::class, 'updatePassword'])->name('settings.password');
+        // Settings (using /preferences to avoid conflict with super admin /settings)
+        Route::get('/preferences', [\App\Http\Controllers\Client\SettingsController::class, 'index'])->name('settings.index');
+        Route::post('/preferences/notifications', [\App\Http\Controllers\Client\SettingsController::class, 'updateNotifications'])->name('settings.notifications');
+        Route::post('/preferences/privacy', [\App\Http\Controllers\Client\SettingsController::class, 'updatePrivacy'])->name('settings.privacy');
+        Route::post('/preferences/password', [\App\Http\Controllers\Client\SettingsController::class, 'updatePassword'])->name('settings.password');
     });
 
     // ============================================================
