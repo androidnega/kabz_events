@@ -252,6 +252,8 @@ class SearchController extends Controller
                     'verified' => $vendor->is_verified,
                     'subscription_type' => $subscriptionType,
                     'is_premium' => $subscription && in_array(strtolower($subscription->plan_name ?? ''), ['premium', 'vip']),
+                    'preview_image' => $vendor->getPreviewImageUrl(),
+                    'sample_work_images' => $vendor->sample_work_images ?? [],
                 ];
             }),
             'count' => $vendors->count(),
