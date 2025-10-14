@@ -76,7 +76,7 @@
                 @foreach($media as $item)
                     <div class="media-item bg-white rounded border border-gray-200 overflow-hidden hover:border-purple-400 transition-all duration-200">
                         {{-- Image/Video Preview --}}
-                        <div class="h-40 bg-gray-100 relative group cursor-pointer view-media-trigger" 
+                        <div class="h-40 bg-gray-100 relative group" 
                              data-url="{{ $item['url'] }}" 
                              data-title="{{ basename($item['public_id']) }}" 
                              data-type="{{ $item['resource_type'] }}">
@@ -91,15 +91,18 @@
                                      loading="lazy">
                             @endif
 
-                            {{-- Icon Actions on Hover --}}
-                            <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                                <i class="fas fa-eye text-white text-2xl cursor-pointer hover:text-blue-300 transition" 
+                            {{-- Icon Actions on Hover - More Visible --}}
+                            <div class="absolute inset-0 bg-black bg-opacity-70 hidden group-hover:flex items-center justify-center gap-6">
+                                <i class="view-btn fas fa-eye text-white text-3xl cursor-pointer hover:scale-110 hover:text-blue-400 transition-all" 
+                                   data-url="{{ $item['url'] }}" 
+                                   data-title="{{ basename($item['public_id']) }}" 
+                                   data-type="{{ $item['resource_type'] }}"
                                    title="View"></i>
-                                <i class="fas fa-download download-btn text-white text-2xl cursor-pointer hover:text-green-300 transition" 
+                                <i class="download-btn fas fa-download text-white text-3xl cursor-pointer hover:scale-110 hover:text-green-400 transition-all" 
                                    data-url="{{ $item['url'] }}" 
                                    data-filename="{{ basename($item['public_id']) }}.{{ $item['format'] }}" 
                                    title="Download"></i>
-                                <i class="fas fa-trash delete-btn text-white text-2xl cursor-pointer hover:text-red-300 transition" 
+                                <i class="delete-btn fas fa-trash text-white text-3xl cursor-pointer hover:scale-110 hover:text-red-400 transition-all" 
                                    data-public-id="{{ $item['public_id'] }}" 
                                    data-filename="{{ basename($item['public_id']) }}" 
                                    data-folder="{{ $folder }}" 
@@ -373,44 +376,40 @@
 
         // Event delegation for media items
         document.addEventListener('click', function(e) {
-            // Download icon
-            const downloadIcon = e.target.closest('.download-btn');
-            if (downloadIcon) {
+            // View icon - Opens lightbox
+            const viewBtn = e.target.closest('.view-btn');
+            if (viewBtn) {
                 e.stopPropagation();
                 e.preventDefault();
-                const url = downloadIcon.dataset.url || downloadIcon.getAttribute('data-url');
-                const filename = downloadIcon.dataset.filename || downloadIcon.getAttribute('data-filename');
+                const url = viewBtn.getAttribute('data-url');
+                const title = viewBtn.getAttribute('data-title');
+                const type = viewBtn.getAttribute('data-type');
+                const allViewBtns = Array.from(document.querySelectorAll('.view-btn'));
+                const index = allViewBtns.indexOf(viewBtn);
+                viewMedia(url, title, type, index);
+                return;
+            }
+
+            // Download icon
+            const downloadBtn = e.target.closest('.download-btn');
+            if (downloadBtn) {
+                e.stopPropagation();
+                e.preventDefault();
+                const url = downloadBtn.getAttribute('data-url');
+                const filename = downloadBtn.getAttribute('data-filename');
                 downloadMedia(url, filename);
                 return;
             }
 
             // Delete icon
-            const deleteIcon = e.target.closest('.delete-btn');
-            if (deleteIcon) {
+            const deleteBtn = e.target.closest('.delete-btn');
+            if (deleteBtn) {
                 e.stopPropagation();
                 e.preventDefault();
-                const publicId = deleteIcon.dataset.publicId || deleteIcon.getAttribute('data-public-id');
-                const filename = deleteIcon.dataset.filename || deleteIcon.getAttribute('data-filename');
-                const folder = deleteIcon.dataset.folder || deleteIcon.getAttribute('data-folder');
+                const publicId = deleteBtn.getAttribute('data-public-id');
+                const filename = deleteBtn.getAttribute('data-filename');
+                const folder = deleteBtn.getAttribute('data-folder');
                 deleteMedia(publicId, filename, folder);
-                return;
-            }
-
-            // View icon or image click
-            const viewIcon = e.target.closest('.fa-eye');
-            const viewTrigger = e.target.closest('.view-media-trigger');
-            
-            if (viewIcon || (viewTrigger && !e.target.closest('.download-btn') && !e.target.closest('.delete-btn'))) {
-                e.stopPropagation();
-                e.preventDefault();
-                const trigger = viewTrigger;
-                if (trigger) {
-                    const url = trigger.dataset.url;
-                    const title = trigger.dataset.title;
-                    const type = trigger.dataset.type;
-                    const index = Array.from(document.querySelectorAll('.view-media-trigger')).indexOf(trigger);
-                    viewMedia(url, title, type, index);
-                }
                 return;
             }
 
