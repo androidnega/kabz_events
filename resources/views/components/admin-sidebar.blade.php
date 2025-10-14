@@ -60,9 +60,9 @@
             </a>
 
             <!-- Vendors -->
-            <a href="{{ route('vendors.index') }}" 
+            <a href="{{ route('admin.vendors.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
-                      {{ request()->routeIs('vendors.index') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+                      {{ request()->routeIs('admin.vendors.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i class="fas fa-store-alt text-lg w-5"></i>
                 <span>All Vendors</span>
             </a>

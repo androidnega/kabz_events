@@ -162,6 +162,16 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::post('/verifications/{vendorId}/suspend', [VendorVerificationController::class, 'suspend'])->name('verifications.suspend');
         Route::post('/verifications/{vendorId}/cancel', [VendorVerificationController::class, 'cancelVerification'])->name('verifications.cancel');
         
+        // Vendor Management
+        Route::get('/vendors', [App\Http\Controllers\Admin\VendorController::class, 'index'])->name('vendors.index');
+        Route::get('/vendors/{id}', [App\Http\Controllers\Admin\VendorController::class, 'show'])->name('vendors.show');
+        Route::post('/vendors/{id}/verify', [App\Http\Controllers\Admin\VendorController::class, 'verify'])->name('vendors.verify');
+        Route::post('/vendors/{id}/unverify', [App\Http\Controllers\Admin\VendorController::class, 'unverify'])->name('vendors.unverify');
+        Route::post('/vendors/{id}/deactivate', [App\Http\Controllers\Admin\VendorController::class, 'deactivate'])->name('vendors.deactivate');
+        Route::post('/vendors/{id}/activate', [App\Http\Controllers\Admin\VendorController::class, 'activate'])->name('vendors.activate');
+        Route::post('/vendors/{id}/reset-password', [App\Http\Controllers\Admin\VendorController::class, 'resetPassword'])->name('vendors.resetPassword');
+        Route::delete('/vendors/{id}', [App\Http\Controllers\Admin\VendorController::class, 'destroy'])->name('vendors.destroy');
+        
         // Client Management
         Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
         Route::get('/clients/{id}', [ClientController::class, 'show'])->name('clients.show');
