@@ -39,6 +39,14 @@ class VendorProfileController extends Controller
             });
         }
 
+        // Region filter
+        if ($request->has('region') && $request->region) {
+            $query->where('address', 'like', "%{$request->region}%");
+        }
+
+        // Sort filter
+        $sortBy = $request->input('sort', 'rating');
+
         // Priority Sorting: Subscribed > Verified > Unverified
         $query->leftJoin('vendor_subscriptions', function ($join) {
             $join->on('vendors.id', '=', 'vendor_subscriptions.vendor_id')
@@ -53,9 +61,14 @@ class VendorProfileController extends Controller
                 WHEN vendor_subscriptions.id IS NOT NULL THEN 3
                 WHEN vendors.is_verified = 1 THEN 2
                 ELSE 1
-            END as priority_score')
-        ->orderByDesc('priority_score')
-        ->orderBy('rating_cached', 'desc');
+            END as priority_score');
+
+        // Apply sorting based on user selection
+        match ($sortBy) {
+            'recent' => $query->orderByDesc('priority_score')->latest('vendors.created_at'),
+            'name' => $query->orderByDesc('priority_score')->orderBy('business_name'),
+            default => $query->orderByDesc('priority_score')->orderByDesc('rating_cached'),
+        };
 
         $vendors = $query->paginate(9);
 

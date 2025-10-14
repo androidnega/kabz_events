@@ -43,9 +43,6 @@ use Illuminate\Support\Facades\Route;
 // Public Homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/api/load-more-vendors', [HomeController::class, 'loadMoreVendors'])->name('home.load-more-vendors');
-
-// Search & Filter Vendors
-Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 Route::get('/search/advanced', [\App\Http\Controllers\AdvancedSearchController::class, 'index'])->name('search.advanced');
 
 // Location and Nearby Vendors (AJAX endpoints)

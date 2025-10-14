@@ -15,16 +15,66 @@
                 </p>
                 
                 <!-- Search Bar -->
-                <div class="max-w-2xl mx-auto">
-                    <form action="{{ route('search.index') }}" method="GET" class="relative">
-                        <input 
-                            type="text" 
-                            name="q"
-                            placeholder="Search vendors..."
-                            class="w-full px-4 md:px-5 py-2.5 md:py-3 pr-24 md:pr-28 rounded-full text-gray-900 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-purple-300"
-                        >
-                        <button type="submit" class="absolute right-1 top-1/2 transform -translate-y-1/2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-1.5 md:py-2 px-4 md:px-6 rounded-full transition-colors text-sm md:text-base">
-                            <i class="fas fa-search"></i>
+                <div class="max-w-4xl mx-auto">
+                    <form action="{{ route('vendors.index') }}" method="GET" class="flex flex-col md:flex-row gap-2 md:gap-3">
+                        <!-- Search Input -->
+                        <div class="flex-1 relative">
+                            <input 
+                                type="text" 
+                                name="search"
+                                placeholder="Search for photographer, caterer, decorator..."
+                                class="w-full pl-10 pr-4 py-2.5 md:py-3 rounded-full text-gray-900 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-purple-300 border border-white"
+                            >
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                        </div>
+                        
+                        <!-- Location Dropdown -->
+                        <div class="relative" x-data="{ open: false }">
+                            <button 
+                                type="button"
+                                @click="open = !open"
+                                class="w-full md:w-56 px-4 py-2.5 md:py-3 rounded-full bg-white text-gray-700 text-sm md:text-base border border-white hover:bg-gray-50 transition flex items-center justify-between gap-2"
+                            >
+                                <div class="flex items-center gap-2 flex-1 min-w-0">
+                                    <i class="fas fa-map-marker-alt text-purple-600 flex-shrink-0"></i>
+                                    <span id="homeLocationDisplay" class="truncate">All Locations</span>
+                                </div>
+                                <i class="fas fa-chevron-down text-xs flex-shrink-0"></i>
+                            </button>
+                            
+                            <input type="hidden" name="region" id="homeSelectedRegion" value="">
+                            <input type="hidden" name="district" id="homeSelectedDistrict" value="">
+                            
+                            <!-- Location Dropdown Menu -->
+                            <div x-show="open" 
+                                 @click.away="open = false"
+                                 x-cloak
+                                 class="absolute top-full left-0 right-0 md:left-auto md:right-0 md:w-72 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 max-h-80 overflow-y-auto z-50">
+                                <div class="p-2">
+                                    @foreach(['Greater Accra', 'Ashanti', 'Western', 'Central', 'Northern', 'Eastern', 'Volta', 'Upper East', 'Upper West', 'Bono'] as $region)
+                                    <button 
+                                        type="button"
+                                        @click="document.getElementById('homeSelectedRegion').value = '{{ $region }}'; document.getElementById('homeLocationDisplay').textContent = '{{ $region }}'; open = false"
+                                        class="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 rounded transition"
+                                    >
+                                        {{ $region }}
+                                    </button>
+                                    @endforeach
+                                    <div class="border-t border-gray-200 my-1"></div>
+                                    <button 
+                                        type="button"
+                                        @click="document.getElementById('homeSelectedRegion').value = ''; document.getElementById('homeSelectedDistrict').value = ''; document.getElementById('homeLocationDisplay').textContent = 'All Locations'; open = false"
+                                        class="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded transition"
+                                    >
+                                        Clear Location
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Search Button -->
+                        <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 md:py-3 px-6 md:px-8 rounded-full transition-colors text-sm md:text-base">
+                            Search
                         </button>
                     </form>
                 </div>
@@ -43,7 +93,7 @@
             @if($categories->count() > 0)
             <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 lg:gap-6">
                 @foreach($categories as $category)
-                <a href="{{ route('search.index', ['category' => $category->slug]) }}" class="block group">
+                <a href="{{ route('vendors.index', ['category' => $category->slug]) }}" class="block group">
                     <div class="bg-white rounded-lg border border-gray-200 hover:border-purple-300 transition-colors duration-200 p-3 md:p-4 text-center h-full">
                         <!-- Icon -->
                         <div class="mb-2 flex justify-center">
