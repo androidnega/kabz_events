@@ -158,7 +158,7 @@
         </div>
 
         {{-- Vendor Results List --}}
-        <div id="vendorResults" class="space-y-4 mb-8">
+        <div id="vendorResults" class="space-y-2 md:space-y-3 mb-8">
             {{-- Results will be loaded here via AJAX --}}
         </div>
     </div>
@@ -259,61 +259,51 @@
                 
                 return `
                 <a href="${vendor.url}" class="block group">
-                    <div class="bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors overflow-hidden ${vendor.is_premium ? 'ring-2 ring-yellow-400' : ''}">
-                        <div class="flex flex-col sm:flex-row gap-3 md:gap-4 p-3 md:p-4">
+                    <div class="bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors overflow-hidden">
+                        <div class="flex items-center gap-3 md:gap-4 p-2 md:p-3">
                             <!-- Vendor Image -->
-                            <div class="w-full sm:w-32 md:w-40 flex-shrink-0">
+                            <div class="w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
                                 ${hasImage ? `
-                                    <div class="aspect-video sm:aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                                    <div class="w-full h-full bg-gray-100 rounded-lg overflow-hidden">
                                         <img src="${previewImage}" 
                                              alt="${vendor.business_name}" 
                                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                                              loading="lazy"
-                                             onerror="this.parentElement.innerHTML='<div class=\\'h-full bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center\\'><div class=\\'text-4xl font-bold text-purple-300\\'>${vendorInitial}</div></div>'">
+                                             onerror="this.parentElement.innerHTML='<div class=\\'h-full bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center\\'><div class=\\'text-2xl font-bold text-purple-300\\'>${vendorInitial}</div></div>'">
                                     </div>
                                 ` : `
-                                    <div class="aspect-video sm:aspect-square bg-gradient-to-br from-purple-100 to-teal-100 rounded-lg flex items-center justify-center">
-                                        <div class="text-4xl md:text-5xl font-bold text-purple-300">${vendorInitial}</div>
+                                    <div class="w-full h-full bg-gradient-to-br from-purple-100 to-teal-100 rounded-lg flex items-center justify-center">
+                                        <div class="text-2xl md:text-3xl font-bold text-purple-300">${vendorInitial}</div>
                                     </div>
                                 `}
                             </div>
                             
-                            <!-- Vendor Info -->
-                            <div class="flex-1 min-w-0">
-                                <!-- Business Name & Verified -->
-                                <div class="flex items-start justify-between gap-2 mb-2">
-                                    <h3 class="text-base md:text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors line-clamp-2 flex-1">
+                            <!-- Vendor Info (All in one line) -->
+                            <div class="flex-1 min-w-0 flex flex-col justify-center">
+                                <!-- Row 1: Name, Rating, Verified -->
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h3 class="text-sm md:text-base font-semibold text-gray-900 group-hover:text-purple-600 transition-colors truncate flex-shrink">
                                         ${vendor.business_name}
                                     </h3>
-                                    ${vendor.verified ? '<svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>' : ''}
-                                </div>
-                                
-                                <!-- Rating -->
-                                <div class="flex items-center gap-2 mb-2">
-                                    <div class="flex items-center text-yellow-400">
+                                    ${vendor.verified ? '<svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>' : ''}
+                                    <div class="flex items-center text-yellow-400 flex-shrink-0">
                                         ${generateStars(vendor.rating)}
                                     </div>
-                                    <span class="text-sm text-gray-700">${vendor.rating}</span>
-                                    <span class="text-xs text-gray-500">(${vendor.review_count})</span>
+                                    <span class="text-xs text-gray-600 flex-shrink-0">${vendor.rating}</span>
                                 </div>
-
-                                <!-- Category -->
-                                ${vendor.categories.length > 0 ? `
-                                    <div class="mb-2">
-                                        <span class="inline-block bg-purple-100 text-purple-700 text-xs font-medium px-2 py-0.5 rounded">${vendor.categories[0]}</span>
-                                    </div>
-                                ` : ''}
-
-                                <!-- Location -->
-                                ${vendor.address ? `
-                                    <div class="flex items-center text-xs md:text-sm text-gray-600">
-                                        <svg class="w-3 h-3 md:w-4 md:h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                        </svg>
-                                        <span class="truncate">${vendor.address}</span>
-                                        ${vendor.distance ? `<span class="font-semibold text-teal-600 ml-2 flex-shrink-0">(${vendor.distance})</span>` : ''}
-                                    </div>
-                                ` : ''}
+                                
+                                <!-- Row 2: Category & Location -->
+                                <div class="flex items-center gap-2 text-xs text-gray-600">
+                                    ${vendor.categories.length > 0 ? `<span class="inline-block bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-medium flex-shrink-0">${vendor.categories[0]}</span>` : ''}
+                                    ${vendor.address ? `
+                                        <span class="flex items-center gap-1 truncate">
+                                            <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            </svg>
+                                            <span class="truncate">${vendor.address}</span>
+                                        </span>
+                                    ` : ''}
+                                </div>
                             </div>
                         </div>
                     </div>
