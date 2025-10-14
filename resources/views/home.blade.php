@@ -5,26 +5,26 @@
 
     <!-- Hero Section -->
     <div class="bg-gradient-to-r from-primary to-purple-700 text-white">
-        <div class="container mx-auto py-12 md:py-20 px-4">
+        <div class="container mx-auto py-6 md:py-12 lg:py-16 px-4">
             <div class="text-center">
-                <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 px-2">
-                    Find the Perfect Vendors for Your Event in Ghana
+                <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">
+                    Find Perfect Event Vendors in Ghana
                 </h1>
-                <p class="text-lg sm:text-xl md:text-2xl mb-8 text-purple-100 px-2">
-                    Connect with verified event service providers across Ghana
+                <p class="text-sm sm:text-base md:text-lg lg:text-xl mb-4 md:mb-6 text-purple-100">
+                    Connect with verified service providers
                 </p>
                 
                 <!-- Search Bar -->
-                <div class="max-w-3xl mx-auto px-4">
-                    <form action="{{ route('search.index') }}" method="GET" class="flex flex-col sm:flex-row gap-3 sm:gap-0 sm:relative">
+                <div class="max-w-2xl mx-auto">
+                    <form action="{{ route('search.index') }}" method="GET" class="relative">
                         <input 
                             type="text" 
                             name="q"
-                            placeholder="Search for photographers, caterers, decorators..."
-                            class="w-full px-4 sm:px-6 py-3 sm:py-4 sm:pr-36 rounded-full text-gray-900 text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-purple-300 shadow-lg"
+                            placeholder="Search vendors..."
+                            class="w-full px-4 md:px-5 py-2.5 md:py-3 pr-24 md:pr-28 rounded-full text-gray-900 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-purple-300"
                         >
-                        <button type="submit" class="w-full sm:w-auto sm:absolute sm:right-2 sm:top-1/2 sm:transform sm:-translate-y-1/2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 sm:py-2 px-8 rounded-full transition-colors shadow-lg">
-                            <i class="fas fa-search mr-2"></i>Search
+                        <button type="submit" class="absolute right-1 top-1/2 transform -translate-y-1/2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-1.5 md:py-2 px-4 md:px-6 rounded-full transition-colors text-sm md:text-base">
+                            <i class="fas fa-search"></i>
                         </button>
                     </form>
                 </div>
@@ -33,11 +33,11 @@
     </div>
 
     <!-- Categories Section -->
-    <div class="py-12 md:py-16 bg-white">
+    <div class="py-8 md:py-12 lg:py-16 bg-white">
         <div class="container mx-auto px-4">
-            <div class="text-center mb-8 md:mb-12">
-                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3 md:mb-4">Browse by Category</h2>
-                <p class="text-base md:text-lg text-gray-600">Find exactly what you need for your special event</p>
+            <div class="text-center mb-6 md:mb-8 lg:mb-10">
+                <h2 class="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 md:mb-3">Browse by Category</h2>
+                <p class="text-sm md:text-base lg:text-lg text-gray-600">Find what you need for your event</p>
             </div>
 
             @if($categories->count() > 0)
@@ -73,11 +73,11 @@
     </div>
 
     <!-- Featured Vendors Section -->
-    <div class="py-16 bg-neutral">
+    <div class="py-8 md:py-12 lg:py-16 bg-neutral">
         <div class="container mx-auto">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-gray-900 mb-4">Featured Vendors</h2>
-                <p class="text-lg text-gray-600">Top-rated and verified service providers</p>
+            <div class="text-center mb-6 md:mb-8 lg:mb-10">
+                <h2 class="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 md:mb-3">Featured Vendors</h2>
+                <p class="text-sm md:text-base lg:text-lg text-gray-600">Top-rated service providers</p>
             </div>
 
             @if($featuredVendors->count() > 0)
