@@ -137,11 +137,24 @@
       <div x-show="showLoginModal" 
            x-cloak
            @click.away="showLoginModal = false"
+           x-transition:enter="transition ease-out duration-300"
+           x-transition:enter-start="opacity-0"
+           x-transition:enter-end="opacity-100"
+           x-transition:leave="transition ease-in duration-200"
+           x-transition:leave-start="opacity-100"
+           x-transition:leave-end="opacity-0"
            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50" 
            style="display: none;">
         
         <!-- Modal panel - Centered and Compact -->
-        <div class="relative bg-white rounded-2xl shadow-2xl transform transition-all w-full max-w-sm mx-auto" @click.stop>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-xs mx-auto" 
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             @click.stop>
           <div class="bg-white px-6 py-6">
             <div class="text-center">
               <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-indigo-100 mb-3">
