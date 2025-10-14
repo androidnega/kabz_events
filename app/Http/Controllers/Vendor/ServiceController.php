@@ -47,8 +47,11 @@ class ServiceController extends Controller
         }
 
         $categories = Category::orderBy('name')->get();
+        
+        // Get vendor's default category from their first service
+        $defaultCategoryId = $vendor->services()->first()?->category_id;
 
-        return view('vendor.services.create', compact('categories'));
+        return view('vendor.services.create', compact('categories', 'vendor', 'defaultCategoryId'));
     }
 
     /**

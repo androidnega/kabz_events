@@ -26,7 +26,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="py-12">
+    <div class="py-12" x-data="{ showLoginModal: false }">
         <div class="container mx-auto">
             <!-- Vendor Name Header -->
             <div class="mb-8">
@@ -278,7 +278,7 @@
                     <x-card>
                         <div class="p-6 text-center">
                             <p class="text-gray-600">
-                                Please <a href="{{ route('login') }}" class="text-primary hover:underline font-semibold">log in</a> to leave a review for this vendor.
+                                Please <button @click="showLoginModal = true" class="text-primary hover:underline font-semibold">log in</button> to leave a review for this vendor.
                             </p>
                         </div>
                     </x-card>
@@ -371,6 +371,85 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        {{-- Login Required Modal --}}
+        <div x-show="showLoginModal" 
+             x-cloak
+             @click.away="showLoginModal = false"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50" 
+             style="display: none;">
+          
+          <!-- Modal panel - Centered and Compact -->
+          <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-xs mx-4 overflow-hidden" 
+               x-transition:enter="transition ease-out duration-300 transform"
+               x-transition:enter-start="opacity-0 scale-95"
+               x-transition:enter-end="opacity-100 scale-100"
+               x-transition:leave="transition ease-in duration-200 transform"
+               x-transition:leave-start="opacity-100 scale-100"
+               x-transition:leave-end="opacity-0 scale-95"
+               @click.stop>
+            
+            <!-- Close Button -->
+            <button 
+              @click="showLoginModal = false"
+              class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition z-10">
+              <i class="fas fa-times text-lg"></i>
+            </button>
+
+            <!-- Header Section -->
+            <div class="bg-gradient-to-br from-indigo-50 to-white px-6 py-6">
+              <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-indigo-600 mb-4 shadow-lg">
+                  <i class="fas fa-lock text-white text-base"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">
+                  Login Required
+                </h3>
+                <p class="text-xs text-gray-600 leading-relaxed">
+                  Please sign in to leave a review for this vendor
+                </p>
+              </div>
+            </div>
+            
+            <!-- Actions Section -->
+            <div class="bg-gray-50 px-6 py-5 rounded-b-xl">
+              <div class="space-y-3">
+                <a href="{{ route('login') }}" class="block w-full">
+                  <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200 text-sm">
+                    Sign In
+                  </button>
+                </a>
+                
+                <a href="{{ route('register') }}" class="block w-full">
+                  <button class="w-full bg-white hover:bg-gray-50 text-indigo-600 border-2 border-indigo-600 px-4 py-3 rounded-lg font-medium transition-colors duration-200 text-sm">
+                    Create Account
+                  </button>
+                </a>
+              </div>
+
+              <!-- Divider -->
+              <div class="my-4">
+                <div class="border-t border-gray-300"></div>
+              </div>
+
+              <!-- Vendor Registration Link -->
+              <div class="text-center">
+                <p class="text-xs text-gray-600">
+                  Are you a vendor? 
+                  <a href="{{ route('vendor.public.register') }}" class="text-indigo-600 hover:text-indigo-700 font-semibold underline decoration-2 hover:decoration-indigo-700">
+                    Register here
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
     </div>
 </x-layouts.base>

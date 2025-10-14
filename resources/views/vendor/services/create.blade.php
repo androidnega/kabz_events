@@ -1,7 +1,7 @@
 <x-vendor-layout>
     <x-slot name="title">Add New Service</x-slot>
 
-    <div class="max-w-2xl mx-auto">
+    <div class="w-full">
         <div class="mb-6">
             <h2 class="text-2xl font-bold text-gray-900">Add New Service</h2>
             <p class="text-gray-600 mt-1">Create a new service listing for your business</p>
@@ -28,24 +28,29 @@
                             <x-input-error :messages="$errors->get('title')" class="mt-2" />
                         </div>
 
-                        <!-- Category -->
-                        <div>
-                            <x-input-label for="category_id" :value="__('Category')" />
-                            <select 
-                                id="category_id" 
-                                name="category_id" 
-                                class="border-gray-300 focus:border-primary focus:ring-primary rounded-md shadow-sm block mt-1 w-full"
-                                required
-                            >
-                                <option value="">Select a category</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <x-input-error :messages="$errors->get('category_id')" class="mt-2" />
-                        </div>
+                        <!-- Hidden Category Field (Auto-selected from vendor's existing services) -->
+                        @if($defaultCategoryId)
+                            <input type="hidden" name="category_id" value="{{ $defaultCategoryId }}">
+                        @else
+                            <!-- Category - Only show if vendor has no services yet -->
+                            <div>
+                                <x-input-label for="category_id" :value="__('Category')" />
+                                <select 
+                                    id="category_id" 
+                                    name="category_id" 
+                                    class="border-gray-300 focus:border-primary focus:ring-primary rounded-md shadow-sm block mt-1 w-full"
+                                    required
+                                >
+                                    <option value="">Select a category</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('category_id')" class="mt-2" />
+                            </div>
+                        @endif
 
                         <!-- Description -->
                         <div>
