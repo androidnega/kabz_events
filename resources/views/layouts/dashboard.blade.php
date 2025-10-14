@@ -108,12 +108,8 @@
                     <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-gray-700 hover:text-primary focus:outline-none transition">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800">@yield('page-title', 'Dashboard')</h2>
-                        @hasSection('page-subtitle')
-                            <p class="text-sm text-gray-600">@yield('page-subtitle')</p>
-                        @endif
-                    </div>
+                    <!-- Empty spacer for layout -->
+                    <div class="flex-1"></div>
                 </div>
 
                 <div class="flex items-center space-x-4">

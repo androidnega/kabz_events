@@ -37,10 +37,8 @@
                         <i class="fas fa-bars text-xl"></i>
                     </button>
 
-                    <!-- Page Title (Hidden on mobile, shown on desktop) -->
-                    <h1 class="hidden sm:block text-xl font-semibold text-gray-800">
-                        {{ $pageTitle ?? 'Admin Dashboard' }}
-                    </h1>
+                    <!-- Empty spacer for layout -->
+                    <div class="flex-1"></div>
 
                     <!-- Right Side Actions -->
                     <div class="flex items-center gap-4">
