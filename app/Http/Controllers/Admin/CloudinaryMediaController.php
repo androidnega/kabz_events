@@ -306,8 +306,17 @@ class CloudinaryMediaController extends Controller
             $reason = $request->reason;
             $folder = $request->folder;
 
+            // Initialize Cloudinary
+            $cloudinary = $this->getCloudinary();
+            if (!$cloudinary) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cloudinary not configured'
+                ], 400);
+            }
+
             // Get media details first
-            $resource = $this->cloudinary->adminApi()->asset($publicId);
+            $resource = $cloudinary->adminApi()->asset($publicId);
             $url = $resource['secure_url'];
 
             // Find owner
