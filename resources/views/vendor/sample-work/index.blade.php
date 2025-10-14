@@ -91,14 +91,6 @@
                             </div>
                             <p class="text-sm sm:text-base font-medium text-gray-700 mb-1">Click to upload or drag and drop</p>
                             <p class="text-xs sm:text-sm text-gray-500">JPEG, JPG, PNG, WEBP (Up to 10MB - auto-compressed)</p>
-                            @php
-                                $useCloudinary = \App\Services\SettingsService::get('cloud_storage') === 'cloudinary';
-                            @endphp
-                            @if($useCloudinary)
-                                <p class="text-xs sm:text-sm text-blue-600 mt-1"><i class="fas fa-cloud mr-1"></i> Uploaded to Cloudinary with auto-compression</p>
-                            @else
-                                <p class="text-xs sm:text-sm text-gray-500 mt-1"><i class="fas fa-server mr-1"></i> Stored locally</p>
-                            @endif
                             <p class="text-xs sm:text-sm text-purple-600 mt-2">{{ $vendor->getMaxSampleImages() - ($vendor->sample_work_images ? count($vendor->sample_work_images) : 0) }} slots available</p>
                         </label>
                     </div>
@@ -142,13 +134,6 @@
                                 class="w-full h-32 sm:h-48 object-cover rounded-lg border-2 {{ $isPreview ? 'border-purple-500' : 'border-gray-200' }}"
                                 loading="lazy"
                             />
-                            
-                            {{-- Cloud Badge --}}
-                            @if(is_array($imageData) && $imageData['type'] === 'cloudinary')
-                                <div class="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-                                    <i class="fas fa-cloud"></i>
-                                </div>
-                            @endif
                             
                             {{-- Preview Badge --}}
                             @if($isPreview)
@@ -202,18 +187,12 @@
                     <div class="space-y-4">
                         @php
                             $videoUrl = $vendor->getVideoUrl();
-                            $isCloudinary = is_array($vendor->sample_work_video) && ($vendor->sample_work_video['type'] ?? null) === 'cloudinary';
                         @endphp
                         <div class="relative">
                             <video controls class="w-full rounded-lg border border-gray-300 max-h-96">
                                 <source src="{{ $videoUrl }}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
-                            @if($isCloudinary)
-                                <div class="mt-2 text-center text-sm text-blue-600">
-                                    <i class="fas fa-cloud mr-1"></i> Hosted on Cloudinary
-                                </div>
-                            @endif
                         </div>
                         <button 
                             data-action="deleteVideo"
