@@ -76,7 +76,7 @@
                             @if(count($vendor->sample_work_images) > 1)
                             <div class="grid grid-cols-5 gap-3">
                                 @foreach($vendor->sample_work_images as $index => $image)
-                                <div class="relative cursor-pointer group" onclick="changeMainImage('{{ asset('storage/' . $image) }}', {{ $index + 1 }})">
+                                <div class="relative cursor-pointer group thumbnail-item" data-image="{{ asset('storage/' . $image) }}" data-index="{{ $index + 1 }}">
                                     <div class="aspect-square overflow-hidden rounded-lg border-2 border-gray-200 group-hover:border-primary transition-all duration-200">
                                         <img src="{{ asset('storage/' . $image) }}" 
                                              alt="Sample work {{ $index + 1 }}" 
@@ -363,16 +363,20 @@
     </div>
 </x-layouts.base>
 
+<script id="vendor-images-data" type="application/json">
+@json([
+    'images' => $vendor->sample_work_images ? array_map(function($image) { 
+        return asset('storage/' . $image); 
+    }, $vendor->sample_work_images) : [],
+    'count' => count($vendor->sample_work_images ?? [])
+])
+</script>
+
 <script>
 let currentImageIndex = 1;
-const totalImages = {{ count($vendor->sample_work_images ?? []) }};
-const images = [
-    @if($vendor->sample_work_images)
-        @foreach($vendor->sample_work_images as $image)
-        '{{ asset('storage/' . $image) }}',
-        @endforeach
-    @endif
-];
+const imageData = JSON.parse(document.getElementById('vendor-images-data').textContent);
+const totalImages = imageData.count;
+const images = imageData.images;
 
 function changeMainImage(imageSrc, imageNumber) {
     const mainImage = document.getElementById('mainSampleImage');
@@ -384,7 +388,7 @@ function changeMainImage(imageSrc, imageNumber) {
     }
     
     if (imageCounter) {
-        imageCounter.textContent = imageNumber + '/' + totalImages;
+        imageCounter.textContent = imageNumber;
     }
 }
 
@@ -401,6 +405,18 @@ function nextImage() {
         changeMainImage(images[currentImageIndex - 1], currentImageIndex);
     }
 }
+
+// Thumbnail click handlers
+document.addEventListener('DOMContentLoaded', function() {
+    const thumbnails = document.querySelectorAll('.thumbnail-item');
+    thumbnails.forEach(function(thumbnail) {
+        thumbnail.addEventListener('click', function() {
+            const imageSrc = this.getAttribute('data-image');
+            const imageIndex = parseInt(this.getAttribute('data-index'));
+            changeMainImage(imageSrc, imageIndex);
+        });
+    });
+});
 
 // Keyboard navigation
 document.addEventListener('keydown', function(e) {
