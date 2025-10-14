@@ -406,7 +406,7 @@ document.addEventListener('alpine:init', () => {
     
     async loadMessages() {
       this.loadingMessages = true;
-      const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
       
       try {
         const res = await fetch(`/dashboard/messages/vendor/${vendorId}`, {
@@ -471,7 +471,7 @@ document.addEventListener('alpine:init', () => {
       }
       
       this.chatSending = true;
-      const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
       
       try {
         const formData = new FormData();
@@ -523,7 +523,7 @@ document.addEventListener('alpine:init', () => {
         return;
       }
       this.reportSubmitting = true;
-      const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
       
       try {
         const res = await fetch(reportsRoute, {

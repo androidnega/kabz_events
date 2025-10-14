@@ -100,7 +100,7 @@
 <script data-auto-start="{{ $autoStart ? '1' : '0' }}">
 document.addEventListener('DOMContentLoaded', function() {
     const scriptTag = document.currentScript;
-    const shouldAutoStart = scriptTag.getAttribute('data-auto-start') === '1';
+    const shouldAutoStart = scriptTag ? scriptTag.getAttribute('data-auto-start') === '1' : false;
     
     const tour = new Shepherd.Tour({
         useModalOverlay: true,
@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
                         }
                     }).catch(err => console.error('Error marking tour complete:', err));
                 }
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
                 }
             }).catch(err => console.error('Error marking tour complete:', err));
         } else {
