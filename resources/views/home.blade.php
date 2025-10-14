@@ -5,12 +5,12 @@
 
     <!-- Hero Section -->
     <div class="bg-gradient-to-r from-primary to-purple-700 text-white">
-        <div class="container mx-auto py-6 md:py-12 lg:py-16 px-4">
+        <div class="container mx-auto py-6 md:py-16 lg:py-20 px-4">
             <div class="text-center">
-                <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-2 md:mb-4 px-2">
+                <h1 class="text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 md:mb-4 lg:mb-6 px-2">
                     Find Perfect Event Vendors in Ghana
                 </h1>
-                <p class="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl mb-4 md:mb-6 text-purple-100 px-2">
+                <p class="text-xs sm:text-sm md:text-lg lg:text-xl xl:text-2xl mb-4 md:mb-8 lg:mb-10 text-purple-100 px-2">
                     Connect with verified service providers
                 </p>
                 
@@ -34,14 +34,14 @@
 
     <!-- Categories Section -->
     <div class="py-8 md:py-12 lg:py-16 bg-white">
-        <div class="container mx-auto px-4">
+        <div class="container mx-auto">
             <div class="text-center mb-6 md:mb-8 lg:mb-10">
                 <h2 class="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 md:mb-3">Browse by Category</h2>
                 <p class="text-sm md:text-base lg:text-lg text-gray-600">Find what you need for your event</p>
             </div>
 
             @if($categories->count() > 0)
-            <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 lg:gap-6 px-4 md:px-0">
+            <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 lg:gap-6">
                 @foreach($categories as $category)
                 <a href="{{ route('search.index', ['category' => $category->slug]) }}" class="block group">
                     <div class="bg-white rounded-lg border border-gray-200 hover:border-purple-300 transition-colors duration-200 p-3 md:p-4 text-center h-full">
