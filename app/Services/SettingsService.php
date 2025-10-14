@@ -73,7 +73,19 @@ class SettingsService
      */
     public static function clearCache(): void
     {
-        Cache::tags(['settings'])->flush();
+        // Get all setting keys to clear individual caches
+        $keys = SystemSetting::pluck('key')->toArray();
+        foreach ($keys as $key) {
+            Cache::forget("setting_{$key}");
+        }
+        
+        // Get all groups to clear group caches
+        $groups = SystemSetting::distinct()->pluck('group')->toArray();
+        foreach ($groups as $group) {
+            if ($group) {
+                Cache::forget("settings_group_{$group}");
+            }
+        }
     }
 }
 
