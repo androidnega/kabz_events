@@ -89,6 +89,8 @@ function loadNotifications() {
     .then(data => {
       // Update notification count
       const bellButton = document.querySelector('[x-data] button');
+      if (!bellButton) return; // Exit if button not found
+      
       const countSpan = bellButton.querySelector('span');
       
       if (data.total_unread > 0) {
@@ -97,18 +99,23 @@ function loadNotifications() {
           newSpan.className = 'absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full';
           bellButton.appendChild(newSpan);
         }
-        bellButton.querySelector('span').textContent = data.total_unread;
+        const span = bellButton.querySelector('span');
+        if (span) span.textContent = data.total_unread;
       } else if (countSpan) {
         countSpan.remove();
       }
       
       // Update notifications list
       updateNotificationsList(data.notifications);
+    })
+    .catch(error => {
+      console.log('Notification loading error:', error);
     });
 }
 
 function updateNotificationsList(notifications) {
   const container = document.getElementById('notifications-container');
+  if (!container) return; // Exit if container not found
   
   if (notifications.length === 0) {
     container.innerHTML = `
@@ -155,30 +162,40 @@ function ucfirst(str) {
 }
 
 function markAsRead(notificationId) {
+  const csrfToken = document.querySelector('meta[name="csrf-token"]');
+  if (!csrfToken) return;
+  
   fetch(`/dashboard/notifications/${notificationId}/read`, {
     method: 'POST',
     headers: {
-      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+      'X-CSRF-TOKEN': csrfToken.content,
       'Accept': 'application/json',
     }
   }).then(() => {
     loadNotifications();
+  }).catch(error => {
+    console.log('Mark as read error:', error);
   });
 }
 
 function markAllAsRead() {
+  const csrfToken = document.querySelector('meta[name="csrf-token"]');
+  if (!csrfToken) return;
+  
   fetch('/dashboard/notifications/read-all', {
     method: 'POST',
     headers: {
-      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+      'X-CSRF-TOKEN': csrfToken.content,
       'Accept': 'application/json',
     }
   }).then(() => {
     loadNotifications();
+  }).catch(error => {
+    console.log('Mark all as read error:', error);
   });
 }
 
-// Auto-refresh notifications every 30 seconds
-setInterval(loadNotifications, 30000);
+// Auto-refresh notifications every 30 seconds (disabled for now)
+// setInterval(loadNotifications, 30000);
 </script>
 
