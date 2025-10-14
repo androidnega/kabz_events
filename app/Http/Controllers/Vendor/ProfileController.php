@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Vendor;
 
 use App\Http\Controllers\Controller;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -88,8 +89,16 @@ class ProfileController extends Controller
 
         // Handle profile photo upload
         if ($request->hasFile('profile_photo')) {
-            $path = $request->file('profile_photo')->store('vendors/profiles', 'public');
-            $validated['profile_photo'] = $path;
+            $cloudinaryService = new CloudinaryService();
+            $result = $cloudinaryService->uploadImage(
+                $request->file('profile_photo'),
+                'kabz_vendors/profiles'
+            );
+            
+            if ($result['success']) {
+                // Store the URL (Cloudinary) or path (local)
+                $validated['profile_photo'] = $result['url'] ?? $result['path'];
+            }
         }
 
         $vendor->update($validated);

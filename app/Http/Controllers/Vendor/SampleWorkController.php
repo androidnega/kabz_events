@@ -58,53 +58,31 @@ class SampleWorkController extends Controller
         
         $uploadedImages = [];
         $currentImages = $vendor->sample_work_images ?? [];
-        $useCloudinary = SettingsService::get('cloud_storage') === 'cloudinary' && $this->cloudinaryService->isConfigured();
         
         foreach ($request->file('images') as $image) {
-            if ($useCloudinary) {
-                // Upload to Cloudinary with compression
-                $result = $this->cloudinaryService->uploadImage(
-                    $image,
-                    'vendors/sample_work/' . $vendor->id,
-                    [
-                        'width' => 1920, // Max width
-                        'crop' => 'limit', // Don't upscale, only downscale if larger
-                        'quality' => 'auto:good', // Automatic quality optimization
-                    ]
-                );
-                
-                if ($result) {
-                    // Store Cloudinary URL and public_id
-                    $uploadedImages[] = [
-                        'url' => $result['url'],
-                        'public_id' => $result['public_id'],
-                        'type' => 'cloudinary'
-                    ];
-                    
-                    Log::info('Image uploaded to Cloudinary', [
-                        'vendor_id' => $vendor->id,
-                        'url' => $result['url'],
-                        'original_size' => $image->getSize(),
-                        'compressed_size' => $result['bytes'] ?? 'unknown'
-                    ]);
-                } else {
-                    Log::error('Cloudinary upload failed, falling back to local storage');
-                    // Fallback to local storage
-                    $path = $image->store('vendors/sample_work', 'public');
-                    $uploadedImages[] = [
-                        'url' => $path,
-                        'public_id' => null,
-                        'type' => 'local'
-                    ];
-                }
-            } else {
-                // Store locally
-                $path = $image->store('vendors/sample_work', 'public');
+            // Use CloudinaryService which handles both Cloudinary and local storage
+            $result = $this->cloudinaryService->uploadImage(
+                $image,
+                'kabz_vendors/sample_work',
+                [
+                    'width' => 1920, // Max width
+                    'crop' => 'limit', // Don't upscale, only downscale if larger
+                    'quality' => 'auto:good', // Automatic quality optimization
+                ]
+            );
+            
+            if ($result['success']) {
                 $uploadedImages[] = [
-                    'url' => $path,
-                    'public_id' => null,
-                    'type' => 'local'
+                    'url' => $result['url'] ?? $result['path'],
+                    'public_id' => $result['public_id'],
+                    'type' => $result['provider']
                 ];
+                
+                Log::info('Image uploaded', [
+                    'vendor_id' => $vendor->id,
+                    'provider' => $result['provider'],
+                    'url' => $result['url'] ?? $result['path']
+                ]);
             }
         }
         
@@ -259,43 +237,17 @@ class SampleWorkController extends Controller
             }
         }
         
-        // Upload new video
-        if ($useCloudinary) {
-            $result = $this->cloudinaryService->uploadVideo(
-                $video,
-                'vendors/sample_work/videos/' . $vendor->id,
-                30 // Max 30 seconds
-            );
-            
-            if ($result) {
-                $videoData = [
-                    'url' => $result['url'],
-                    'public_id' => $result['public_id'],
-                    'type' => 'cloudinary',
-                    'duration' => $result['duration']
-                ];
-                
-                $vendor->sample_work_video = $videoData;
-                $vendor->save();
-                
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Video uploaded successfully to Cloudinary!',
-                    'video_data' => $videoData
-                ]);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Video upload failed. Please try again.'
-                ], 500);
-            }
-        } else {
-            // Store locally
-            $path = $video->store('vendors/sample_work/videos', 'public');
+        // Upload new video using CloudinaryService
+        $result = $this->cloudinaryService->uploadVideo(
+            $video,
+            'kabz_vendors/sample_work/videos'
+        );
+        
+        if ($result['success']) {
             $videoData = [
-                'url' => $path,
-                'public_id' => null,
-                'type' => 'local'
+                'url' => $result['url'] ?? $result['path'],
+                'public_id' => $result['public_id'],
+                'type' => $result['provider']
             ];
             
             $vendor->sample_work_video = $videoData;
@@ -306,6 +258,11 @@ class SampleWorkController extends Controller
                 'message' => 'Video uploaded successfully!',
                 'video_data' => $videoData
             ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Video upload failed. Please try again.'
+            ], 500);
         }
     }
 
@@ -319,7 +276,7 @@ class SampleWorkController extends Controller
         if ($vendor->sample_work_video) {
             if (is_array($vendor->sample_work_video)) {
                 if ($vendor->sample_work_video['type'] === 'cloudinary' && !empty($vendor->sample_work_video['public_id'])) {
-                    $this->cloudinaryService->deleteFile($vendor->sample_work_video['public_id'], 'video');
+                    $this->cloudinaryService->deleteVideo($vendor->sample_work_video['public_id']);
                 } elseif ($vendor->sample_work_video['type'] === 'local' && Storage::disk('public')->exists($vendor->sample_work_video['url'])) {
                     Storage::disk('public')->delete($vendor->sample_work_video['url']);
                 }

@@ -167,11 +167,7 @@ class Vendor extends Model
      */
     public function getImageUrl($imageData): ?string
     {
-        if (is_array($imageData)) {
-            return $imageData['url'] ?? null;
-        }
-        // Legacy format (simple string path)
-        return $imageData ? asset('storage/' . $imageData) : null;
+        return get_image_url($imageData);
     }
 
     /**
@@ -179,21 +175,7 @@ class Vendor extends Model
      */
     public function getPreviewImageUrl(): ?string
     {
-        if (!$this->preview_image) {
-            return null;
-        }
-        
-        if (is_array($this->preview_image)) {
-            // Cloudinary URL is already full URL
-            if ($this->preview_image['type'] === 'cloudinary') {
-                return $this->preview_image['url'];
-            }
-            // Local storage needs asset() helper
-            return asset('storage/' . $this->preview_image['url']);
-        }
-        
-        // Legacy format
-        return asset('storage/' . $this->preview_image);
+        return get_image_url($this->preview_image);
     }
 
     /**
@@ -201,21 +183,7 @@ class Vendor extends Model
      */
     public function getVideoUrl(): ?string
     {
-        if (!$this->sample_work_video) {
-            return null;
-        }
-        
-        if (is_array($this->sample_work_video)) {
-            // Cloudinary URL is already full URL
-            if ($this->sample_work_video['type'] === 'cloudinary') {
-                return $this->sample_work_video['url'];
-            }
-            // Local storage needs asset() helper
-            return asset('storage/' . $this->sample_work_video['url']);
-        }
-        
-        // Legacy format
-        return asset('storage/' . $this->sample_work_video);
+        return get_image_url($this->sample_work_video);
     }
 
     /**

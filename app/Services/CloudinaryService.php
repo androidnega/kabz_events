@@ -2,343 +2,230 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use Cloudinary\Cloudinary;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class CloudinaryService
 {
-    private $cloudName;
-    private $apiKey;
-    private $apiSecret;
-    private $uploadUrl;
+    protected ?Cloudinary $cloudinary = null;
+    protected bool $isEnabled = false;
 
     public function __construct()
     {
-        $this->cloudName = SettingsService::get('cloudinary_cloud_name');
-        $this->apiKey = SettingsService::get('cloudinary_api_key');
-        $this->apiSecret = SettingsService::get('cloudinary_api_secret');
-        
-        if ($this->cloudName) {
-            $this->uploadUrl = "https://api.cloudinary.com/v1_1/{$this->cloudName}/upload";
+        $this->initialize();
+    }
+
+    /**
+     * Initialize Cloudinary connection
+     */
+    protected function initialize(): void
+    {
+        $cloudName = SettingsService::get('cloudinary_cloud_name');
+        $apiKey = SettingsService::get('cloudinary_api_key');
+        $apiSecret = SettingsService::get('cloudinary_api_secret');
+        $storageProvider = SettingsService::get('cloud_storage', 'local');
+
+        if ($storageProvider === 'cloudinary' && $cloudName && $apiKey && $apiSecret) {
+            try {
+                $this->cloudinary = new Cloudinary([
+                    'cloud' => [
+                        'cloud_name' => $cloudName,
+                        'api_key' => $apiKey,
+                        'api_secret' => $apiSecret
+                    ]
+                ]);
+                $this->isEnabled = true;
+            } catch (\Exception $e) {
+                Log::error('Cloudinary initialization failed: ' . $e->getMessage());
+                $this->isEnabled = false;
+            }
         }
     }
 
     /**
-     * Check if Cloudinary is configured.
+     * Check if Cloudinary is enabled and configured
      */
-    public function isConfigured(): bool
+    public function isEnabled(): bool
     {
-        return !empty($this->cloudName) && 
-               !empty($this->apiKey) && 
-               !empty($this->apiSecret);
+        return $this->isEnabled;
     }
 
     /**
-     * Upload an image to Cloudinary with automatic compression.
+     * Upload an image to Cloudinary
      * 
-     * @param UploadedFile $file
-     * @param string $folder Cloudinary folder path
-     * @param array $transformations Additional transformations (e.g., ['width' => 1920, 'quality' => 'auto'])
-     * @return array|null
+     * @param UploadedFile $file The uploaded file
+     * @param string $folder The Cloudinary folder to upload to (e.g., 'vendors/profiles')
+     * @param array $options Additional upload options
+     * @return array Returns ['success' => bool, 'url' => string|null, 'public_id' => string|null, 'path' => string|null]
      */
-    public function uploadImage(UploadedFile $file, string $folder = 'chat', array $transformations = []): ?array
+    public function uploadImage(UploadedFile $file, string $folder, array $options = []): array
     {
-        if (!$this->isConfigured()) {
-            Log::warning('Cloudinary is not configured');
-            return null;
+        if (!$this->isEnabled) {
+            // Fallback to local storage
+            return $this->uploadToLocal($file, $folder);
         }
 
         try {
-            $timestamp = time();
-            
-            // Default transformations for automatic compression
-            $defaultTransformations = [
-                'quality' => 'auto:good', // Automatic quality adjustment
-                'fetch_format' => 'auto', // Automatic format selection (WebP if supported)
+            $uploadOptions = array_merge([
+                'folder' => $folder,
+                'resource_type' => 'image',
+                'use_filename' => true,
+                'unique_filename' => true,
+            ], $options);
+
+            $response = $this->cloudinary->uploadApi()->upload(
+                $file->getPathname(),
+                $uploadOptions
+            );
+
+            return [
+                'success' => true,
+                'url' => $response['secure_url'],
+                'public_id' => $response['public_id'],
+                'path' => null, // Cloudinary doesn't use local paths
+                'provider' => 'cloudinary'
             ];
-            
-            // Merge with custom transformations
-            $allTransformations = array_merge($defaultTransformations, $transformations);
-            
-            $signature = $this->generateSignatureWithTransformations($timestamp, $folder, $allTransformations);
-
-            $multipartData = [
-                [
-                    'name' => 'file',
-                    'contents' => fopen($file->getRealPath(), 'r'),
-                    'filename' => $file->getClientOriginalName(),
-                ],
-                [
-                    'name' => 'timestamp',
-                    'contents' => $timestamp,
-                ],
-                [
-                    'name' => 'folder',
-                    'contents' => $folder,
-                ],
-                [
-                    'name' => 'api_key',
-                    'contents' => $this->apiKey,
-                ],
-                [
-                    'name' => 'signature',
-                    'contents' => $signature,
-                ],
-                [
-                    'name' => 'resource_type',
-                    'contents' => 'image',
-                ],
-            ];
-
-            // Add transformation parameters
-            foreach ($allTransformations as $key => $value) {
-                $multipartData[] = [
-                    'name' => $key,
-                    'contents' => $value,
-                ];
-            }
-
-            $response = Http::asMultipart()->post($this->uploadUrl, $multipartData);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                return [
-                    'url' => $data['secure_url'] ?? $data['url'],
-                    'public_id' => $data['public_id'],
-                    'format' => $data['format'],
-                    'width' => $data['width'] ?? null,
-                    'height' => $data['height'] ?? null,
-                    'bytes' => $data['bytes'] ?? null,
-                ];
-            }
-
-            Log::error('Cloudinary upload failed', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            return null;
         } catch (\Exception $e) {
-            Log::error('Cloudinary upload exception', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return null;
+            Log::error('Cloudinary upload failed: ' . $e->getMessage());
+            // Fallback to local storage
+            return $this->uploadToLocal($file, $folder);
         }
     }
 
     /**
-     * Upload an audio file to Cloudinary.
+     * Upload a video to Cloudinary
+     * 
+     * @param UploadedFile $file The uploaded video file
+     * @param string $folder The Cloudinary folder to upload to
+     * @param array $options Additional upload options
+     * @return array Returns ['success' => bool, 'url' => string|null, 'public_id' => string|null, 'path' => string|null]
      */
-    public function uploadAudio(UploadedFile $file, string $folder = 'chat'): ?array
+    public function uploadVideo(UploadedFile $file, string $folder, array $options = []): array
     {
-        if (!$this->isConfigured()) {
-            Log::warning('Cloudinary is not configured');
-            return null;
+        if (!$this->isEnabled) {
+            return $this->uploadToLocal($file, $folder . '/videos');
         }
 
         try {
-            $timestamp = time();
-            $signature = $this->generateSignature($timestamp, $folder);
+            $uploadOptions = array_merge([
+                'folder' => $folder,
+                'resource_type' => 'video',
+                'use_filename' => true,
+                'unique_filename' => true,
+            ], $options);
 
-            $response = Http::asMultipart()->post($this->uploadUrl, [
-                [
-                    'name' => 'file',
-                    'contents' => fopen($file->getRealPath(), 'r'),
-                    'filename' => $file->getClientOriginalName(),
-                ],
-                [
-                    'name' => 'timestamp',
-                    'contents' => $timestamp,
-                ],
-                [
-                    'name' => 'folder',
-                    'contents' => $folder,
-                ],
-                [
-                    'name' => 'api_key',
-                    'contents' => $this->apiKey,
-                ],
-                [
-                    'name' => 'signature',
-                    'contents' => $signature,
-                ],
-                [
-                    'name' => 'resource_type',
-                    'contents' => 'video', // Cloudinary uses 'video' for audio files
-                ],
-            ]);
+            $response = $this->cloudinary->uploadApi()->upload(
+                $file->getPathname(),
+                $uploadOptions
+            );
 
-            if ($response->successful()) {
-                $data = $response->json();
-                return [
-                    'url' => $data['secure_url'] ?? $data['url'],
-                    'public_id' => $data['public_id'],
-                    'format' => $data['format'],
-                    'duration' => $data['duration'] ?? null,
-                ];
-            }
-
-            Log::error('Cloudinary audio upload failed', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            return null;
+            return [
+                'success' => true,
+                'url' => $response['secure_url'],
+                'public_id' => $response['public_id'],
+                'path' => null,
+                'provider' => 'cloudinary'
+            ];
         } catch (\Exception $e) {
-            Log::error('Cloudinary audio upload exception', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return null;
+            Log::error('Cloudinary video upload failed: ' . $e->getMessage());
+            return $this->uploadToLocal($file, $folder . '/videos');
         }
     }
 
     /**
-     * Generate signature for Cloudinary upload with transformations.
+     * Delete an image from Cloudinary
+     * 
+     * @param string $publicId The Cloudinary public_id
+     * @return bool
      */
-    private function generateSignatureWithTransformations(int $timestamp, string $folder, array $transformations = []): string
+    public function deleteImage(string $publicId): bool
     {
-        $params = array_merge([
-            'timestamp' => $timestamp,
-            'folder' => $folder,
-        ], $transformations);
-
-        ksort($params);
-        
-        $signatureString = '';
-        foreach ($params as $key => $value) {
-            $signatureString .= "{$key}={$value}&";
+        if (!$this->isEnabled || empty($publicId)) {
+            return false;
         }
-        $signatureString = rtrim($signatureString, '&');
-        $signatureString .= $this->apiSecret;
 
-        return sha1($signatureString);
+        try {
+            $this->cloudinary->uploadApi()->destroy($publicId, ['resource_type' => 'image']);
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Cloudinary delete failed: ' . $e->getMessage());
+            return false;
+        }
     }
 
     /**
-     * Generate signature for Cloudinary upload (legacy method).
+     * Delete a video from Cloudinary
+     * 
+     * @param string $publicId The Cloudinary public_id
+     * @return bool
      */
-    private function generateSignature(int $timestamp, string $folder): string
+    public function deleteVideo(string $publicId): bool
     {
-        return $this->generateSignatureWithTransformations($timestamp, $folder);
+        if (!$this->isEnabled || empty($publicId)) {
+            return false;
+        }
+
+        try {
+            $this->cloudinary->uploadApi()->destroy($publicId, ['resource_type' => 'video']);
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Cloudinary video delete failed: ' . $e->getMessage());
+            return false;
+        }
     }
 
     /**
-     * Upload a video to Cloudinary.
+     * Fallback: Upload to local storage
      * 
      * @param UploadedFile $file
      * @param string $folder
-     * @param int|null $maxDuration Maximum duration in seconds
-     * @return array|null
+     * @return array
      */
-    public function uploadVideo(UploadedFile $file, string $folder = 'videos', ?int $maxDuration = null): ?array
+    protected function uploadToLocal(UploadedFile $file, string $folder): array
     {
-        if (!$this->isConfigured()) {
-            Log::warning('Cloudinary is not configured');
-            return null;
-        }
-
         try {
-            $timestamp = time();
-            $signature = $this->generateSignature($timestamp, $folder);
-
-            $multipartData = [
-                [
-                    'name' => 'file',
-                    'contents' => fopen($file->getRealPath(), 'r'),
-                    'filename' => $file->getClientOriginalName(),
-                ],
-                [
-                    'name' => 'timestamp',
-                    'contents' => $timestamp,
-                ],
-                [
-                    'name' => 'folder',
-                    'contents' => $folder,
-                ],
-                [
-                    'name' => 'api_key',
-                    'contents' => $this->apiKey,
-                ],
-                [
-                    'name' => 'signature',
-                    'contents' => $signature,
-                ],
-                [
-                    'name' => 'resource_type',
-                    'contents' => 'video',
-                ],
+            $path = $file->store($folder, 'public');
+            
+            return [
+                'success' => true,
+                'url' => Storage::url($path),
+                'public_id' => null,
+                'path' => $path,
+                'provider' => 'local'
             ];
-
-            // Add max duration if specified
-            if ($maxDuration) {
-                $multipartData[] = [
-                    'name' => 'duration',
-                    'contents' => $maxDuration,
-                ];
-            }
-
-            $response = Http::timeout(120)->asMultipart()->post($this->uploadUrl, $multipartData);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                return [
-                    'url' => $data['secure_url'] ?? $data['url'],
-                    'public_id' => $data['public_id'],
-                    'format' => $data['format'],
-                    'duration' => $data['duration'] ?? null,
-                    'width' => $data['width'] ?? null,
-                    'height' => $data['height'] ?? null,
-                    'bytes' => $data['bytes'] ?? null,
-                ];
-            }
-
-            Log::error('Cloudinary video upload failed', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            return null;
         } catch (\Exception $e) {
-            Log::error('Cloudinary video upload exception', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return null;
+            Log::error('Local storage upload failed: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'url' => null,
+                'public_id' => null,
+                'path' => null,
+                'provider' => 'local'
+            ];
         }
     }
 
     /**
-     * Delete a file from Cloudinary.
+     * Get the URL for displaying an image
+     * Handles both Cloudinary URLs and local storage paths
+     * 
+     * @param string|null $urlOrPath The URL or path to the image
+     * @return string|null
      */
-    public function deleteFile(string $publicId, string $resourceType = 'image'): bool
+    public static function getImageUrl(?string $urlOrPath): ?string
     {
-        if (!$this->isConfigured()) {
-            return false;
+        if (empty($urlOrPath)) {
+            return null;
         }
 
-        try {
-            $timestamp = time();
-            $signature = sha1("public_id={$publicId}&timestamp={$timestamp}{$this->apiSecret}");
-
-            $deleteUrl = "https://api.cloudinary.com/v1_1/{$this->cloudName}/{$resourceType}/destroy";
-
-            $response = Http::asForm()->post($deleteUrl, [
-                'public_id' => $publicId,
-                'timestamp' => $timestamp,
-                'api_key' => $this->apiKey,
-                'signature' => $signature,
-            ]);
-
-            return $response->successful();
-        } catch (\Exception $e) {
-            Log::error('Cloudinary delete exception', [
-                'message' => $e->getMessage(),
-            ]);
-            return false;
+        // If it's already a full URL (Cloudinary), return as is
+        if (str_starts_with($urlOrPath, 'http://') || str_starts_with($urlOrPath, 'https://')) {
+            return $urlOrPath;
         }
+
+        // Otherwise, it's a local storage path
+        return Storage::url($urlOrPath);
     }
 }
-
