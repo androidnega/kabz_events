@@ -84,7 +84,7 @@ $unreadMessageCount = \App\Models\Message::where('receiver_id', auth()->id())->w
 
 <script>
 function loadNotifications() {
-  fetch('/notifications/unread')
+  fetch('/dashboard/notifications/unread')
     .then(response => response.json())
     .then(data => {
       // Update notification count
@@ -155,7 +155,7 @@ function ucfirst(str) {
 }
 
 function markAsRead(notificationId) {
-  fetch(`/notifications/${notificationId}/read`, {
+  fetch(`/dashboard/notifications/${notificationId}/read`, {
     method: 'POST',
     headers: {
       'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -167,7 +167,7 @@ function markAsRead(notificationId) {
 }
 
 function markAllAsRead() {
-  fetch('/notifications/read-all', {
+  fetch('/dashboard/notifications/read-all', {
     method: 'POST',
     headers: {
       'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
