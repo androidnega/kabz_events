@@ -137,50 +137,48 @@
       <div x-show="showLoginModal" 
            x-cloak
            @click.away="showLoginModal = false"
-           class="fixed inset-0 z-50 flex items-center justify-center p-4" 
+           class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50" 
            style="display: none;">
-        <!-- Background overlay -->
-        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" @click="showLoginModal = false"></div>
-
-        <!-- Modal panel - Centered -->
-        <div class="relative bg-white rounded-2xl shadow-2xl transform transition-all w-full max-w-md mx-auto">
-          <div class="bg-white px-6 py-8 sm:px-8">
+        
+        <!-- Modal panel - Centered and Compact -->
+        <div class="relative bg-white rounded-2xl shadow-2xl transform transition-all w-full max-w-sm mx-auto" @click.stop>
+          <div class="bg-white px-6 py-6">
             <div class="text-center">
-              <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 mb-4">
-                <i class="fas fa-lock text-indigo-600 text-2xl"></i>
+              <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-indigo-100 mb-3">
+                <i class="fas fa-lock text-indigo-600 text-xl"></i>
               </div>
-              <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+              <h3 class="text-xl font-bold text-gray-900 mb-2">
                 Login Required
               </h3>
-              <p class="text-sm sm:text-base text-gray-600">
+              <p class="text-sm text-gray-600">
                 Please sign in to contact this vendor and access full details
               </p>
             </div>
           </div>
           
-          <div class="bg-gray-50 px-6 py-6 sm:px-8 space-y-3 rounded-b-2xl">
+          <div class="bg-gray-50 px-6 py-5 space-y-2.5 rounded-b-2xl">
             <a href="{{ route('login') }}" class="block w-full">
-              <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-lg font-medium transition shadow-sm">
+              <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition shadow-sm text-sm">
                 <i class="fas fa-sign-in-alt mr-2"></i> Sign In
               </button>
             </a>
             
             <a href="{{ route('register') }}" class="block w-full">
-              <button class="w-full bg-white hover:bg-gray-50 text-indigo-600 border-2 border-indigo-600 px-4 py-3 rounded-lg font-medium transition">
+              <button class="w-full bg-white hover:bg-gray-50 text-indigo-600 border-2 border-indigo-600 px-4 py-2.5 rounded-lg font-medium transition text-sm">
                 <i class="fas fa-user-plus mr-2"></i> Create Account
               </button>
             </a>
 
-            <div class="text-center pt-2 pb-1">
-              <p class="text-sm text-gray-600">
+            <div class="text-center pt-1">
+              <p class="text-xs text-gray-600">
                 Are you a vendor? 
-                <a href="{{ route('vendor.public.register') }}" class="text-indigo-600 hover:text-indigo-700 font-medium">
+                <a href="{{ route('vendor.public.register') }}" class="text-indigo-600 hover:text-indigo-700 font-medium underline">
                   Register here
                 </a>
               </p>
             </div>
 
-            <button @click="showLoginModal = false" class="w-full text-gray-600 hover:text-gray-800 px-4 py-2 text-sm font-medium hover:bg-gray-100 rounded-lg transition">
+            <button @click="showLoginModal = false" class="w-full text-gray-600 hover:text-gray-800 px-4 py-2 text-xs font-medium hover:bg-gray-100 rounded-lg transition">
               Maybe Later
             </button>
           </div>
