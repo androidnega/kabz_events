@@ -5,7 +5,7 @@
 
     <!-- Page Header -->
     <div class="bg-gradient-to-r from-primary to-purple-700 text-white py-12">
-        <div class="container mx-auto px-4">
+        <div class="container mx-auto">
             <h1 class="text-3xl md:text-4xl font-bold mb-4">Find Trusted Event Vendors in Ghana</h1>
             <p class="text-lg text-purple-100">Browse verified service providers for your special events</p>
         </div>
@@ -13,7 +13,7 @@
 
     <!-- Search & Filter Section -->
     <div class="bg-white border-b border-gray-200 py-3 md:py-4">
-        <div class="container mx-auto px-4">
+        <div class="container mx-auto">
             <form action="{{ route('vendors.index') }}" method="GET">
                 <!-- Desktop Layout -->
                 <div class="hidden md:flex items-center gap-3">
@@ -164,7 +164,7 @@
 
     <!-- Vendors Grid -->
     <div class="py-8 md:py-12 bg-neutral">
-        <div class="container mx-auto px-4">
+        <div class="container mx-auto">
             @if($vendors->count() > 0)
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                     @foreach($vendors as $vendor)
