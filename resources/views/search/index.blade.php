@@ -1,15 +1,15 @@
 <x-app-layout>
     {{-- Page Header --}}
-    <div class="bg-gradient-to-r from-purple-600 to-teal-500 text-white py-12 mb-8">
+    <div class="bg-gradient-to-r from-purple-600 to-teal-500 text-white py-4 md:py-8 mb-4 md:mb-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 class="text-4xl font-bold mb-2">Find Trusted Event Vendors in Ghana</h1>
-            <p class="text-lg text-purple-100">Search from verified vendors across all regions - Live Results</p>
+            <h1 class="text-xl md:text-2xl lg:text-3xl font-bold mb-1 md:mb-2">Find Event Vendors in Ghana</h1>
+            <p class="text-sm md:text-base text-purple-100">Verified vendors across all regions</p>
         </div>
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Search and Filter Section --}}
-        <div class="bg-white p-6 shadow-lg rounded-lg mb-8">
+        <div class="bg-white p-3 md:p-4 lg:p-6 border border-gray-200 rounded-lg mb-4 md:mb-6">
             {{-- Hidden form fields for AJAX --}}
             <input type="hidden" id="selectedRegion" value="{{ request('region') }}">
             <input type="hidden" id="selectedDistrict" value="{{ request('district') }}">
@@ -17,27 +17,27 @@
             <input type="hidden" id="gpsLng" value="{{ request('lng') }}">
             <input type="hidden" id="searchRadius" value="{{ request('radius', 50) }}">
 
-            <div class="space-y-4">
+            <div class="space-y-3">
                 {{-- Main Search Bar --}}
                 <div class="relative">
                     <input 
                         type="text" 
                         id="searchKeyword"
                         value="{{ request('q') }}" 
-                        placeholder="Search for photographers, caterers, decorators..." 
-                        class="w-full border-2 border-gray-300 rounded-lg p-4 pr-12 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-colors"
+                        placeholder="Search vendors..." 
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 md:px-4 md:py-3 pr-10 text-sm md:text-base focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
                     >
-                    <svg class="absolute right-4 top-5 w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
 
                 {{-- Filter Row --}}
-                <div class="grid md:grid-cols-5 gap-4">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-3">
                     {{-- Category Filter --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                        <select id="categoryFilter" class="w-full border-2 border-gray-300 rounded-lg p-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-colors">
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select id="categoryFilter" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs md:text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors">
                             <option value="">All Categories</option>
                             @foreach($categories as $cat)
                                 <option value="{{ $cat->slug }}" @selected(request('category') == $cat->slug)>
@@ -49,50 +49,49 @@
 
                     {{-- Location Filter (Opens Modal) --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                        <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Location</label>
                         <button 
                             type="button"
                             onclick="openLocationModal()"
-                            class="w-full border-2 border-gray-300 rounded-lg p-3 text-left hover:border-purple-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-colors flex items-center justify-between"
+                            class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs md:text-sm text-left hover:border-purple-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors flex items-center justify-between"
                         >
-                            <span id="locationDisplay" class="text-gray-400">Select Location</span>
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <span id="locationDisplay" class="text-gray-400 truncate">Select</span>
+                            <svg class="w-3 h-3 md:w-4 md:h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             </svg>
                         </button>
                     </div>
 
                     {{-- Rating Filter --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Min Rating</label>
-                        <select id="ratingFilter" class="w-full border-2 border-gray-300 rounded-lg p-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-colors">
-                            <option value="">Any Rating</option>
-                            <option value="4.5" @selected(request('min_rating') == '4.5')>4.5+ Stars</option>
-                            <option value="4.0" @selected(request('min_rating') == '4.0')>4.0+ Stars</option>
-                            <option value="3.5" @selected(request('min_rating') == '3.5')>3.5+ Stars</option>
-                            <option value="3.0" @selected(request('min_rating') == '3.0')>3.0+ Stars</option>
+                        <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Rating</label>
+                        <select id="ratingFilter" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs md:text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors">
+                            <option value="">Any</option>
+                            <option value="4.5" @selected(request('min_rating') == '4.5')>4.5+</option>
+                            <option value="4.0" @selected(request('min_rating') == '4.0')>4.0+</option>
+                            <option value="3.5" @selected(request('min_rating') == '3.5')>3.5+</option>
+                            <option value="3.0" @selected(request('min_rating') == '3.0')>3.0+</option>
                         </select>
                     </div>
 
                     {{-- Sort Filter --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
-                        <select id="sortFilter" class="w-full border-2 border-gray-300 rounded-lg p-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-colors">
+                        <label class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Sort</label>
+                        <select id="sortFilter" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs md:text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors">
                             <option value="rating" @selected(request('sort') == 'rating' || !request('sort'))>Top Rated</option>
-                            <option value="premium" @selected(request('sort') == 'premium')>Premium First</option>
-                            <option value="recent" @selected(request('sort') == 'recent')>Most Recent</option>
-                            <option value="name" @selected(request('sort') == 'name')>Alphabetical</option>
-                            <option value="distance" @selected(request('sort') == 'distance')>Nearest First</option>
+                            <option value="premium" @selected(request('sort') == 'premium')>Premium</option>
+                            <option value="recent" @selected(request('sort') == 'recent')>Recent</option>
+                            <option value="name" @selected(request('sort') == 'name')>A-Z</option>
+                            <option value="distance" @selected(request('sort') == 'distance')>Nearest</option>
                         </select>
                     </div>
 
                     {{-- Clear Filters Button --}}
-                    <div class="flex items-end">
+                    <div class="flex items-end col-span-2 md:col-span-1">
                         <button 
                             type="button"
                             onclick="clearAllFilters()"
-                            class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
+                            class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-3 rounded-lg transition-colors text-xs md:text-sm"
                         >
                             Clear All
                         </button>
