@@ -43,11 +43,16 @@
 
         {{-- Media Grid - Compact with Infinite Scroll --}}
         @if($media->count() > 0)
-            <div id="mediaGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-3">
+            <div id="mediaGrid" 
+                 class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-3"
+                 data-has-more="{{ $media->count() >= 24 ? '1' : '0' }}">
                 @foreach($media as $item)
                     <div class="media-item bg-white rounded border border-gray-200 overflow-hidden hover:border-purple-400 transition">
                         {{-- Image/Video Preview --}}
-                        <div class="aspect-square bg-gray-50 relative group cursor-pointer" onclick="viewMedia('{{ $item['url'] }}', '{{ basename($item['public_id']) }}', '{{ $item['resource_type'] }}')">
+                        <div class="aspect-square bg-gray-50 relative group cursor-pointer view-media-trigger" 
+                             data-url="{{ $item['url'] }}" 
+                             data-title="{{ basename($item['public_id']) }}" 
+                             data-type="{{ $item['resource_type'] }}">
                             @if($item['resource_type'] === 'video')
                                 <div class="w-full h-full flex items-center justify-center bg-gray-800">
                                     <i class="fas fa-play-circle text-white text-4xl"></i>
@@ -62,12 +67,17 @@
 
                             {{-- Hover Actions --}}
                             <div class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                                <button onclick="event.stopPropagation(); downloadMedia('{{ $item['url'] }}', '{{ basename($item['public_id']) }}')" 
-                                        class="p-2 bg-green-600 text-white rounded hover:bg-green-700 transition text-xs" title="Download">
+                                <button class="download-btn p-2 bg-green-600 text-white rounded hover:bg-green-700 transition text-xs" 
+                                        data-url="{{ $item['url'] }}" 
+                                        data-filename="{{ basename($item['public_id']) }}" 
+                                        title="Download">
                                     <i class="fas fa-download"></i>
                                 </button>
-                                <button onclick="event.stopPropagation(); deleteMedia('{{ $item['public_id'] }}', '{{ basename($item['public_id']) }}', '{{ $folder }}')" 
-                                        class="p-2 bg-red-600 text-white rounded hover:bg-red-700 transition text-xs" title="Delete">
+                                <button class="delete-btn p-2 bg-red-600 text-white rounded hover:bg-red-700 transition text-xs" 
+                                        data-public-id="{{ $item['public_id'] }}" 
+                                        data-filename="{{ basename($item['public_id']) }}" 
+                                        data-folder="{{ $folder }}" 
+                                        title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -158,7 +168,7 @@
         let currentPublicId = '';
         let currentFolder = '';
 
-        // View media in lightbox with zoom
+        // View media in lightbox
         function viewMedia(url, title, type) {
             const lightbox = document.getElementById('lightbox');
             const img = document.getElementById('lightboxImage');
@@ -255,6 +265,40 @@
             });
         }
 
+        // Event delegation for dynamically loaded media items
+        document.addEventListener('click', function(e) {
+            // View media trigger
+            const viewTrigger = e.target.closest('.view-media-trigger');
+            if (viewTrigger && !e.target.closest('.download-btn') && !e.target.closest('.delete-btn')) {
+                const url = viewTrigger.dataset.url;
+                const title = viewTrigger.dataset.title;
+                const type = viewTrigger.dataset.type;
+                viewMedia(url, title, type);
+                return;
+            }
+
+            // Download button
+            const downloadBtn = e.target.closest('.download-btn');
+            if (downloadBtn) {
+                e.stopPropagation();
+                const url = downloadBtn.dataset.url;
+                const filename = downloadBtn.dataset.filename;
+                downloadMedia(url, filename);
+                return;
+            }
+
+            // Delete button
+            const deleteBtn = e.target.closest('.delete-btn');
+            if (deleteBtn) {
+                e.stopPropagation();
+                const publicId = deleteBtn.dataset.publicId;
+                const filename = deleteBtn.dataset.filename;
+                const folder = deleteBtn.dataset.folder;
+                deleteMedia(publicId, filename, folder);
+                return;
+            }
+        });
+
         // Close modals on escape key
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
@@ -266,7 +310,8 @@
         // Infinite Scroll
         let page = 1;
         let loading = false;
-        let hasMore = {{ $media->count() >= 24 ? 'true' : 'false' }};
+        const mediaGrid = document.getElementById('mediaGrid');
+        let hasMore = mediaGrid ? mediaGrid.dataset.hasMore === '1' : false;
 
         window.addEventListener('scroll', function() {
             if (loading || !hasMore) return;
