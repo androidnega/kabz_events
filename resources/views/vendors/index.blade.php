@@ -12,93 +12,148 @@
     </div>
 
     <!-- Search & Filter Section -->
-    <div class="bg-white border-b border-gray-200 py-4 md:py-6">
+    <div class="bg-white border-b border-gray-200 py-3 md:py-4">
         <div class="container mx-auto px-4">
-            <form action="{{ route('vendors.index') }}" method="GET" class="space-y-3">
-                <!-- Main Search Bar -->
-                <div class="relative">
-                    <input 
-                        type="text" 
-                        name="search"
-                        value="{{ request('search') }}"
-                        placeholder="Search for photographer, caterer, decorator..."
-                        class="w-full pl-10 pr-4 py-2.5 md:py-3 rounded-lg border border-gray-300 text-sm md:text-base focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
-                    >
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
-                </div>
-
-                <!-- Filters Row -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-                    <!-- Category Filter -->
-                    <div class="col-span-2 md:col-span-1">
-                        <select 
-                            name="category" 
-                            class="w-full px-3 py-2 md:py-2.5 rounded-lg border border-gray-300 text-xs md:text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
+            <form action="{{ route('vendors.index') }}" method="GET">
+                <!-- Desktop Layout -->
+                <div class="hidden md:flex items-center gap-3">
+                    <!-- Search Input -->
+                    <div class="flex-1 relative">
+                        <input 
+                            type="text" 
+                            name="search"
+                            value="{{ request('search') }}"
+                            placeholder="Search for photographer, caterer, decorator..."
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
                         >
-                            <option value="">All Categories</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
                     </div>
 
-                    <!-- Location Filter -->
-                    <div x-data="{ open: false }" class="relative">
+                    <!-- Category Select -->
+                    <select 
+                        name="category" 
+                        class="w-48 px-3 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
+                    >
+                        <option value="">All Categories</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <!-- Location Dropdown -->
+                    <div x-data="{ open: false }" class="relative w-44">
                         <button 
                             type="button"
                             @click="open = !open"
-                            class="w-full px-3 py-2 md:py-2.5 rounded-lg border border-gray-300 text-xs md:text-sm text-left hover:border-purple-500 focus:border-purple-500 transition-colors flex items-center justify-between gap-1"
+                            class="w-full px-3 py-2.5 rounded-lg border border-gray-300 text-sm text-left hover:border-purple-500 transition-colors flex items-center justify-between"
                         >
-                            <span id="vendorLocationDisplay" class="text-gray-700 truncate flex-1">All Locations</span>
+                            <span id="vendorLocationDisplayDesktop" class="text-gray-700 truncate">All Locations</span>
                             <i class="fas fa-chevron-down text-xs text-gray-400 flex-shrink-0"></i>
                         </button>
                         
-                        <input type="hidden" name="region" id="vendorSelectedRegion" value="{{ request('region') }}">
+                        <input type="hidden" name="region" id="vendorSelectedRegionDesktop" value="{{ request('region') }}">
                         
-                        <!-- Location Dropdown -->
-                        <div x-show="open" 
-                             @click.away="open = false"
-                             x-cloak
-                             class="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 max-h-64 overflow-y-auto z-50">
+                        <div x-show="open" @click.away="open = false" x-cloak
+                             class="absolute top-full left-0 w-64 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 max-h-80 overflow-y-auto z-50">
                             <div class="p-2">
                                 @foreach(['Greater Accra', 'Ashanti', 'Western', 'Central', 'Northern', 'Eastern', 'Volta', 'Upper East', 'Upper West', 'Bono'] as $region)
-                                <button 
-                                    type="button"
-                                    @click="document.getElementById('vendorSelectedRegion').value = '{{ $region }}'; document.getElementById('vendorLocationDisplay').textContent = '{{ $region }}'; open = false; this.closest('form').submit()"
-                                    class="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 rounded transition"
-                                >
+                                <button type="button"
+                                    @click="document.getElementById('vendorSelectedRegionDesktop').value = '{{ $region }}'; document.getElementById('vendorLocationDisplayDesktop').textContent = '{{ $region }}'; open = false"
+                                    class="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 rounded">
                                     {{ $region }}
                                 </button>
                                 @endforeach
-                                <div class="border-t border-gray-200 my-1"></div>
-                                <button 
-                                    type="button"
-                                    @click="document.getElementById('vendorSelectedRegion').value = ''; document.getElementById('vendorLocationDisplay').textContent = 'All Locations'; open = false; this.closest('form').submit()"
-                                    class="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded transition"
-                                >
-                                    Clear Location
+                                <div class="border-t my-1"></div>
+                                <button type="button"
+                                    @click="document.getElementById('vendorSelectedRegionDesktop').value = ''; document.getElementById('vendorLocationDisplayDesktop').textContent = 'All Locations'; open = false"
+                                    class="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded">
+                                    Clear
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Sort Filter -->
-                    <div>
-                        <select 
-                            name="sort"
-                            class="w-full px-3 py-2 md:py-2.5 rounded-lg border border-gray-300 text-xs md:text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
+                    <!-- Sort Select -->
+                    <select 
+                        name="sort"
+                        class="w-36 px-3 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
+                    >
+                        <option value="rating" {{ !request('sort') || request('sort') == 'rating' ? 'selected' : '' }}>Top Rated</option>
+                        <option value="recent" {{ request('sort') == 'recent' ? 'selected' : '' }}>Recent</option>
+                        <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>A-Z</option>
+                    </select>
+
+                    <!-- Search Button -->
+                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors text-sm whitespace-nowrap">
+                        <i class="fas fa-search mr-1"></i> Search
+                    </button>
+                </div>
+
+                <!-- Mobile Layout -->
+                <div class="md:hidden space-y-2">
+                    <!-- Search Input -->
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            name="search"
+                            value="{{ request('search') }}"
+                            placeholder="Search vendors..."
+                            class="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
                         >
-                            <option value="rating" {{ request('sort') == 'rating' || !request('sort') ? 'selected' : '' }}>Top Rated</option>
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+                    </div>
+
+                    <!-- Filters Grid -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <!-- Category -->
+                        <select name="category" class="w-full px-2 py-2 rounded-lg border border-gray-300 text-xs focus:border-purple-500 focus:ring-1 focus:ring-purple-200">
+                            <option value="">All Categories</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+
+                        <!-- Location -->
+                        <div x-data="{ open: false }" class="relative">
+                            <button type="button" @click="open = !open"
+                                class="w-full px-2 py-2 rounded-lg border border-gray-300 text-xs text-left hover:border-purple-500 transition-colors flex items-center justify-between">
+                                <span id="vendorLocationDisplayMobile" class="text-gray-700 truncate flex-1 min-w-0">All Locations</span>
+                                <i class="fas fa-chevron-down text-xs text-gray-400 flex-shrink-0 ml-1"></i>
+                            </button>
+                            
+                            <input type="hidden" name="region" id="vendorSelectedRegionMobile" value="{{ request('region') }}">
+                            
+                            <div x-show="open" @click.away="open = false" x-cloak
+                                 class="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 max-h-60 overflow-y-auto z-50">
+                                <div class="p-2">
+                                    @foreach(['Greater Accra', 'Ashanti', 'Western', 'Central', 'Northern', 'Eastern', 'Volta', 'Upper East', 'Upper West', 'Bono'] as $region)
+                                    <button type="button"
+                                        @click="document.getElementById('vendorSelectedRegionMobile').value = '{{ $region }}'; document.getElementById('vendorLocationDisplayMobile').textContent = '{{ $region }}'; open = false"
+                                        class="block w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-purple-50 rounded">
+                                        {{ $region }}
+                                    </button>
+                                    @endforeach
+                                    <div class="border-t my-1"></div>
+                                    <button type="button"
+                                        @click="document.getElementById('vendorSelectedRegionMobile').value = ''; document.getElementById('vendorLocationDisplayMobile').textContent = 'All Locations'; open = false"
+                                        class="block w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-red-50 rounded">
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sort -->
+                        <select name="sort" class="w-full px-2 py-2 rounded-lg border border-gray-300 text-xs focus:border-purple-500 focus:ring-1 focus:ring-purple-200">
+                            <option value="rating" {{ !request('sort') || request('sort') == 'rating' ? 'selected' : '' }}>Top Rated</option>
                             <option value="recent" {{ request('sort') == 'recent' ? 'selected' : '' }}>Recent</option>
                             <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>A-Z</option>
                         </select>
-                    </div>
 
-                    <!-- Search Button -->
-                    <div class="col-span-2 md:col-span-1">
-                        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 md:py-2.5 px-4 rounded-lg transition-colors text-xs md:text-sm">
+                        <!-- Search Button -->
+                        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-xs">
                             <i class="fas fa-search mr-1"></i> Search
                         </button>
                     </div>
@@ -108,10 +163,10 @@
     </div>
 
     <!-- Vendors Grid -->
-    <div class="py-12 bg-neutral">
-        <div class="container mx-auto">
+    <div class="py-8 md:py-12 bg-neutral">
+        <div class="container mx-auto px-4">
             @if($vendors->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                     @foreach($vendors as $vendor)
                         <x-vendor-card :vendor="$vendor" />
                     @endforeach
