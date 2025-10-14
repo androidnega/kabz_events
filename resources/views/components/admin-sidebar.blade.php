@@ -67,12 +67,28 @@
                 <span>All Vendors</span>
             </a>
 
+            <!-- Clients -->
+            <a href="{{ route('admin.clients.index') }}" 
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
+                      {{ request()->routeIs('admin.clients.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+                <i class="fas fa-users text-lg w-5"></i>
+                <span>Clients</span>
+            </a>
+
             <!-- Reports -->
             <a href="{{ route('admin.reports.index') }}" 
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
                       {{ request()->routeIs('admin.reports.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                 <i class="fas fa-flag text-lg w-5"></i>
                 <span>Reports</span>
+            </a>
+
+            <!-- Media Management -->
+            <a href="{{ route('admin.media.index') }}" 
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
+                      {{ request()->routeIs('admin.media.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+                <i class="fas fa-cloud text-lg w-5"></i>
+                <span>Media Management</span>
             </a>
 
             <!-- Messages (Admin view - coming soon) -->
