@@ -84,10 +84,15 @@ class CloudinaryMediaController extends Controller
                     $response = $this->cloudinary->adminApi()->assets([
                         'type' => 'upload',
                         'prefix' => $folder['name'],
-                        'max_results' => 1
+                        'max_results' => 500
                     ]);
-                    $folder['count'] = $response['total_count'] ?? 0;
+                    $folder['count'] = isset($response['resources']) ? count($response['resources']) : 0;
+                    Log::info('Folder count', [
+                        'folder' => $folder['name'],
+                        'count' => $folder['count']
+                    ]);
                 } catch (\Exception $e) {
+                    Log::error('Folder count error: ' . $e->getMessage(), ['folder' => $folder['name']]);
                     $folder['count'] = 0;
                 }
             }

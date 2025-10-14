@@ -1,5 +1,7 @@
-<x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<x-admin-layout>
+    <x-slot name="pageTitle">Media Management</x-slot>
+
+    <div class="p-4 sm:p-6 lg:p-8">
         {{-- Header --}}
         <div class="mb-6">
             <h1 class="text-2xl font-bold text-gray-900">
@@ -26,7 +28,7 @@
         {{-- Stats Cards --}}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {{-- Total Files --}}
-            <div class="bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
+            <div class="bg-white rounded-lg border border-gray-200 p-4">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-xs text-gray-500 uppercase font-semibold">Total Files</p>
@@ -39,7 +41,7 @@
             </div>
 
             {{-- Profile Photos --}}
-            <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
+            <div class="bg-white rounded-lg border border-gray-200 p-4">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-xs text-gray-500 uppercase font-semibold">Profiles</p>
@@ -52,7 +54,7 @@
             </div>
 
             {{-- Sample Work --}}
-            <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
+            <div class="bg-white rounded-lg border border-gray-200 p-4">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-xs text-gray-500 uppercase font-semibold">Sample Work</p>
@@ -65,7 +67,7 @@
             </div>
 
             {{-- Videos --}}
-            <div class="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
+            <div class="bg-white rounded-lg border border-gray-200 p-4">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-xs text-gray-500 uppercase font-semibold">Videos</p>
@@ -87,7 +89,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             @foreach($folders as $folder)
                 <a href="{{ route('admin.media.gallery', $folder['name']) }}" 
-                   class="bg-white rounded-lg shadow hover:shadow-lg transition-all duration-200 p-4 border border-gray-200 hover:border-purple-400 group">
+                   class="bg-white rounded-lg transition-all duration-200 p-4 border border-gray-200 hover:border-purple-400 group">
                     
                     {{-- Icon --}}
                     <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br 
@@ -152,4 +154,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-admin-layout>
