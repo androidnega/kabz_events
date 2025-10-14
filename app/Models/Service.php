@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Service extends Model
 {
@@ -51,5 +52,25 @@ class Service extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Get the featured ads for this service.
+     */
+    public function featuredAds(): HasMany
+    {
+        return $this->hasMany(FeaturedAd::class);
+    }
+
+    /**
+     * Check if service has active featured ad.
+     */
+    public function hasFeaturedAd(): bool
+    {
+        return $this->featuredAds()
+            ->where('status', 'active')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->exists();
     }
 }

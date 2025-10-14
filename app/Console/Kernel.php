@@ -24,6 +24,16 @@ class Kernel extends ConsoleKernel
         $schedule->command('users:set-offline')
             ->everyMinute()
             ->withoutOverlapping();
+        
+        // Expire featured ads daily at 1 AM
+        $schedule->command('featured-ads:expire')
+            ->dailyAt('01:00')
+            ->withoutOverlapping();
+        
+        // Expire VIP subscriptions daily at 2 AM
+        $schedule->command('vip-subscriptions:expire')
+            ->dailyAt('02:00')
+            ->withoutOverlapping();
     }
 
     /**

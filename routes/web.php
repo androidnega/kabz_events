@@ -2,8 +2,11 @@
 
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\FeaturedAdController as AdminFeaturedAdController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\VendorVerificationController;
+use App\Http\Controllers\Admin\VipPlanController;
+use App\Http\Controllers\Admin\VipSubscriptionController as AdminVipSubscriptionController;
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
@@ -19,9 +22,11 @@ use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboardCo
 use App\Http\Controllers\SuperAdmin\LocationController;
 use App\Http\Controllers\SuperAdmin\SMSTestController;
 use App\Http\Controllers\Vendor\DashboardController as VendorDashboardControllerNew;
+use App\Http\Controllers\Vendor\FeaturedAdController;
 use App\Http\Controllers\Vendor\ServiceController;
 use App\Http\Controllers\Vendor\SubscriptionController;
 use App\Http\Controllers\Vendor\VerificationController;
+use App\Http\Controllers\Vendor\VipSubscriptionController;
 use App\Http\Controllers\VendorDashboardController;
 use App\Http\Controllers\VendorProfileController;
 use App\Http\Controllers\VendorRegistrationController;
@@ -186,6 +191,43 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         
         // User Management
         Route::resource('users', App\Http\Controllers\Admin\UserController::class);
+        
+        // Featured Ads Management
+        Route::get('/featured-ads', [AdminFeaturedAdController::class, 'index'])->name('featured-ads.index');
+        Route::get('/featured-ads/create', [AdminFeaturedAdController::class, 'create'])->name('featured-ads.create');
+        Route::post('/featured-ads', [AdminFeaturedAdController::class, 'store'])->name('featured-ads.store');
+        Route::get('/featured-ads/{id}', [AdminFeaturedAdController::class, 'show'])->name('featured-ads.show');
+        Route::get('/featured-ads/{id}/edit', [AdminFeaturedAdController::class, 'edit'])->name('featured-ads.edit');
+        Route::put('/featured-ads/{id}', [AdminFeaturedAdController::class, 'update'])->name('featured-ads.update');
+        Route::delete('/featured-ads/{id}', [AdminFeaturedAdController::class, 'destroy'])->name('featured-ads.destroy');
+        Route::post('/featured-ads/{id}/approve', [AdminFeaturedAdController::class, 'approve'])->name('featured-ads.approve');
+        Route::post('/featured-ads/{id}/reject', [AdminFeaturedAdController::class, 'reject'])->name('featured-ads.reject');
+        Route::post('/featured-ads/{id}/suspend', [AdminFeaturedAdController::class, 'suspend'])->name('featured-ads.suspend');
+        Route::get('/featured-ads/export/csv', [AdminFeaturedAdController::class, 'export'])->name('featured-ads.export');
+        Route::get('/vendors/{vendorId}/services', [AdminFeaturedAdController::class, 'getVendorServices'])->name('vendors.services');
+        
+        // VIP Plans Management
+        Route::get('/vip-plans', [VipPlanController::class, 'index'])->name('vip-plans.index');
+        Route::get('/vip-plans/create', [VipPlanController::class, 'create'])->name('vip-plans.create');
+        Route::post('/vip-plans', [VipPlanController::class, 'store'])->name('vip-plans.store');
+        Route::get('/vip-plans/{id}', [VipPlanController::class, 'show'])->name('vip-plans.show');
+        Route::get('/vip-plans/{id}/edit', [VipPlanController::class, 'edit'])->name('vip-plans.edit');
+        Route::put('/vip-plans/{id}', [VipPlanController::class, 'update'])->name('vip-plans.update');
+        Route::post('/vip-plans/{id}/toggle-status', [VipPlanController::class, 'toggleStatus'])->name('vip-plans.toggle-status');
+        Route::delete('/vip-plans/{id}', [VipPlanController::class, 'destroy'])->name('vip-plans.destroy');
+        
+        // VIP Subscriptions Management
+        Route::get('/vip-subscriptions', [AdminVipSubscriptionController::class, 'index'])->name('vip-subscriptions.index');
+        Route::get('/vip-subscriptions/create', [AdminVipSubscriptionController::class, 'create'])->name('vip-subscriptions.create');
+        Route::post('/vip-subscriptions', [AdminVipSubscriptionController::class, 'store'])->name('vip-subscriptions.store');
+        Route::get('/vip-subscriptions/{id}', [AdminVipSubscriptionController::class, 'show'])->name('vip-subscriptions.show');
+        Route::get('/vip-subscriptions/{id}/edit', [AdminVipSubscriptionController::class, 'edit'])->name('vip-subscriptions.edit');
+        Route::put('/vip-subscriptions/{id}', [AdminVipSubscriptionController::class, 'update'])->name('vip-subscriptions.update');
+        Route::post('/vip-subscriptions/{id}/cancel', [AdminVipSubscriptionController::class, 'cancel'])->name('vip-subscriptions.cancel');
+        Route::post('/vip-subscriptions/{id}/reactivate', [AdminVipSubscriptionController::class, 'reactivate'])->name('vip-subscriptions.reactivate');
+        Route::post('/vip-subscriptions/{id}/extend', [AdminVipSubscriptionController::class, 'extend'])->name('vip-subscriptions.extend');
+        Route::delete('/vip-subscriptions/{id}', [AdminVipSubscriptionController::class, 'destroy'])->name('vip-subscriptions.destroy');
+        Route::get('/vip-subscriptions/export/csv', [AdminVipSubscriptionController::class, 'export'])->name('vip-subscriptions.export');
     });
 
     // Vendor Routes
@@ -227,6 +269,25 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::post('/messages/typing/{clientId}', [\App\Http\Controllers\Vendor\MessageController::class, 'typing'])->name('messages.typing');
         Route::post('/messages/stop-typing/{clientId}', [\App\Http\Controllers\Vendor\MessageController::class, 'stopTyping'])->name('messages.stop-typing');
         Route::post('/status/online', [\App\Http\Controllers\Vendor\MessageController::class, 'updateOnlineStatus'])->name('status.update');
+        
+        // Featured Ads
+        Route::get('/featured-ads', [FeaturedAdController::class, 'index'])->name('featured-ads.index');
+        Route::get('/featured-ads/create', [FeaturedAdController::class, 'create'])->name('featured-ads.create');
+        Route::post('/featured-ads', [FeaturedAdController::class, 'store'])->name('featured-ads.store');
+        Route::get('/featured-ads/{id}', [FeaturedAdController::class, 'show'])->name('featured-ads.show');
+        Route::get('/featured-ads/{id}/edit', [FeaturedAdController::class, 'edit'])->name('featured-ads.edit');
+        Route::put('/featured-ads/{id}', [FeaturedAdController::class, 'update'])->name('featured-ads.update');
+        Route::delete('/featured-ads/{id}', [FeaturedAdController::class, 'destroy'])->name('featured-ads.destroy');
+        Route::get('/featured-ads/{id}/payment', [FeaturedAdController::class, 'payment'])->name('featured-ads.payment');
+        Route::post('/featured-ads/{id}/verify-payment', [FeaturedAdController::class, 'verifyPayment'])->name('featured-ads.verify-payment');
+        
+        // VIP Subscriptions
+        Route::get('/vip-subscriptions', [VipSubscriptionController::class, 'index'])->name('vip-subscriptions.index');
+        Route::get('/vip-subscriptions/{planId}/subscribe', [VipSubscriptionController::class, 'subscribe'])->name('vip-subscriptions.subscribe');
+        Route::post('/vip-subscriptions/{planId}/process', [VipSubscriptionController::class, 'processSubscription'])->name('vip-subscriptions.process');
+        Route::get('/vip-subscriptions/{id}/payment', [VipSubscriptionController::class, 'payment'])->name('vip-subscriptions.payment');
+        Route::post('/vip-subscriptions/{id}/verify-payment', [VipSubscriptionController::class, 'verifyPayment'])->name('vip-subscriptions.verify-payment');
+        Route::post('/vip-subscriptions/{id}/cancel', [VipSubscriptionController::class, 'cancel'])->name('vip-subscriptions.cancel');
     });
 
     // Client Routes

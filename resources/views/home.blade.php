@@ -81,6 +81,64 @@
         </div>
     </div>
 
+    <!-- Featured Ads Section -->
+    @if($featuredAds->isNotEmpty())
+    <div class="py-8 md:py-12 lg:py-16 bg-gradient-to-br from-purple-50 to-pink-50">
+        <div class="container mx-auto">
+            <div class="text-center mb-6 md:mb-8">
+                <h2 class="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">⭐ Featured Services</h2>
+                <p class="text-sm md:text-base text-gray-600">Premium vendors offering exceptional services</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @foreach($featuredAds as $ad)
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-purple-300 hover:border-purple-500 transition-all duration-300"
+                         onclick="window.location='{{ route('vendors.show', $ad->vendor->slug) }}'; event.target.closest('.featured-ad-card').querySelector('.ad-click-tracker')?.click();">
+                        @if($ad->image_path)
+                            <img src="{{ asset('storage/' . $ad->image_path) }}" 
+                                 alt="{{ $ad->headline }}" 
+                                 class="w-full h-48 object-cover">
+                        @else
+                            <div class="w-full h-48 bg-gradient-to-br from-purple-200 to-pink-200 flex items-center justify-center">
+                                <div class="text-6xl">{{ strtoupper(substr($ad->vendor->business_name, 0, 1)) }}</div>
+                            </div>
+                        @endif
+                        
+                        <div class="p-6 featured-ad-card">
+                            <div class="flex items-start justify-between mb-2">
+                                <h3 class="text-lg font-bold text-gray-900">{{ $ad->headline }}</h3>
+                                <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-1 rounded">FEATURED</span>
+                            </div>
+                            
+                            @if($ad->description)
+                                <p class="text-sm text-gray-600 mb-3">{{ Str::limit($ad->description, 100) }}</p>
+                            @endif
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    @if($ad->vendor->hasVipBadge())
+                                        <span class="text-purple-600" title="VIP Member">👑</span>
+                                    @endif
+                                    <span class="text-sm font-semibold text-teal-600">{{ $ad->vendor->business_name }}</span>
+                                    @if($ad->vendor->is_verified)
+                                        <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            <form action="{{ route('vendors.show', $ad->vendor->slug) }}" method="GET" class="ad-click-tracker" style="display:none;">
+                                <input type="hidden" name="ad_click" value="{{ $ad->id }}">
+                            </form>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Categories Section -->
     <div class="py-8 md:py-12 lg:py-16 bg-white">
         <div class="container mx-auto">

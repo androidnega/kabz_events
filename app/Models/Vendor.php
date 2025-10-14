@@ -119,6 +119,22 @@ class Vendor extends Model
     }
 
     /**
+     * Get the VIP subscriptions for the vendor.
+     */
+    public function vipSubscriptions(): HasMany
+    {
+        return $this->hasMany(VipSubscription::class);
+    }
+
+    /**
+     * Get the featured ads for the vendor.
+     */
+    public function featuredAds(): HasMany
+    {
+        return $this->hasMany(FeaturedAd::class);
+    }
+
+    /**
      * Get the active subscription for the vendor.
      */
     public function activeSubscription(): ?VendorSubscription
@@ -134,12 +150,52 @@ class Vendor extends Model
     }
 
     /**
+     * Get the active VIP subscription for the vendor.
+     */
+    public function activeVipSubscription(): ?VipSubscription
+    {
+        return $this->vipSubscriptions()
+            ->where('status', 'active')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->latest('end_date')
+            ->first();
+    }
+
+    /**
      * Check if vendor has VIP/Premium subscription.
      */
     public function hasVipSubscription(): bool
     {
+        // Check new VIP subscriptions first
+        $vipSubscription = $this->activeVipSubscription();
+        if ($vipSubscription) {
+            return true;
+        }
+        
+        // Fallback to old subscription system
         $subscription = $this->activeSubscription();
         return $subscription && in_array(strtolower($subscription->plan), ['vip', 'premium', 'pro']);
+    }
+
+    /**
+     * Check if vendor has active VIP badge.
+     */
+    public function hasVipBadge(): bool
+    {
+        return $this->activeVipSubscription() !== null;
+    }
+
+    /**
+     * Get vendor's priority level for search ranking.
+     */
+    public function getPriorityLevel(): int
+    {
+        $vipSub = $this->activeVipSubscription();
+        if ($vipSub && $vipSub->vipPlan) {
+            return $vipSub->vipPlan->priority_level;
+        }
+        return 1; // Normal priority
     }
 
     /**
@@ -147,6 +203,12 @@ class Vendor extends Model
      */
     public function getMaxSampleImages(): int
     {
+        // Check VIP subscription limit first
+        $vipSub = $this->activeVipSubscription();
+        if ($vipSub && $vipSub->vipPlan) {
+            return $vipSub->vipPlan->image_limit;
+        }
+        
         // VIP/Verified vendors can upload more, free users limited to 5
         if ($this->hasVipSubscription() || $this->is_verified) {
             return 20; // VIP/Verified get 20 images

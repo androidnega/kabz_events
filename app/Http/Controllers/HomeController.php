@@ -15,13 +15,23 @@ class HomeController extends Controller
      */
     public function index(): View
     {
+        // Get active featured ads for homepage
+        $featuredAds = \App\Models\FeaturedAd::with(['vendor', 'service'])
+            ->where('status', 'active')
+            ->where('placement', 'homepage')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
+
         // Get top 10 categories ordered by display_order
         $categories = Category::orderBy('display_order')
             ->take(10)
             ->get();
 
-        // Get featured vendors (ALL vendors with priority: Subscribed > Verified > Unverified)
-        $featuredVendors = Vendor::with(['services.category', 'subscriptions'])
+        // Get featured vendors with VIP priority (VIP > Subscribed > Verified > Unverified)
+        $featuredVendors = Vendor::with(['services.category', 'subscriptions', 'vipSubscriptions.vipPlan'])
             ->select('vendors.*')
             ->leftJoin('vendor_subscriptions', function ($join) {
                 $join->on('vendors.id', '=', 'vendor_subscriptions.vendor_id')
@@ -31,8 +41,16 @@ class HomeController extends Controller
                            ->orWhere('vendor_subscriptions.ends_at', '>=', now());
                      });
             })
+            ->leftJoin('vip_subscriptions', function ($join) {
+                $join->on('vendors.id', '=', 'vip_subscriptions.vendor_id')
+                     ->where('vip_subscriptions.status', '=', 'active')
+                     ->where('vip_subscriptions.start_date', '<=', now())
+                     ->where('vip_subscriptions.end_date', '>=', now());
+            })
+            ->leftJoin('vip_plans', 'vip_subscriptions.vip_plan_id', '=', 'vip_plans.id')
             ->selectRaw('vendors.*, 
                 CASE 
+                    WHEN vip_plans.priority_level IS NOT NULL THEN (10 + vip_plans.priority_level)
                     WHEN vendor_subscriptions.id IS NOT NULL THEN 3
                     WHEN vendors.is_verified = 1 THEN 2
                     ELSE 1
@@ -42,7 +60,7 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
-        return view('home', compact('categories', 'featuredVendors'));
+        return view('home', compact('categories', 'featuredVendors', 'featuredAds'));
     }
 
     /**
@@ -54,8 +72,8 @@ class HomeController extends Controller
         $perPage = 6;
         $offset = ($page - 1) * $perPage;
 
-        // Show ALL vendors with priority sorting
-        $vendors = Vendor::with(['services.category', 'subscriptions'])
+        // Show ALL vendors with VIP priority sorting
+        $vendors = Vendor::with(['services.category', 'subscriptions', 'vipSubscriptions.vipPlan'])
             ->select('vendors.*')
             ->leftJoin('vendor_subscriptions', function ($join) {
                 $join->on('vendors.id', '=', 'vendor_subscriptions.vendor_id')
@@ -65,8 +83,16 @@ class HomeController extends Controller
                            ->orWhere('vendor_subscriptions.ends_at', '>=', now());
                      });
             })
+            ->leftJoin('vip_subscriptions', function ($join) {
+                $join->on('vendors.id', '=', 'vip_subscriptions.vendor_id')
+                     ->where('vip_subscriptions.status', '=', 'active')
+                     ->where('vip_subscriptions.start_date', '<=', now())
+                     ->where('vip_subscriptions.end_date', '>=', now());
+            })
+            ->leftJoin('vip_plans', 'vip_subscriptions.vip_plan_id', '=', 'vip_plans.id')
             ->selectRaw('vendors.*, 
                 CASE 
+                    WHEN vip_plans.priority_level IS NOT NULL THEN (10 + vip_plans.priority_level)
                     WHEN vendor_subscriptions.id IS NOT NULL THEN 3
                     WHEN vendors.is_verified = 1 THEN 2
                     ELSE 1
