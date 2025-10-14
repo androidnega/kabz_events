@@ -2,7 +2,7 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         <div class="mb-6">
             <a href="{{ route('superadmin.settings.index') }}" class="text-primary hover:underline">
-                <i class="fas fa-arrow-left mr-2"></i> Back to Settings
+                <i class="fas fa-arrow-left mr-2"></i> Back to Configuration
             </a>
         </div>
 
