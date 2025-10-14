@@ -53,10 +53,10 @@
                         <button 
                             type="button"
                             onclick="openLocationModal()"
-                            class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs md:text-sm text-left hover:border-purple-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors flex items-center justify-between"
+                            class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs md:text-sm text-left hover:border-purple-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors flex items-center justify-between gap-1 overflow-hidden"
                         >
-                            <span id="locationDisplay" class="text-gray-400 truncate">Select</span>
-                            <svg class="w-3 h-3 md:w-4 md:h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <span id="locationDisplay" class="text-gray-400 truncate flex-1 min-w-0">Select</span>
+                            <svg class="w-3 h-3 md:w-4 md:h-4 text-gray-400 flex-shrink-0 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                             </svg>
                         </button>
@@ -157,8 +157,8 @@
             </p>
         </div>
 
-        {{-- Vendor Cards Grid --}}
-        <div id="vendorResults" class="grid md:grid-cols-3 gap-6 mb-8">
+        {{-- Vendor Results List --}}
+        <div id="vendorResults" class="space-y-4 mb-8">
             {{-- Results will be loaded here via AJAX --}}
         </div>
     </div>
@@ -252,54 +252,72 @@
             }
 
             container.innerHTML = vendors.map(vendor => {
-                // Generate badge HTML
-                let badgeHTML = '';
-                if (vendor.is_premium) {
-                    badgeHTML = '<span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-md">⭐ Premium</span>';
-                } else if (vendor.subscription_type) {
-                    badgeHTML = '<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">📦 Subscribed</span>';
-                }
-                if (vendor.verified) {
-                    badgeHTML += '<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">✓ Verified</span>';
-                }
+                // Get preview image or fallback
+                const previewImage = vendor.preview_image || (vendor.sample_work_images && vendor.sample_work_images.length > 0 ? vendor.sample_work_images[0] : null);
+                const hasImage = previewImage && previewImage !== '';
+                const vendorInitial = vendor.business_name.charAt(0).toUpperCase();
                 
                 return `
-                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 ${vendor.is_premium ? 'ring-2 ring-yellow-400' : ''}">
-                    <a href="${vendor.url}" class="block">
-                        ${vendor.is_premium ? '<div class="absolute top-0 right-0 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg shadow-lg">FEATURED</div>' : ''}
-                        
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">${vendor.business_name}</h3>
-                        
-                        <!-- Rating and Badges -->
-                        <div class="flex items-center flex-wrap mb-3">
-                            <div class="flex items-center text-yellow-400 mr-2">
-                                ${generateStars(vendor.rating)}
+                <a href="${vendor.url}" class="block group">
+                    <div class="bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors overflow-hidden ${vendor.is_premium ? 'ring-2 ring-yellow-400' : ''}">
+                        <div class="flex flex-col sm:flex-row gap-3 md:gap-4 p-3 md:p-4">
+                            <!-- Vendor Image -->
+                            <div class="w-full sm:w-32 md:w-40 flex-shrink-0">
+                                ${hasImage ? `
+                                    <div class="aspect-video sm:aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                                        <img src="${previewImage}" 
+                                             alt="${vendor.business_name}" 
+                                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                             loading="lazy"
+                                             onerror="this.parentElement.innerHTML='<div class=\\'h-full bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center\\'><div class=\\'text-4xl font-bold text-purple-300\\'>${vendorInitial}</div></div>'">
+                                    </div>
+                                ` : `
+                                    <div class="aspect-video sm:aspect-square bg-gradient-to-br from-purple-100 to-teal-100 rounded-lg flex items-center justify-center">
+                                        <div class="text-4xl md:text-5xl font-bold text-purple-300">${vendorInitial}</div>
+                                    </div>
+                                `}
                             </div>
-                            <span class="text-sm font-semibold text-gray-700">${vendor.rating}</span>
-                            <span class="text-sm text-gray-500 ml-1">(${vendor.review_count} review${vendor.review_count !== 1 ? 's' : ''})</span>
-                            ${badgeHTML}
-                        </div>
+                            
+                            <!-- Vendor Info -->
+                            <div class="flex-1 min-w-0">
+                                <!-- Business Name & Verified -->
+                                <div class="flex items-start justify-between gap-2 mb-2">
+                                    <h3 class="text-base md:text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors line-clamp-2 flex-1">
+                                        ${vendor.business_name}
+                                    </h3>
+                                    ${vendor.verified ? '<svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>' : ''}
+                                </div>
+                                
+                                <!-- Rating -->
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="flex items-center text-yellow-400">
+                                        ${generateStars(vendor.rating)}
+                                    </div>
+                                    <span class="text-sm text-gray-700">${vendor.rating}</span>
+                                    <span class="text-xs text-gray-500">(${vendor.review_count})</span>
+                                </div>
 
-                        <!-- Categories -->
-                        <div class="flex flex-wrap gap-2 mb-3">
-                            ${vendor.categories.slice(0, 3).map(cat => 
-                                `<span class="inline-block bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">${cat}</span>`
-                            ).join('')}
-                        </div>
+                                <!-- Category -->
+                                ${vendor.categories.length > 0 ? `
+                                    <div class="mb-2">
+                                        <span class="inline-block bg-purple-100 text-purple-700 text-xs font-medium px-2 py-0.5 rounded">${vendor.categories[0]}</span>
+                                    </div>
+                                ` : ''}
 
-                        <!-- Location -->
-                        <div class="text-sm text-gray-600 mb-2">
-                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            </svg>
-                            ${vendor.address}
-                            ${vendor.distance ? `<span class="font-semibold text-teal-600 ml-2">(${vendor.distance})</span>` : ''}
+                                <!-- Location -->
+                                ${vendor.address ? `
+                                    <div class="flex items-center text-xs md:text-sm text-gray-600">
+                                        <svg class="w-3 h-3 md:w-4 md:h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        </svg>
+                                        <span class="truncate">${vendor.address}</span>
+                                        ${vendor.distance ? `<span class="font-semibold text-teal-600 ml-2 flex-shrink-0">(${vendor.distance})</span>` : ''}
+                                    </div>
+                                ` : ''}
+                            </div>
                         </div>
-
-                        <!-- Description -->
-                        ${vendor.description ? `<p class="text-sm text-gray-600 line-clamp-2">${vendor.description}</p>` : ''}
-                    </a>
-                </div>
+                    </div>
+                </a>
             `;
             }).join('');
         }
@@ -311,9 +329,9 @@
             
             for (let i = 0; i < 5; i++) {
                 if (i < fullStars) {
-                    stars.push('<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>');
+                    stars.push('<svg class="w-3 h-3 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>');
                 } else {
-                    stars.push('<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>');
+                    stars.push('<svg class="w-3 h-3 md:w-4 md:h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>');
                 }
             }
             

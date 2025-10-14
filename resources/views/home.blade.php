@@ -7,10 +7,10 @@
     <div class="bg-gradient-to-r from-primary to-purple-700 text-white">
         <div class="container mx-auto py-6 md:py-12 lg:py-16 px-4">
             <div class="text-center">
-                <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">
+                <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-2 md:mb-4 px-2">
                     Find Perfect Event Vendors in Ghana
                 </h1>
-                <p class="text-sm sm:text-base md:text-lg lg:text-xl mb-4 md:mb-6 text-purple-100">
+                <p class="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl mb-4 md:mb-6 text-purple-100 px-2">
                     Connect with verified service providers
                 </p>
                 
