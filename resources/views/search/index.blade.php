@@ -1,4 +1,7 @@
-<x-app-layout>
+<x-layouts.base>
+    <x-slot name="title">
+        Search Event Vendors in Ghana | {{ config('app.name') }}
+    </x-slot>
     {{-- Page Header --}}
     <div class="bg-gradient-to-r from-purple-600 to-teal-500 text-white py-4 md:py-8 mb-4 md:mb-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -366,5 +369,5 @@
             performLiveSearch();
         });
     </script>
-</x-app-layout>
+</x-layouts.base>
 

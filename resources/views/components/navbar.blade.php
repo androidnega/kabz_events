@@ -19,10 +19,6 @@
                     <i class="fas fa-search mr-1"></i> Find Vendors
                 </a>
                 
-                <a href="{{ route('search.index') }}" class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium transition">
-                    <i class="fas fa-th-large mr-1"></i> Browse Categories
-                </a>
-                
                 @auth
                     <!-- Unified Dashboard Link - Phase K3 -->
                     <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
@@ -101,9 +97,6 @@
             </a>
             <a href="{{ route('vendors.index') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">
                 <i class="fas fa-search mr-2 w-5"></i> Find Vendors
-            </a>
-            <a href="{{ route('search.index') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">
-                <i class="fas fa-th-large mr-2 w-5"></i> Browse Categories
             </a>
             
             @auth
