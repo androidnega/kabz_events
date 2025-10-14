@@ -99,13 +99,16 @@ class SampleWorkController extends Controller
         
         $vendor->save();
         
-        $storageType = $useCloudinary ? 'Cloudinary (compressed)' : 'local storage';
+        // Determine storage type from the uploaded images
+        $storageType = !empty($uploadedImages) && ($uploadedImages[0]['type'] ?? 'local') === 'cloudinary' 
+            ? 'Cloudinary (compressed)' 
+            : 'local storage';
         
         return response()->json([
             'success' => true,
             'message' => count($uploadedImages) . ' image(s) uploaded successfully to ' . $storageType . '!',
             'images' => $allImages,
-            'storage_type' => $useCloudinary ? 'cloudinary' : 'local'
+            'storage_type' => !empty($uploadedImages) ? ($uploadedImages[0]['type'] ?? 'local') : 'local'
         ]);
     }
 
@@ -136,7 +139,7 @@ class SampleWorkController extends Controller
         if (is_array($imageData)) {
             if ($imageData['type'] === 'cloudinary' && !empty($imageData['public_id'])) {
                 // Delete from Cloudinary
-                $this->cloudinaryService->deleteFile($imageData['public_id'], 'image');
+                $this->cloudinaryService->deleteImage($imageData['public_id']);
             } elseif ($imageData['type'] === 'local' && Storage::disk('public')->exists($imageData['url'])) {
                 // Delete from local storage
                 Storage::disk('public')->delete($imageData['url']);
@@ -222,13 +225,12 @@ class SampleWorkController extends Controller
         ]);
         
         $video = $request->file('video');
-        $useCloudinary = SettingsService::get('cloud_storage') === 'cloudinary' && $this->cloudinaryService->isConfigured();
         
         // Delete old video if exists
         if ($vendor->sample_work_video) {
             if (is_array($vendor->sample_work_video)) {
                 if ($vendor->sample_work_video['type'] === 'cloudinary') {
-                    $this->cloudinaryService->deleteFile($vendor->sample_work_video['public_id'], 'video');
+                    $this->cloudinaryService->deleteVideo($vendor->sample_work_video['public_id']);
                 } elseif (Storage::disk('public')->exists($vendor->sample_work_video['url'])) {
                     Storage::disk('public')->delete($vendor->sample_work_video['url']);
                 }
