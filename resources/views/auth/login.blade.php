@@ -1,89 +1,100 @@
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-purple-50 py-8 px-4" x-data="{ formWidth: 'max-w-md' }">
-        <div class="w-full" :class="formWidth">
-            {{-- Logo/Header --}}
-            <div class="text-center mb-4">
-                <a href="/" class="inline-block">
-                    <div class="w-12 h-12 mx-auto bg-gradient-to-br from-primary to-purple-700 rounded-xl flex items-center justify-center shadow">
-                        <span class="text-xl font-bold text-white">K</span>
-                    </div>
-                </a>
-                <h2 class="mt-3 text-xl font-bold text-gray-900">
-                    Welcome Back
-                </h2>
-                <p class="mt-1 text-sm text-gray-600">
-                    Or 
-                    <a href="{{ route('register') }}" class="font-medium text-primary hover:text-purple-700">
-                        create a new account
-                    </a>
-                </p>
-            </div>
-
+    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-purple-50 py-8 px-4">
+        <div class="w-full max-w-xs mx-4">
             {{-- Login Card --}}
-            <div class="bg-white rounded-xl shadow-md border border-purple-100 p-5">
-                <!-- Session Status -->
-                <x-auth-session-status class="mb-3" :status="session('status')" />
-
-                <form method="POST" action="{{ route('login') }}" class="space-y-3">
-                    @csrf
-
-                    <!-- Email Address -->
-                    <div>
-                        <x-input-label for="email" :value="__('Email')" class="text-gray-700 font-medium text-sm" />
-                        <x-text-input id="email" class="block mt-1 w-full rounded-lg border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" 
-                                      type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-                        <x-input-error :messages="$errors->get('email')" class="mt-1" />
-                    </div>
-
-                    <!-- Password -->
-                    <div>
-                        <x-input-label for="password" :value="__('Password')" class="text-gray-700 font-medium text-sm" />
-                        <x-text-input id="password" class="block mt-1 w-full rounded-lg border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-                                      type="password"
-                                      name="password"
-                                      required autocomplete="current-password" />
-                        <x-input-error :messages="$errors->get('password')" class="mt-1" />
-                    </div>
-
-                    <!-- Remember Me -->
-                    <div class="flex items-center justify-between text-sm">
-                        <label for="remember_me" class="inline-flex items-center">
-                            <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary" name="remember">
-                            <span class="ml-2 text-gray-600">{{ __('Remember me') }}</span>
-                        </label>
-
-                        @if (Route::has('password.request'))
-                            <a class="text-primary hover:text-purple-700" href="{{ route('password.request') }}">
-                                {{ __('Forgot password?') }}
-                            </a>
-                        @endif
-                    </div>
-
-                    <div>
-                        <x-primary-button class="w-full justify-center bg-gradient-to-r from-primary to-purple-700 hover:from-purple-700 hover:to-primary shadow-md">
-                            <i class="fas fa-sign-in-alt mr-2"></i>{{ __('Sign in') }}
-                        </x-primary-button>
-                    </div>
-                </form>
-
-                {{-- Vendor Registration Link --}}
-                <div class="mt-4 pt-4 border-t border-gray-200">
-                    <p class="text-center text-xs text-gray-600">
-                        Want to offer services? 
-                        <a href="{{ route('vendor.public.register') }}" class="font-medium text-primary hover:text-purple-700">
-                            <i class="fas fa-store mr-1"></i> 
-                            Register as a Vendor
+            <div class="bg-white rounded-xl shadow-2xl overflow-hidden">
+                {{-- Header Section --}}
+                <div class="bg-gradient-to-br from-indigo-50 to-white px-6 py-6">
+                    <div class="text-center">
+                        <a href="/" class="inline-block">
+                            <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-indigo-600 shadow-lg mb-4">
+                                <span class="text-xl font-bold text-white">K</span>
+                            </div>
                         </a>
-                    </p>
+                        <h2 class="text-lg font-bold text-gray-900 mb-2">
+                            Welcome Back
+                        </h2>
+                        <p class="text-xs text-gray-600 leading-relaxed">
+                            Or 
+                            <a href="{{ route('register') }}" class="font-semibold text-indigo-600 hover:text-indigo-700 underline decoration-2">
+                                create a new account
+                            </a>
+                        </p>
+                    </div>
                 </div>
-            </div>
 
-            {{-- Back to Home Link --}}
-            <div class="mt-4 text-center">
-                <a href="/" class="text-xs text-gray-600 hover:text-primary inline-flex items-center">
-                    <i class="fas fa-arrow-left mr-1"></i>
-                    Back to Home
-                </a>
+                {{-- Form Section --}}
+                <div class="bg-gray-50 px-6 py-5 rounded-b-xl">
+                    <!-- Session Status -->
+                    <x-auth-session-status class="mb-3" :status="session('status')" />
+
+                    <form method="POST" action="{{ route('login') }}" class="space-y-3">
+                        @csrf
+
+                        <!-- Email Address -->
+                        <div>
+                            <x-input-label for="email" :value="__('Email')" class="text-gray-700 font-medium text-sm" />
+                            <x-text-input id="email" class="block mt-1 w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50" 
+                                          type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                            <x-input-error :messages="$errors->get('email')" class="mt-1" />
+                        </div>
+
+                        <!-- Password -->
+                        <div>
+                            <x-input-label for="password" :value="__('Password')" class="text-gray-700 font-medium text-sm" />
+                            <x-text-input id="password" class="block mt-1 w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                                          type="password"
+                                          name="password"
+                                          required autocomplete="current-password" />
+                            <x-input-error :messages="$errors->get('password')" class="mt-1" />
+                        </div>
+
+                        <!-- Remember Me & Forgot Password -->
+                        <div class="flex items-center justify-between text-sm">
+                            <label for="remember_me" class="inline-flex items-center">
+                                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" name="remember">
+                                <span class="ml-2 text-gray-600">{{ __('Remember me') }}</span>
+                            </label>
+
+                            @if (Route::has('password.request'))
+                                <a class="text-indigo-600 hover:text-indigo-700 font-medium" href="{{ route('password.request') }}">
+                                    {{ __('Forgot password?') }}
+                                </a>
+                            @endif
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-2">
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-lg font-medium transition shadow-md hover:shadow-lg text-sm transform hover:scale-105 duration-200">
+                                <i class="fas fa-sign-in-alt mr-2"></i>{{ __('Sign in') }}
+                            </button>
+                        </div>
+                    </form>
+
+                    {{-- Divider --}}
+                    <div class="my-4">
+                        <div class="border-t border-gray-300"></div>
+                    </div>
+
+                    {{-- Vendor Registration Link --}}
+                    <div class="text-center mb-2">
+                        <p class="text-xs text-gray-600">
+                            Want to offer services? 
+                            <a href="{{ route('vendor.public.register') }}" class="text-indigo-600 hover:text-indigo-700 font-semibold underline decoration-2 hover:decoration-indigo-700">
+                                <i class="fas fa-store mr-1"></i> 
+                                Register as a Vendor
+                            </a>
+                        </p>
+                    </div>
+
+                    {{-- Back to Home Link --}}
+                    <div class="text-center">
+                        <a href="/" class="text-xs text-gray-500 hover:text-gray-700 inline-flex items-center font-medium hover:bg-gray-200 px-3 py-2 rounded-lg transition">
+                            <i class="fas fa-arrow-left mr-1.5"></i>
+                            Back to Home
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
