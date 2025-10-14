@@ -1,22 +1,20 @@
 <x-guest-layout>
     <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-purple-50 py-8 px-4">
         <div class="w-full max-w-xs mx-4">
+            {{-- Header Section --}}
+            <div class="text-center mb-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-3">
+                    Reset Password
+                </h2>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    Enter your email to receive a password reset link
+                </p>
+            </div>
+
             {{-- Forgot Password Card --}}
             <div class="bg-white rounded-xl shadow-2xl overflow-hidden">
-                {{-- Header Section --}}
-                <div class="bg-gradient-to-br from-indigo-50 to-white px-8 py-8">
-                    <div class="text-center">
-                        <h2 class="text-xl font-bold text-gray-900 mb-3">
-                            Reset Password
-                        </h2>
-                        <p class="text-sm text-gray-600 leading-relaxed">
-                            Enter your email to receive a password reset link
-                        </p>
-                    </div>
-                </div>
-
                 {{-- Form Section --}}
-                <div class="bg-gray-50 px-8 py-8 rounded-b-xl">
+                <div class="bg-gray-50 px-8 py-8 rounded-xl">
                     <!-- Session Status -->
                     <x-auth-session-status class="mb-6" :status="session('status')" />
 
