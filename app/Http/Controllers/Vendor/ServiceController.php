@@ -48,8 +48,24 @@ class ServiceController extends Controller
 
         $categories = Category::orderBy('name')->get();
         
-        // Get vendor's default category from their first service
-        $defaultCategoryId = $vendor->services()->first()?->category_id;
+        // Determine default category intelligently
+        $defaultCategoryId = null;
+        
+        // 1. Check if vendor has existing services - use that category
+        if ($vendor->services()->count() > 0) {
+            $defaultCategoryId = $vendor->services()->first()->category_id;
+        } 
+        // 2. Map from verification business_category to category_id
+        elseif ($vendor->verificationRequest && $vendor->verificationRequest->business_category) {
+            $businessCategory = $vendor->verificationRequest->business_category;
+            $category = Category::where('name', 'LIKE', "%{$businessCategory}%")->first();
+            $defaultCategoryId = $category?->id;
+        }
+        
+        // 3. Fallback to "Event Planning & Coordination" (id: 6)
+        if (!$defaultCategoryId) {
+            $defaultCategoryId = 6; // Event Planning & Coordination
+        }
 
         return view('vendor.services.create', compact('categories', 'vendor', 'defaultCategoryId'));
     }
