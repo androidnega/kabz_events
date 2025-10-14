@@ -16,47 +16,61 @@
                 </div>
 
                 {{-- Form Section --}}
-                <div class="bg-gray-50 px-8 py-7 rounded-b-xl">
+                <div class="bg-gray-50 px-8 py-8 rounded-b-xl">
                     <!-- Session Status -->
-                    <x-auth-session-status class="mb-3" :status="session('status')" />
+                    <x-auth-session-status class="mb-6" :status="session('status')" />
 
-                    <form method="POST" action="{{ route('password.email') }}" class="space-y-4">
+                    <form method="POST" action="{{ route('password.email') }}">
                         @csrf
 
                         <!-- Email Address -->
-                        <div>
-                            <x-input-label for="email" :value="__('Email')" class="text-gray-700 font-medium text-sm mb-2" />
-                            <x-text-input id="email" class="block mt-2 w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50" type="email" name="email" :value="old('email')" required autofocus />
-                            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                        <div class="mb-6">
+                            <x-input-label for="email" :value="__('Email')" class="block text-gray-700 font-semibold text-sm mb-3" />
+                            <x-text-input 
+                                id="email" 
+                                class="w-full px-4 py-3.5 rounded-lg border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200 text-gray-900 placeholder-gray-400" 
+                                type="email" 
+                                name="email" 
+                                :value="old('email')" 
+                                placeholder="Enter your email address"
+                                required 
+                                autofocus />
+                            <x-input-error :messages="$errors->get('email')" class="mt-2.5" />
                         </div>
 
                         <!-- Submit Button -->
-                        <div class="pt-3">
-                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3.5 rounded-lg font-medium transition shadow-md hover:shadow-lg text-sm transform hover:scale-105 duration-200">
-                                <i class="fas fa-envelope mr-2"></i>{{ __('Email Password Reset Link') }}
+                        <div class="mt-8 mb-6">
+                            <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white px-6 py-4 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] text-sm tracking-wide">
+                                <i class="fas fa-envelope mr-2.5"></i>
+                                {{ __('Email Password Reset Link') }}
                             </button>
                         </div>
                     </form>
 
                     {{-- Divider --}}
-                    <div class="my-5">
-                        <div class="border-t border-gray-300"></div>
+                    <div class="relative my-8">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-xs">
+                            <span class="px-3 bg-gray-50 text-gray-500 uppercase tracking-wider">Or</span>
+                        </div>
                     </div>
 
                     {{-- Login Link --}}
-                    <div class="text-center mb-3">
-                        <p class="text-sm text-gray-600">
-                            Remember your password? 
-                            <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-700 font-semibold underline decoration-2 hover:decoration-indigo-700">
-                                <i class="fas fa-sign-in-alt mr-1"></i> 
-                                Sign in
-                            </a>
+                    <div class="text-center mb-6">
+                        <p class="text-sm text-gray-600 mb-4">
+                            Remember your password?
                         </p>
+                        <a href="{{ route('login') }}" class="inline-flex items-center justify-center text-indigo-600 hover:text-indigo-700 font-semibold text-sm transition-colors duration-200">
+                            <i class="fas fa-sign-in-alt mr-2"></i> 
+                            Sign in to your account
+                        </a>
                     </div>
 
                     {{-- Back to Home Link --}}
-                    <div class="text-center">
-                        <a href="/" class="text-sm text-gray-500 hover:text-gray-700 inline-flex items-center font-medium hover:bg-gray-200 px-4 py-2.5 rounded-lg transition">
+                    <div class="text-center pt-4 border-t border-gray-200">
+                        <a href="/" class="inline-flex items-center justify-center text-sm text-gray-500 hover:text-gray-700 font-medium hover:bg-gray-200 px-5 py-3 rounded-lg transition-all duration-200">
                             <i class="fas fa-arrow-left mr-2"></i>
                             Back to Home
                         </a>
