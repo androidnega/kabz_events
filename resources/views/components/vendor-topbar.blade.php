@@ -9,7 +9,7 @@
             <!-- Left: Logo & Toggle -->
             <div class="flex items-center space-x-2 sm:space-x-4">
                 <!-- Sidebar Toggle (Desktop only) -->
-                <button @click="sidebarOpen = !sidebarOpen" class="hidden lg:block text-gray-600 hover:text-gray-900 focus:outline-none">
+                <button @click="sidebarOpen = !sidebarOpen" class="hidden md:block text-gray-600 hover:text-gray-900 focus:outline-none">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
                 
@@ -23,7 +23,7 @@
             <div class="flex items-center space-x-2 sm:space-x-3">
                 <!-- Quick Action: Add Service (Desktop only) -->
                 <a href="{{ route('vendor.services.create') }}" 
-                   class="hidden lg:flex items-center px-3 sm:px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition text-sm">
+                   class="hidden md:flex items-center px-3 sm:px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition text-sm">
                     <i class="fas fa-plus mr-2"></i>
                     <span class="font-medium">Add Service</span>
                 </a>
@@ -32,7 +32,7 @@
                 <x-notification-bell />
 
                 <!-- Profile Dropdown (Desktop only) -->
-                <div x-data="{ open: false }" class="relative hidden lg:block">
+                <div x-data="{ open: false }" class="relative hidden md:block">
                     <button @click="open = !open" 
                             class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
                         @if($user->profile_photo)

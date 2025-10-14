@@ -30,7 +30,7 @@
         <x-vendor-nav />
         
         <!-- Main Content Area -->
-        <main class="min-h-screen pt-16 transition-all duration-300 pb-20 lg:pb-6" :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'" style="margin-left: 256px !important;">
+        <main class="min-h-screen pt-16 transition-all duration-300 pb-20 md:pb-6" :class="sidebarOpen ? 'md:ml-64' : 'md:ml-20'">
             <div class="p-4 sm:p-6">
                 {{ $slot }}
             </div>
