@@ -22,10 +22,18 @@ class VendorProfileController extends Controller
             }, 'subscriptions'])
             ->select('vendors.*');
 
-        // Category filter
+        // Category filter (supports both ID and slug)
         if ($request->has('category') && $request->category) {
             $query->whereHas('services', function ($q) use ($request) {
-                $q->where('category_id', $request->category);
+                // Check if category is an ID (numeric) or slug (string)
+                if (is_numeric($request->category)) {
+                    $q->where('category_id', $request->category);
+                } else {
+                    // It's a slug, find the category
+                    $q->whereHas('category', function ($catQuery) use ($request) {
+                        $catQuery->where('slug', $request->category);
+                    });
+                }
             });
         }
 

@@ -1,10 +1,6 @@
 <x-vendor-layout>
     <x-slot name="title">Messages</x-slot>
 
-    @push('styles')
-    <script src="https://cdn.tailwindcss.com"></script>
-    @endpush
-
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
          data-has-conversations="{{ count($conversations) > 0 ? '1' : '0' }}"
          data-user-id="{{ Auth::id() }}"
