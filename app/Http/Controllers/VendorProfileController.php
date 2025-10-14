@@ -16,10 +16,11 @@ class VendorProfileController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Vendor::where('is_verified', true)
-            ->with(['services.category', 'reviews' => function ($query) {
+        // Show ALL vendors (subscribed, verified, unverified) with priority sorting
+        $query = Vendor::with(['services.category', 'reviews' => function ($query) {
                 $query->where('approved', true);
-            }]);
+            }, 'subscriptions'])
+            ->select('vendors.*');
 
         // Category filter
         if ($request->has('category') && $request->category) {
@@ -38,8 +39,25 @@ class VendorProfileController extends Controller
             });
         }
 
-        $vendors = $query->orderBy('rating_cached', 'desc')
-            ->paginate(9);
+        // Priority Sorting: Subscribed > Verified > Unverified
+        $query->leftJoin('vendor_subscriptions', function ($join) {
+            $join->on('vendors.id', '=', 'vendor_subscriptions.vendor_id')
+                 ->where('vendor_subscriptions.status', '=', 'active')
+                 ->where(function ($q) {
+                     $q->whereNull('vendor_subscriptions.ends_at')
+                       ->orWhere('vendor_subscriptions.ends_at', '>=', now());
+                 });
+        })
+        ->selectRaw('vendors.*, 
+            CASE 
+                WHEN vendor_subscriptions.id IS NOT NULL THEN 3
+                WHEN vendors.is_verified = 1 THEN 2
+                ELSE 1
+            END as priority_score')
+        ->orderByDesc('priority_score')
+        ->orderBy('rating_cached', 'desc');
+
+        $vendors = $query->paginate(9);
 
         $categories = Category::orderBy('name')->get();
 
@@ -51,8 +69,8 @@ class VendorProfileController extends Controller
      */
     public function show(string $slug): View
     {
+        // Allow viewing ALL vendors (subscribed, verified, and unverified)
         $vendor = Vendor::where('slug', $slug)
-            ->where('is_verified', true)
             ->with([
                 'services' => function ($query) {
                     $query->where('is_active', true)->with('category');
@@ -60,7 +78,8 @@ class VendorProfileController extends Controller
                 'reviews' => function ($query) {
                     $query->where('approved', true)->with('user')->latest();
                 },
-                'user'
+                'user',
+                'subscriptions'
             ])
             ->firstOrFail();
 

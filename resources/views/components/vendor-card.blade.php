@@ -29,19 +29,30 @@
 
         {{-- Vendor Details --}}
         <div class="p-5">
-            {{-- Business Name with Verified Badge --}}
+            {{-- Business Name with Status Badges --}}
             <div class="flex items-start justify-between mb-2">
                 <h3 class="text-xl font-semibold text-gray-800 truncate flex-1 group-hover:text-purple-600 transition-colors">
                     {{ $vendor->business_name }}
                 </h3>
-                @if($vendor->is_verified)
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200 ml-2 flex-shrink-0">
-                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                        </svg>
-                        Verified
-                    </span>
-                @endif
+                <div class="flex flex-col gap-1 ml-2 flex-shrink-0">
+                    @php
+                        $hasActiveSubscription = $vendor->activeSubscription() !== null;
+                    @endphp
+                    
+                    {{-- VIP/Subscribed Badge --}}
+                    @if($hasActiveSubscription)
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 border border-purple-200">
+                            <i class="fas fa-crown mr-1"></i> VIP
+                        </span>
+                    @endif
+                    
+                    {{-- Verified Badge --}}
+                    @if($vendor->is_verified)
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                            <i class="fas fa-check-circle mr-1"></i> Verified
+                        </span>
+                    @endif
+                </div>
             </div>
 
             {{-- Rating --}}

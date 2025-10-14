@@ -20,21 +20,27 @@ class HomeController extends Controller
             ->take(10)
             ->get();
 
-        // Get featured vendors (verified, ordered by rating)
-        $featuredVendors = Vendor::where('is_verified', true)
-            ->orderBy('rating_cached', 'desc')
+        // Get featured vendors (ALL vendors with priority: Subscribed > Verified > Unverified)
+        $featuredVendors = Vendor::with(['services.category', 'subscriptions'])
+            ->select('vendors.*')
+            ->leftJoin('vendor_subscriptions', function ($join) {
+                $join->on('vendors.id', '=', 'vendor_subscriptions.vendor_id')
+                     ->where('vendor_subscriptions.status', '=', 'active')
+                     ->where(function ($q) {
+                         $q->whereNull('vendor_subscriptions.ends_at')
+                           ->orWhere('vendor_subscriptions.ends_at', '>=', now());
+                     });
+            })
+            ->selectRaw('vendors.*, 
+                CASE 
+                    WHEN vendor_subscriptions.id IS NOT NULL THEN 3
+                    WHEN vendors.is_verified = 1 THEN 2
+                    ELSE 1
+                END as priority_score')
+            ->orderByDesc('priority_score')
+            ->orderByDesc('rating_cached')
             ->take(6)
-            ->with('services.category') // Eager load services and their categories
             ->get();
-
-        // If no featured vendors, get latest verified vendors
-        if ($featuredVendors->isEmpty()) {
-            $featuredVendors = Vendor::where('is_verified', true)
-                ->latest()
-                ->take(6)
-                ->with('services.category')
-                ->get();
-        }
 
         return view('home', compact('categories', 'featuredVendors'));
     }
@@ -48,11 +54,27 @@ class HomeController extends Controller
         $perPage = 6;
         $offset = ($page - 1) * $perPage;
 
-        $vendors = Vendor::where('is_verified', true)
-            ->orderBy('rating_cached', 'desc')
+        // Show ALL vendors with priority sorting
+        $vendors = Vendor::with(['services.category', 'subscriptions'])
+            ->select('vendors.*')
+            ->leftJoin('vendor_subscriptions', function ($join) {
+                $join->on('vendors.id', '=', 'vendor_subscriptions.vendor_id')
+                     ->where('vendor_subscriptions.status', '=', 'active')
+                     ->where(function ($q) {
+                         $q->whereNull('vendor_subscriptions.ends_at')
+                           ->orWhere('vendor_subscriptions.ends_at', '>=', now());
+                     });
+            })
+            ->selectRaw('vendors.*, 
+                CASE 
+                    WHEN vendor_subscriptions.id IS NOT NULL THEN 3
+                    WHEN vendors.is_verified = 1 THEN 2
+                    ELSE 1
+                END as priority_score')
+            ->orderByDesc('priority_score')
+            ->orderByDesc('rating_cached')
             ->offset($offset)
             ->limit($perPage)
-            ->with('services.category')
             ->get();
 
         $html = '';
