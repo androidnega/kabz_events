@@ -13,6 +13,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <style>
@@ -21,27 +24,22 @@
     
     @stack('styles')
 </head>
-<body class="font-sans antialiased bg-gray-50">
-    <div x-data="{ sidebarOpen: true, mobileMenuOpen: false }">
-        <!-- Top Navigation Bar (Fixed) -->
-        <x-vendor-topbar />
-        
-        <!-- Sidebar (Fixed, Desktop only) -->
-        <x-vendor-nav />
-        
-        <!-- Main Content Area -->
-        <main class="min-h-screen pt-16 transition-all duration-300 pb-20 md:pb-6" :class="sidebarOpen ? 'md:ml-64' : 'md:ml-20'">
-            <div class="p-4 sm:p-6">
-                {{ $slot }}
-            </div>
-        </main>
-
-        <!-- Mobile Bottom Navigation -->
-        <x-vendor-mobile-nav />
-    </div>
+<body class="font-sans antialiased bg-gray-50" x-data="{ sidebarOpen: true, mobileMenuOpen: false }">
+    <!-- Top Navigation Bar (Fixed) -->
+    <x-vendor-topbar />
     
-    <!-- Alpine.js -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Sidebar (Fixed, Desktop only) -->
+    <x-vendor-nav />
+    
+    <!-- Main Content Area -->
+    <main class="min-h-screen pt-16 transition-all duration-300 pb-20 md:pb-6 md:ml-64">
+        <div class="p-4 sm:p-6">
+            {{ $slot }}
+        </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <x-vendor-mobile-nav />
     
     @stack('scripts')
 </body>
