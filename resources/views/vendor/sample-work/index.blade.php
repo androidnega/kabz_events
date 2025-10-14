@@ -90,8 +90,8 @@
                                 <i class="fas fa-cloud-upload-alt text-4xl sm:text-5xl text-purple-500 mb-3"></i>
                             </div>
                             <p class="text-sm sm:text-base font-medium text-gray-700 mb-1">Click to upload or drag and drop</p>
-                            <p class="text-xs sm:text-sm text-gray-500">JPEG, JPG, PNG, WEBP (Up to 10MB - auto-compressed)</p>
-                            <p class="text-xs sm:text-sm text-purple-600 mt-2">{{ $vendor->getMaxSampleImages() - ($vendor->sample_work_images ? count($vendor->sample_work_images) : 0) }} slots available</p>
+                            <p class="text-xs sm:text-sm text-gray-500">JPEG, JPG, PNG, WEBP (Up to 10MB per image)</p>
+                            <p class="text-xs sm:text-sm text-purple-600 mt-2"><strong>{{ $vendor->getMaxSampleImages() - ($vendor->sample_work_images ? count($vendor->sample_work_images) : 0 }}</strong> slots available</p>
                         </label>
                     </div>
                     
