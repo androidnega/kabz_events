@@ -1,67 +1,44 @@
 <x-vendor-layout>
   <x-slot name="title">Messages</x-slot>
 
-    <div data-has-conversations="{{ count($conversations) > 0 ? '1' : '0' }}"
+    <div class="h-full flex flex-col bg-white" 
+         data-has-conversations="{{ count($conversations) > 0 ? '1' : '0' }}"
          data-user-id="{{ Auth::id() }}"
-         data-csrf-token="{{ csrf_token() }}">
+         data-csrf-token="{{ csrf_token() }}"
+         style="height: calc(100vh - 180px);">
         
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900">Messages</h2>
-                <p class="mt-1 text-sm text-gray-600">Communicate with your clients</p>
-            </div>
-            <div class="text-sm text-gray-500">
-                <i class="fas fa-circle text-green-500 mr-1"></i> Online
-            </div>
-  </div>
-
-        <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden" style="height: calc(100vh - 200px); min-height: 500px; max-height: calc(100vh - 200px);">
-            <div class="flex h-full flex-col md:flex-row">
+        <div class="flex h-full border border-gray-200">
                 <!-- Conversations List -->
                 <div class="w-full md:w-1/3 border-r border-gray-200 overflow-y-auto">
                     <div class="p-4 border-b border-gray-200">
                         <h2 class="text-lg font-semibold text-gray-900">Conversations</h2>
-                    </div>
-                    
+  </div>
+
                     <div id="conversations-list" class="divide-y divide-gray-200">
                         @forelse($conversations as $conversation)
-                        <div class="conversation-item p-4 hover:bg-gray-50 cursor-pointer transition-colors {{ $loop->first ? 'bg-blue-50' : '' }}" 
+                        <div class="conversation-item p-3 hover:bg-gray-50 cursor-pointer border-l-2 {{ $loop->first ? 'border-gray-900 bg-gray-50' : 'border-transparent' }}" 
                              data-client-id="{{ $conversation['client']->id }}"
                              data-client-name="{{ $conversation['client']->name }}">
-                            <div class="flex items-start space-x-3">
-                                <div class="flex-shrink-0">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                        {{ strtoupper(substr($conversation['client']->name, 0, 2)) }}
-                                    </div>
-                                </div>
-                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center justify-between">
-                                        <p class="text-sm font-medium text-gray-900 truncate">
-                                            {{ $conversation['client']->name }}
-                                        </p>
-                                        @if($conversation['unread_count'] > 0)
-                                        <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
-                                            {{ $conversation['unread_count'] }}
-                                        </span>
-                                        @endif
-                                    </div>
-                                    <div class="flex items-center mt-1">
-                                        <div class="w-2 h-2 rounded-full mr-2 {{ $conversation['client_status']['is_online'] ? 'bg-green-500' : 'bg-gray-400' }}"></div>
-                                        <span class="text-xs text-gray-500">{{ $conversation['client_status']['last_seen'] }}</span>
-                                    </div>
-                                    <p class="text-sm text-gray-600 truncate mt-1">
-                                        @if($conversation['latest_message']->media_type === 'image')
-                                            📷 Photo
-                                        @elseif($conversation['latest_message']->media_type === 'audio')
-                                            🎵 Audio
-                                        @else
-                                            {{ Str::limit($conversation['latest_message']->message, 30) }}
-                                        @endif
-                                    </p>
-                                    <p class="text-xs text-gray-400 mt-1">{{ $conversation['latest_message']->timeAgo() }}</p>
-                                </div>
+                            <div class="flex items-center justify-between mb-1">
+                                <p class="text-sm font-medium text-gray-900 truncate">
+                                    {{ $conversation['client']->name }}
+                                </p>
+                                @if($conversation['unread_count'] > 0)
+                                <span class="text-xs font-bold text-gray-900">
+                                    {{ $conversation['unread_count'] }}
+                                </span>
+                                @endif
                             </div>
+                            <p class="text-xs text-gray-600 truncate">
+                                @if($conversation['latest_message']->media_type === 'image')
+                                    📷 Photo
+                                @elseif($conversation['latest_message']->media_type === 'audio')
+                                    🎵 Audio
+                                @else
+                                    {{ Str::limit($conversation['latest_message']->message, 40) }}
+                                @endif
+                            </p>
+                            <p class="text-xs text-gray-500 mt-1">{{ $conversation['latest_message']->timeAgo() }}</p>
                         </div>
                         @empty
                         <div class="p-8 text-center text-gray-500">
@@ -91,32 +68,26 @@
                     <!-- Chat Container (hidden initially on mobile) -->
                     <div id="chat-container" class="flex flex-col hidden" style="height: 100%; width: 100%;">
                         <!-- Chat Header (Fixed) -->
-                        <div class="p-3 md:p-4 border-b border-gray-200 bg-white flex-shrink-0">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <!-- Back button (mobile only) -->
-                                    <button onclick="showConversationsList()" class="md:hidden p-2 hover:bg-gray-100 rounded-lg transition">
-                                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                                        </svg>
-                                    </button>
-                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                        <span id="chat-avatar"></span>
-                                    </div>
-                                    <div>
-                                        <h3 id="chat-client-name" class="text-lg font-semibold text-gray-900"></h3>
-                                        <p id="chat-client-status" class="text-sm text-gray-600"></p>
+                        <div class="flex items-center justify-between px-3 py-2 border-b border-gray-200 flex-shrink-0">
+                            <div class="flex items-center space-x-2">
+                                <button onclick="showConversationsList()" class="md:hidden p-1">
+                                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+                                <div>
+                                    <p id="chat-client-name" class="text-sm font-medium text-gray-900"></p>
+                                    <p id="chat-client-status" class="text-xs text-gray-600"></p>
+                                </div>
               </div>
                   </div>
-                </div>
-              </div>
 
                         <!-- Messages Area (Scrollable Only) -->
                         <div class="flex-1 overflow-hidden bg-gray-50" style="min-height: 0;">
                             <div id="messages-area" class="h-full overflow-y-auto p-3 md:p-4">
                                 <!-- Messages will be loaded here -->
-                            </div>
-                        </div>
+                </div>
+              </div>
 
                         <!-- Typing Indicator (Fixed) -->
                         <div id="typing-indicator" class="hidden px-3 md:px-4 py-2 bg-gray-50 border-t border-gray-200 flex-shrink-0">
@@ -131,42 +102,36 @@
           </div>
 
                         <!-- Message Input (Fixed at Bottom) -->
-                        <div class="p-3 md:p-4 border-t border-gray-200 bg-white flex-shrink-0">
-                            <form id="message-form" enctype="multipart/form-data">
+                        <div class="flex items-center px-3 py-2 border-t border-gray-200 bg-white flex-shrink-0">
+                            <form id="message-form" class="flex items-center w-full space-x-2" enctype="multipart/form-data">
                                 @csrf
-                                <div class="flex items-end space-x-1 md:space-x-2">
-                                    <input type="file" id="image-input" accept="image/*" class="hidden">
-                                    <input type="file" id="audio-input" accept="audio/*" class="hidden">
-                                    
-                                    <button type="button" id="attach-image-btn" class="p-1.5 md:p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0">
-                                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                    </button>
-                                    
-                                    <button type="button" id="attach-audio-btn" class="p-1.5 md:p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0">
-                                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                                        </svg>
-                                    </button>
-                                    
-                                    <div class="flex-1 min-w-0">
-                                        <textarea 
-                                            id="message-input" 
-                                            rows="1" 
-                                            class="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" 
-                                            placeholder="Type a message..."
-                                        ></textarea>
-                                        <div id="attachment-preview" class="mt-2 hidden text-xs"></div>
-                                    </div>
-                                    
-                                    <button type="submit" class="px-4 md:px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm md:text-base flex-shrink-0">
-                                        <span class="hidden md:inline">Send</span>
-                                        <svg class="w-5 h-5 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                                        </svg>
+                                <input type="file" id="image-input" accept="image/*" class="hidden">
+                                <input type="file" id="audio-input" accept="audio/*" class="hidden">
+                                
+                                <button type="button" id="attach-image-btn" class="p-1 text-gray-600 hover:text-gray-900 flex-shrink-0" title="Attach image">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </button>
+                                
+                                <button type="button" id="attach-audio-btn" class="p-1 text-gray-600 hover:text-gray-900 flex-shrink-0" title="Attach audio">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                                    </svg>
+                                </button>
+                                
+                                <textarea 
+                                    id="message-input" 
+                                    rows="2" 
+                                    class="flex-1 resize-none h-12 min-h-[48px] px-3 py-2 text-sm border border-gray-200 focus:outline-none focus:ring-0" 
+                                    placeholder="Type a message… (Enter to send)"
+                                ></textarea>
+                                
+                                <div id="attachment-preview" class="hidden"></div>
+                                
+                                <button type="submit" class="px-3 py-2 text-sm border border-gray-200 hover:bg-gray-50 flex-shrink-0">
+                                    Send
               </button>
-                                </div>
                             </form>
                         </div>
                     </div>
@@ -233,7 +198,6 @@
             }
             
             // Update chat header
-            document.getElementById('chat-avatar').textContent = clientName.substring(0, 2).toUpperCase();
             document.getElementById('chat-client-name').textContent = clientName;
             
             // Load messages
@@ -244,16 +208,6 @@
                 clearInterval(messagesRefreshInterval);
             }
             messagesRefreshInterval = setInterval(loadMessages, 3000);
-            
-            // Ensure input remains visible (safeguard)
-            setTimeout(() => {
-                if (chatContainer.classList.contains('flex')) {
-                    const messageInput = document.getElementById('message-input');
-                    if (messageInput) {
-                        messageInput.closest('.p-4').style.display = 'block';
-                    }
-                }
-            }, 100);
         });
     });
     
@@ -300,23 +254,23 @@
         
         container.innerHTML = messages.map(msg => {
             const isVendor = msg.sender_id === currentUserId;
-            const alignClass = isVendor ? 'justify-end' : 'justify-start';
-            const bgClass = isVendor ? 'bg-blue-600 text-white' : 'bg-white text-gray-900';
+            const alignClass = isVendor ? 'justify-end' : '';
+            const textAlign = isVendor ? 'text-right' : '';
             
             let content = '';
             if (msg.media_type === 'image') {
-                content = `<img src="${msg.media_url}" class="max-w-xs rounded-lg" alt="Image">`;
+                content = `<img src="${msg.media_url}" class="max-w-xs border border-gray-200" alt="Image">`;
             } else if (msg.media_type === 'audio') {
                 content = `<audio controls class="max-w-xs"><source src="${msg.media_url}"></audio>`;
               } else {
-                content = `<p>${msg.message}</p>`;
+                content = `<div class="text-sm">${msg.message || ''}</div>`;
             }
             
             return `
-                <div class="flex ${alignClass} mb-4">
-                    <div class="${bgClass} rounded-lg px-4 py-2 max-w-md shadow-sm">
+                <div class="flex ${alignClass} mb-3">
+                    <div class="max-w-[78%] break-words px-3 py-2 border border-gray-200">
                         ${content}
-                        <p class="text-xs mt-1 ${isVendor ? 'text-blue-100' : 'text-gray-500'}">${msg.time_ago || 'Just now'}</p>
+                        <div class="text-xs text-gray-500 mt-1 ${textAlign}">${msg.time_ago || 'Just now'}</div>
                     </div>
                 </div>
             `;
@@ -386,6 +340,14 @@
             }
         });
         
+        // Keyboard: Enter = send, Shift+Enter = newline
+        document.getElementById('message-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('message-form').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+            }
+        });
+        
         // Typing indicator
         document.getElementById('message-input').addEventListener('input', function() {
             if (!isTyping && currentClientId) {
@@ -416,4 +378,4 @@
             }, 1000);
         });
       </script>
-</x-app-layout>
+</x-vendor-layout>
