@@ -1,11 +1,21 @@
 @php
     $vendor = Auth::user()->vendor;
+    if (!$vendor) {
+        // Redirect or show error if no vendor profile
+        abort(403, 'Vendor profile not found. Please contact support.');
+    }
 @endphp
 
 <!-- Sidebar Navigation (Desktop Only) -->
-<aside class="hidden lg:fixed lg:block top-16 left-0 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 transition-all duration-300 z-20 overflow-y-auto"
-       :class="sidebarOpen ? 'w-64' : 'w-20'">
+<aside class="hidden lg:fixed lg:block top-16 left-0 h-[calc(100vh-4rem)] bg-white border-r-2 border-gray-300 transition-all duration-300 z-30 overflow-y-auto shadow-lg"
+       :class="sidebarOpen ? 'w-64' : 'w-20'"
+       style="background-color: #ffffff !important; border: 2px solid #d1d5db !important;">
     <div class="h-full flex flex-col">
+        <!-- Debug: Sidebar is visible -->
+        <div class="bg-red-500 text-white p-2 text-center text-xs font-bold">
+            SIDEBAR VISIBLE
+        </div>
+        
         <!-- Navigation Links -->
         <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
             <!-- Dashboard -->
