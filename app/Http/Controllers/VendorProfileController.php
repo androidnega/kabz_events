@@ -37,7 +37,8 @@ class VendorProfileController extends Controller
                   ->orWhere('description', 'like', "%{$searchTerm}%")
                   ->orWhere('address', 'like', "%{$searchTerm}%")
                   ->orWhereHas('services.category', function ($categoryQuery) use ($searchTerm) {
-                      $categoryQuery->where('name', 'like', "%{$searchTerm}%");
+                      $categoryQuery->where('name', 'like', "%{$searchTerm}%")
+                                   ->orWhere('description', 'like', "%{$searchTerm}%");
                   });
             });
         }
