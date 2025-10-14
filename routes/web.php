@@ -153,6 +153,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         // Cloudinary Media Management
         Route::get('/media', [\App\Http\Controllers\Admin\CloudinaryMediaController::class, 'index'])->name('media.index');
         Route::get('/media/{folder}', [\App\Http\Controllers\Admin\CloudinaryMediaController::class, 'gallery'])->name('media.gallery');
+        Route::get('/media/download', [\App\Http\Controllers\Admin\CloudinaryMediaController::class, 'download'])->name('media.download');
         Route::delete('/media/delete', [\App\Http\Controllers\Admin\CloudinaryMediaController::class, 'destroy'])->name('media.destroy');
         
         // Vendor Verification Management

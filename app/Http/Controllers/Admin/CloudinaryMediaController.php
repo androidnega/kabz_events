@@ -21,24 +21,26 @@ class CloudinaryMediaController extends Controller
     public function __construct()
     {
         $this->cloudinaryService = new CloudinaryService();
-        $this->initializeCloudinary();
     }
 
-    protected function initializeCloudinary()
+    protected function getCloudinary()
     {
-        $cloudName = SettingsService::get('cloudinary_cloud_name');
-        $apiKey = SettingsService::get('cloudinary_api_key');
-        $apiSecret = SettingsService::get('cloudinary_api_secret');
+        if (!$this->cloudinary) {
+            $cloudName = SettingsService::get('cloudinary_cloud_name');
+            $apiKey = SettingsService::get('cloudinary_api_key');
+            $apiSecret = SettingsService::get('cloudinary_api_secret');
 
-        if ($cloudName && $apiKey && $apiSecret) {
-            $this->cloudinary = new Cloudinary([
-                'cloud' => [
-                    'cloud_name' => $cloudName,
-                    'api_key' => $apiKey,
-                    'api_secret' => $apiSecret
-                ]
-            ]);
+            if ($cloudName && $apiKey && $apiSecret) {
+                $this->cloudinary = new Cloudinary([
+                    'cloud' => [
+                        'cloud_name' => $cloudName,
+                        'api_key' => $apiKey,
+                        'api_secret' => $apiSecret
+                    ]
+                ]);
+            }
         }
+        return $this->cloudinary;
     }
 
     /**
@@ -46,7 +48,9 @@ class CloudinaryMediaController extends Controller
      */
     public function index()
     {
-        if (!$this->cloudinary) {
+        $cloudinary = $this->getCloudinary();
+        
+        if (!$cloudinary) {
             return redirect()->back()->with('error', 'Cloudinary not configured');
         }
 
@@ -81,16 +85,12 @@ class CloudinaryMediaController extends Controller
             // Get count for each folder
             foreach ($folders as &$folder) {
                 try {
-                    $response = $this->cloudinary->adminApi()->assets([
+                    $response = $cloudinary->adminApi()->assets([
                         'type' => 'upload',
                         'prefix' => $folder['name'],
                         'max_results' => 500
                     ]);
                     $folder['count'] = isset($response['resources']) ? count($response['resources']) : 0;
-                    Log::info('Folder count', [
-                        'folder' => $folder['name'],
-                        'count' => $folder['count']
-                    ]);
                 } catch (\Exception $e) {
                     Log::error('Folder count error: ' . $e->getMessage(), ['folder' => $folder['name']]);
                     $folder['count'] = 0;
@@ -110,7 +110,9 @@ class CloudinaryMediaController extends Controller
      */
     public function gallery(Request $request, $folder)
     {
-        if (!$this->cloudinary) {
+        $cloudinary = $this->getCloudinary();
+        
+        if (!$cloudinary) {
             return redirect()->back()->with('error', 'Cloudinary not configured');
         }
 
@@ -150,7 +152,7 @@ class CloudinaryMediaController extends Controller
                     break;
             }
 
-            $response = $this->cloudinary->adminApi()->assets($options);
+            $response = $cloudinary->adminApi()->assets($options);
             
             $media = collect($response['resources'] ?? [])->map(function ($resource) use ($folder) {
                 return $this->enrichMediaData($resource, $folder);
@@ -262,6 +264,29 @@ class CloudinaryMediaController extends Controller
         } catch (\Exception $e) {
             Log::error('Find owner error: ' . $e->getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Download media from Cloudinary
+     */
+    public function download(Request $request)
+    {
+        $publicId = $request->get('public_id');
+        $cloudinary = $this->getCloudinary();
+        
+        if (!$cloudinary) {
+            return response()->json(['error' => 'Cloudinary not configured'], 400);
+        }
+
+        try {
+            $resource = $cloudinary->adminApi()->asset($publicId);
+            return response()->json([
+                'success' => true,
+                'url' => $resource['secure_url']
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'File not found'], 404);
         }
     }
 
