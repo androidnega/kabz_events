@@ -38,7 +38,7 @@
                 <div class="lg:col-span-2 space-y-8">
                     <!-- Sample Work Section -->
                     @if($vendor->sample_work_images && count($vendor->sample_work_images) > 0)
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                         <!-- Section Header -->
                         <div class="px-6 py-4 border-b border-gray-100">
                             <h2 class="text-2xl font-bold text-gray-900">
@@ -50,27 +50,30 @@
                         <div class="p-6">
                             <!-- Main Image Display -->
                             <div class="relative mb-4">
-                                <div class="aspect-video bg-gray-100 rounded-lg overflow-hidden group">
+                                <div class="w-full h-96 bg-gray-100 rounded-lg overflow-hidden group relative">
                                     <img id="mainSampleImage" src="{{ asset('storage/' . $vendor->sample_work_images[0]) }}" 
                                          alt="Sample work from {{ $vendor->business_name }}" 
                                          class="w-full h-full object-cover">
                                     
                                     <!-- Navigation Arrows -->
                                     @if(count($vendor->sample_work_images) > 1)
-                                    <button onclick="previousImage()" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button onclick="previousImage()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 p-2 rounded-full transition-all opacity-0 group-hover:opacity-100 shadow-lg">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                                         </svg>
                                     </button>
-                                    <button onclick="nextImage()" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button onclick="nextImage()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 p-2 rounded-full transition-all opacity-0 group-hover:opacity-100 shadow-lg">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                         </svg>
                                     </button>
                                     @endif
                                     
                                     <!-- Image Counter -->
-                                    <div class="absolute bottom-3 left-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm font-medium">
+                                    <div class="absolute bottom-4 left-4 bg-white bg-opacity-90 text-gray-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                        </svg>
                                         <span id="imageCounter">1</span>/{{ count($vendor->sample_work_images) }}
                                     </div>
                                 </div>
@@ -78,21 +81,26 @@
 
                             <!-- Thumbnail Gallery -->
                             @if(count($vendor->sample_work_images) > 1)
-                            <div class="flex gap-2 overflow-x-auto pb-2">
+                            <div class="flex gap-3">
                                 @foreach($vendor->sample_work_images as $index => $image)
-                                <div class="flex-shrink-0 relative cursor-pointer group thumbnail-item" data-image="{{ asset('storage/' . $image) }}" data-index="{{ $index + 1 }}">
-                                    <div class="w-20 h-20 overflow-hidden rounded-lg border-2 border-gray-200 group-hover:border-primary transition-all duration-200">
-                                        <img src="{{ asset('storage/' . $image) }}" 
-                                             alt="Sample work {{ $index + 1 }}" 
-                                             class="w-full h-full object-cover">
-                                    </div>
-                                    @if($index == 4 && count($vendor->sample_work_images) > 5)
-                                    <div class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center rounded-lg">
-                                        <span class="text-white text-xs font-bold">+{{ count($vendor->sample_work_images) - 5 }}</span>
+                                    @if($index < 5)
+                                    <div class="flex-shrink-0 relative cursor-pointer group thumbnail-item" data-image="{{ asset('storage/' . $image) }}" data-index="{{ $index + 1 }}">
+                                        <div class="w-24 h-16 overflow-hidden rounded-lg border border-gray-300 group-hover:border-primary transition-all duration-200">
+                                            <img src="{{ asset('storage/' . $image) }}" 
+                                                 alt="Sample work {{ $index + 1 }}" 
+                                                 class="w-full h-full object-cover">
+                                        </div>
                                     </div>
                                     @endif
-                                </div>
                                 @endforeach
+                                
+                                @if(count($vendor->sample_work_images) > 5)
+                                <div class="flex-shrink-0 relative">
+                                    <div class="w-24 h-16 bg-blue-600 rounded-lg border border-gray-300 flex items-center justify-center">
+                                        <span class="text-white text-sm font-medium">+{{ count($vendor->sample_work_images) - 5 }}</span>
+                                    </div>
+                                </div>
+                                @endif
                             </div>
                             @endif
                         </div>
