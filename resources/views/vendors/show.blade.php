@@ -63,10 +63,10 @@
                             @if(count($vendor->sample_work_images) > 1)
                             <div class="grid grid-cols-5 gap-2">
                                 @foreach($vendor->sample_work_images as $index => $image)
-                                <div class="relative cursor-pointer group" data-image-src="{{ asset('storage/' . $image) }}" data-image-index="{{ $index + 1 }}" onclick="changeMainImage(this.getAttribute('data-image-src'), this.getAttribute('data-image-index'))">
+                                <div class="relative cursor-pointer group aspect-square" data-image-src="{{ asset('storage/' . $image) }}" data-image-index="{{ $index + 1 }}" onclick="changeMainImage(this.getAttribute('data-image-src'), this.getAttribute('data-image-index'))">
                                     <img src="{{ asset('storage/' . $image) }}" 
                                          alt="Sample work {{ $index + 1 }}" 
-                                         class="w-full h-16 md:h-20 object-cover rounded-lg border-2 border-gray-200 group-hover:border-primary transition">
+                                         class="w-full h-full object-cover rounded-lg border-2 border-gray-200 group-hover:border-primary transition">
                                     @if($index == 4 && count($vendor->sample_work_images) > 5)
                                     <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
                                         <span class="text-white text-sm font-bold">+{{ count($vendor->sample_work_images) - 5 }}</span>

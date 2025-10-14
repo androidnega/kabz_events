@@ -1,6 +1,6 @@
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-purple-50 py-12 px-4" x-data="{ formWidth: 'max-w-md' }">
-        <div class="w-full" :class="formWidth">
+    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-purple-50 py-12 px-4">
+        <div class="w-full max-w-md">
             {{-- Logo/Header --}}
             <div class="text-center mb-6">
                 <a href="/" class="inline-block">
