@@ -128,8 +128,15 @@
     </div>
 </div>
 
+{{-- Regions data as JSON --}}
+<script id="regions-data" type="application/json">
+@json($locationsData)
+</script>
+
 <script>
 function locationModal() {
+    const regionsData = JSON.parse(document.getElementById('regions-data').textContent);
+    
     return {
         isOpen: false,
         currentView: 'regions',
@@ -138,8 +145,7 @@ function locationModal() {
         searchTerm: '',
         currentTowns: [],
         gpsLoading: false,
-        
-        regions: @json($locationsData),
+        regions: regionsData,
         
         get filteredRegions() {
             if (!this.searchTerm) return this.regions;

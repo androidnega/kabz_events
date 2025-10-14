@@ -38,27 +38,31 @@
                 <div class="lg:col-span-2 space-y-8">
                     <!-- Sample Work Section -->
                     @if($vendor->sample_work_images && count($vendor->sample_work_images) > 0)
-                    <x-card>
-                        <div class="p-6">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <!-- Section Header -->
+                        <div class="px-6 py-4 border-b border-gray-100">
+                            <h2 class="text-2xl font-bold text-gray-900">
                                 {{ $vendor->sample_work_title ?? 'Sample Work' }}
                             </h2>
-                            
-                            <!-- Main Image -->
-                            <div class="mb-6">
-                                <div class="relative bg-gray-100 rounded-lg overflow-hidden group">
+                        </div>
+                        
+                        <!-- Image Gallery -->
+                        <div class="p-6">
+                            <!-- Main Image Display -->
+                            <div class="relative mb-4">
+                                <div class="aspect-video bg-gray-100 rounded-lg overflow-hidden group">
                                     <img id="mainSampleImage" src="{{ asset('storage/' . $vendor->sample_work_images[0]) }}" 
                                          alt="Sample work from {{ $vendor->business_name }}" 
-                                         class="w-full h-80 md:h-96 object-cover rounded-lg shadow-lg">
+                                         class="w-full h-full object-cover">
                                     
                                     <!-- Navigation Arrows -->
                                     @if(count($vendor->sample_work_images) > 1)
-                                    <button onclick="previousImage()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100">
+                                    <button onclick="previousImage()" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                                         </svg>
                                     </button>
-                                    <button onclick="nextImage()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100">
+                                    <button onclick="nextImage()" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                         </svg>
@@ -66,7 +70,7 @@
                                     @endif
                                     
                                     <!-- Image Counter -->
-                                    <div class="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
+                                    <div class="absolute bottom-3 left-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm font-medium">
                                         <span id="imageCounter">1</span>/{{ count($vendor->sample_work_images) }}
                                     </div>
                                 </div>
@@ -74,17 +78,17 @@
 
                             <!-- Thumbnail Gallery -->
                             @if(count($vendor->sample_work_images) > 1)
-                            <div class="grid grid-cols-5 gap-3">
+                            <div class="flex gap-2 overflow-x-auto pb-2">
                                 @foreach($vendor->sample_work_images as $index => $image)
-                                <div class="relative cursor-pointer group thumbnail-item" data-image="{{ asset('storage/' . $image) }}" data-index="{{ $index + 1 }}">
-                                    <div class="aspect-square overflow-hidden rounded-lg border-2 border-gray-200 group-hover:border-primary transition-all duration-200">
+                                <div class="flex-shrink-0 relative cursor-pointer group thumbnail-item" data-image="{{ asset('storage/' . $image) }}" data-index="{{ $index + 1 }}">
+                                    <div class="w-20 h-20 overflow-hidden rounded-lg border-2 border-gray-200 group-hover:border-primary transition-all duration-200">
                                         <img src="{{ asset('storage/' . $image) }}" 
                                              alt="Sample work {{ $index + 1 }}" 
                                              class="w-full h-full object-cover">
                                     </div>
                                     @if($index == 4 && count($vendor->sample_work_images) > 5)
                                     <div class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center rounded-lg">
-                                        <span class="text-white text-sm font-bold">+{{ count($vendor->sample_work_images) - 5 }}</span>
+                                        <span class="text-white text-xs font-bold">+{{ count($vendor->sample_work_images) - 5 }}</span>
                                     </div>
                                     @endif
                                 </div>
@@ -92,7 +96,7 @@
                             </div>
                             @endif
                         </div>
-                    </x-card>
+                    </div>
                     @endif
 
                     <!-- About Section (moved after pictures) -->
