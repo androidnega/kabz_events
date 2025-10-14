@@ -148,8 +148,8 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::post('/locations/import', [LocationController::class, 'importCsv'])->name('locations.import');
     });
 
-    // Admin Routes
-    Route::middleware(['role:admin'])->name('admin.')->group(function () {
+    // Admin Routes (also accessible to super_admin)
+    Route::middleware(['role:admin|super_admin'])->name('admin.')->group(function () {
         // Cloudinary Media Management
         Route::get('/media', [\App\Http\Controllers\Admin\CloudinaryMediaController::class, 'index'])->name('media.index');
         Route::get('/media/{folder}', [\App\Http\Controllers\Admin\CloudinaryMediaController::class, 'gallery'])->name('media.gallery');

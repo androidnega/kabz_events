@@ -72,8 +72,11 @@
                                    class="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <button onclick="deleteMedia('{{ $item['public_id'] }}', '{{ basename($item['public_id']) }}', '{{ $folder }}')" 
-                                        class="p-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition">
+                                <button type="button" 
+                                        class="delete-media-btn p-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition"
+                                        data-public-id="{{ $item['public_id'] }}"
+                                        data-file-name="{{ basename($item['public_id']) }}"
+                                        data-folder="{{ $folder }}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -156,8 +159,21 @@
 
     @push('scripts')
     <script>
+        const deleteMediaUrl = '{{ route("admin.media.destroy") }}';
+        const csrfToken = '{{ csrf_token() }}';
         let currentPublicId = '';
         let currentFolder = '';
+
+        // Handle delete button clicks using event delegation
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.delete-media-btn')) {
+                const btn = e.target.closest('.delete-media-btn');
+                const publicId = btn.getAttribute('data-public-id');
+                const fileName = btn.getAttribute('data-file-name');
+                const folder = btn.getAttribute('data-folder');
+                deleteMedia(publicId, fileName, folder);
+            }
+        });
 
         function deleteMedia(publicId, fileName, folder) {
             currentPublicId = publicId;
@@ -186,11 +202,11 @@
             deleteBtn.disabled = true;
             deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Deleting...';
 
-            fetch('{{ route('admin.media.destroy') }}', {
+            fetch(deleteMediaUrl, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify({
                     public_id: currentPublicId,

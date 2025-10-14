@@ -75,14 +75,6 @@
                 <span>Reports</span>
             </a>
 
-            <!-- Categories -->
-            <a href="{{ route('search.index') }}" 
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
-                      {{ request()->routeIs('search.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
-                <i class="fas fa-th-large text-lg w-5"></i>
-                <span>Browse Services</span>
-            </a>
-
             <!-- Messages (Admin view - coming soon) -->
             <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 cursor-not-allowed">
                 <i class="fas fa-envelope text-lg w-5"></i>
