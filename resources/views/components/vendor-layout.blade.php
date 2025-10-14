@@ -21,22 +21,24 @@
     
     @stack('styles')
 </head>
-<body class="font-sans antialiased bg-gray-50" x-data="{ sidebarOpen: true, mobileMenuOpen: false }">
-    <!-- Top Navigation Bar (Fixed) -->
-    <x-vendor-topbar />
-    
-    <!-- Sidebar (Fixed, Desktop only) -->
-    <x-vendor-nav />
-    
-    <!-- Main Content Area -->
-    <main class="min-h-screen pt-16 transition-all duration-300 pb-20 lg:pb-6" :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'">
-        <div class="p-4 sm:p-6">
-            {{ $slot }}
-        </div>
-    </main>
+<body class="font-sans antialiased bg-gray-50">
+    <div x-data="{ sidebarOpen: true, mobileMenuOpen: false }">
+        <!-- Top Navigation Bar (Fixed) -->
+        <x-vendor-topbar />
+        
+        <!-- Sidebar (Fixed, Desktop only) -->
+        <x-vendor-nav />
+        
+        <!-- Main Content Area -->
+        <main class="min-h-screen pt-16 transition-all duration-300 pb-20 lg:pb-6" :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'">
+            <div class="p-4 sm:p-6">
+                {{ $slot }}
+            </div>
+        </main>
 
-    <!-- Mobile Bottom Navigation -->
-    <x-vendor-mobile-nav />
+        <!-- Mobile Bottom Navigation -->
+        <x-vendor-mobile-nav />
+    </div>
     
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
