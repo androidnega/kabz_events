@@ -1,11 +1,11 @@
 <x-vendor-layout>
-  <x-slot name="title">Messages</x-slot>
+    <x-slot name="title">Messages</x-slot>
 
-  <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-    <div class="flex flex-col h-96 border border-gray-200 rounded-lg overflow-hidden" 
+    <div class="flex flex-col bg-white border border-gray-200 rounded-lg overflow-hidden" 
          data-has-conversations="{{ count($conversations) > 0 ? '1' : '0' }}"
          data-user-id="{{ Auth::id() }}"
-         data-csrf-token="{{ csrf_token() }}">
+         data-csrf-token="{{ csrf_token() }}"
+         style="height: 600px; max-height: calc(100vh - 200px);">
         
         <div class="flex flex-1 min-h-0">
                 <!-- Conversations List -->
@@ -137,12 +137,11 @@
                             </form>
                         </div>
                     </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
 
-      <script>
+<script>
     // Get data from HTML attributes
     const pageContainer = document.querySelector('[data-has-conversations]');
     const hasConversations = pageContainer.dataset.hasConversations === '1';
