@@ -91,22 +91,28 @@
                                      loading="lazy">
                             @endif
 
-                            {{-- Icon Actions on Hover - More Visible --}}
-                            <div class="absolute inset-0 bg-black bg-opacity-70 hidden group-hover:flex items-center justify-center gap-6">
-                                <i class="view-btn fas fa-eye text-white text-3xl cursor-pointer hover:scale-110 hover:text-blue-400 transition-all" 
+                            {{-- Icon Actions on Hover --}}
+                            <div class="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button type="button" class="view-btn w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition" 
                                    data-url="{{ $item['url'] }}" 
                                    data-title="{{ basename($item['public_id']) }}" 
                                    data-type="{{ $item['resource_type'] }}"
-                                   title="View"></i>
-                                <i class="download-btn fas fa-download text-white text-3xl cursor-pointer hover:scale-110 hover:text-green-400 transition-all" 
+                                   title="View">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="download-btn w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center hover:bg-green-700 transition" 
                                    data-url="{{ $item['url'] }}" 
                                    data-filename="{{ basename($item['public_id']) }}.{{ $item['format'] }}" 
-                                   title="Download"></i>
-                                <i class="delete-btn fas fa-trash text-white text-3xl cursor-pointer hover:scale-110 hover:text-red-400 transition-all" 
+                                   title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button type="button" class="delete-btn w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700 transition" 
                                    data-public-id="{{ $item['public_id'] }}" 
                                    data-filename="{{ basename($item['public_id']) }}" 
                                    data-folder="{{ $folder }}" 
-                                   title="Delete"></i>
+                                   title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </div>
 
