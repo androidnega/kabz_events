@@ -94,35 +94,32 @@
                                      loading="lazy">
                             @endif
 
-                            {{-- Hover Actions Overlay - Always visible buttons at bottom --}}
-                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                <div class="flex gap-1 justify-center">
-                                    {{-- Download Button --}}
-                                    <button type="button" class="download-btn p-2 bg-green-600 text-white rounded hover:bg-green-700 transition" 
-                                            data-url="{{ $item['url'] }}" 
-                                            data-filename="{{ basename($item['public_id']) }}.{{ $item['format'] }}" 
-                                            onclick="event.stopPropagation();"
-                                            title="Download">
-                                        <i class="fas fa-download"></i>
-                                    </button>
-                                    
-                                    {{-- Delete Button --}}
-                                    <button type="button" class="delete-btn p-2 bg-red-600 text-white rounded hover:bg-red-700 transition" 
-                                            data-public-id="{{ $item['public_id'] }}" 
-                                            data-filename="{{ basename($item['public_id']) }}" 
-                                            data-folder="{{ $folder }}" 
-                                            onclick="event.stopPropagation();"
-                                            title="Delete">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
+                        </div>
+
+                        {{-- Action Buttons - Always Visible --}}
+                        <div class="flex gap-1 p-1 bg-gray-100 border-t border-gray-200">
+                            {{-- Download Button --}}
+                            <button type="button" class="download-btn flex-1 px-2 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 transition text-xs" 
+                                    data-url="{{ $item['url'] }}" 
+                                    data-filename="{{ basename($item['public_id']) }}.{{ $item['format'] }}" 
+                                    title="Download">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            
+                            {{-- Delete Button --}}
+                            <button type="button" class="delete-btn flex-1 px-2 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition text-xs" 
+                                    data-public-id="{{ $item['public_id'] }}" 
+                                    data-filename="{{ basename($item['public_id']) }}" 
+                                    data-folder="{{ $folder }}" 
+                                    title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
 
                         {{-- Media Info - Minimal --}}
-                        <div class="p-1.5 bg-gray-50 text-center">
+                        <div class="p-1 bg-gray-50 text-center">
                             @if($item['owner'])
-                                <p class="text-xs text-gray-600 truncate" title="{{ $item['owner']['name'] }}">{{ Str::limit($item['owner']['name'], 10) }}</p>
+                                <p class="text-xs text-gray-600 truncate" title="{{ $item['owner']['name'] }}">{{ Str::limit($item['owner']['name'], 8) }}</p>
                             @endif
                             <p class="text-xs text-gray-400">{{ number_format($item['bytes'] / 1024, 0) }}KB</p>
                         </div>
