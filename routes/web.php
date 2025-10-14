@@ -150,6 +150,11 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 
     // Admin Routes
     Route::middleware(['role:admin'])->name('admin.')->group(function () {
+        // Cloudinary Media Management
+        Route::get('/media', [\App\Http\Controllers\Admin\CloudinaryMediaController::class, 'index'])->name('media.index');
+        Route::get('/media/{folder}', [\App\Http\Controllers\Admin\CloudinaryMediaController::class, 'gallery'])->name('media.gallery');
+        Route::delete('/media/delete', [\App\Http\Controllers\Admin\CloudinaryMediaController::class, 'destroy'])->name('media.destroy');
+        
         // Vendor Verification Management
         Route::get('/verifications', [VendorVerificationController::class, 'index'])->name('verifications.index');
         Route::post('/verifications/{id}/approve', [VendorVerificationController::class, 'approve'])->name('verifications.approve');
