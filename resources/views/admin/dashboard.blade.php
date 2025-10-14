@@ -183,7 +183,7 @@
                 </a>
 
                 {{-- Browse Vendors --}}
-                <a href="{{ route('search.index') }}" class="flex flex-col items-center justify-center p-4 sm:p-5 bg-white rounded-lg hover:shadow-md transition border border-gray-200 min-h-[100px]">
+                <a href="{{ route('vendors.index') }}" class="flex flex-col items-center justify-center p-4 sm:p-5 bg-white rounded-lg hover:shadow-md transition border border-gray-200 min-h-[100px]">
                     <i class="fas fa-search text-2xl sm:text-3xl text-gray-600 mb-2"></i>
                     <span class="text-xs sm:text-sm font-medium text-gray-700 text-center">Browse Vendors</span>
                 </a>
