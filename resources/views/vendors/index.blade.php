@@ -5,7 +5,7 @@
 
     <!-- Page Header -->
     <div class="bg-gradient-to-r from-primary to-purple-700 text-white py-12">
-        <div class="container mx-auto">
+        <div class="container mx-auto px-4">
             <h1 class="text-3xl md:text-4xl font-bold mb-4">Find Trusted Event Vendors in Ghana</h1>
             <p class="text-lg text-purple-100">Browse verified service providers for your special events</p>
         </div>
