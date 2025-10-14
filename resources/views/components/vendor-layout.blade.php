@@ -20,6 +20,23 @@
     
     <style>
         [x-cloak] { display: none !important; }
+        
+        /* Force sidebar visibility on desktop */
+        @media (min-width: 768px) {
+            .vendor-sidebar {
+                display: block !important;
+                position: fixed !important;
+                top: 64px !important;
+                left: 0 !important;
+                width: 256px !important;
+                height: calc(100vh - 64px) !important;
+                z-index: 20 !important;
+            }
+            
+            .vendor-main-content {
+                margin-left: 256px !important;
+            }
+        }
     </style>
     
     @stack('styles')
@@ -32,7 +49,7 @@
     <x-vendor-nav />
     
     <!-- Main Content Area -->
-    <main class="min-h-screen pt-16 transition-all duration-300 pb-20 md:pb-6 md:ml-64">
+    <main class="vendor-main-content min-h-screen pt-16 pb-20 md:pb-6">
         <div class="p-4 sm:p-6">
             {{ $slot }}
         </div>

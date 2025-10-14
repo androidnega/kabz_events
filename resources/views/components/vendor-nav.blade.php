@@ -7,8 +7,7 @@
 @endphp
 
 <!-- Sidebar Navigation (Desktop Only) -->
-<aside class="hidden md:fixed md:block top-16 left-0 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 transition-all duration-300 z-20 overflow-y-auto"
-       :class="sidebarOpen ? 'w-64' : 'w-20'">
+<aside class="vendor-sidebar hidden md:block bg-white border-r border-gray-200 overflow-y-auto">
     <div class="h-full flex flex-col">
         
         <!-- Navigation Links -->
