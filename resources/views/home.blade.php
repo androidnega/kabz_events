@@ -41,35 +41,26 @@
             </div>
 
             @if($categories->count() > 0)
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 px-4 md:px-0">
+            <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 lg:gap-6 px-4 md:px-0">
                 @foreach($categories as $category)
-                <a href="{{ route('search.index', ['category' => $category->slug]) }}" class="block h-full">
-                    <x-card hoverable class="h-full flex flex-col p-4 md:p-6 text-center group transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                        <!-- Icon with circular background -->
-                        <div class="mb-3 flex justify-center">
-                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-purple-100 to-indigo-100 group-hover:from-purple-200 group-hover:to-indigo-200 flex items-center justify-center transition-all duration-300">
+                <a href="{{ route('search.index', ['category' => $category->slug]) }}" class="block group">
+                    <div class="bg-white rounded-lg border border-gray-200 hover:border-purple-300 transition-colors duration-200 p-3 md:p-4 text-center h-full">
+                        <!-- Icon -->
+                        <div class="mb-2 flex justify-center">
+                            <div class="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
                                 @if($category->icon)
-                                    <i class="fas fa-{{ $category->icon }} text-2xl md:text-3xl text-primary group-hover:scale-110 transition-transform duration-300"></i>
+                                    <i class="fas fa-{{ $category->icon }} text-base md:text-lg lg:text-xl text-primary"></i>
                                 @else
-                                    <i class="fas fa-box text-2xl md:text-3xl text-primary group-hover:scale-110 transition-transform duration-300"></i>
+                                    <i class="fas fa-box text-base md:text-lg lg:text-xl text-primary"></i>
                                 @endif
                             </div>
                         </div>
                         
-                        <!-- Category name with fixed height -->
-                        <h3 class="font-semibold text-sm md:text-base text-gray-900 group-hover:text-primary mb-2 transition-colors duration-300 min-h-[2.5rem] flex items-center justify-center">
+                        <!-- Category name -->
+                        <h3 class="font-semibold text-xs md:text-sm text-gray-900 group-hover:text-primary transition-colors line-clamp-2">
                             {{ $category->name }}
                         </h3>
-                        
-                        <!-- Description with fixed height -->
-                        @if($category->description)
-                        <p class="text-xs text-gray-500 mt-auto line-clamp-2 min-h-[2rem]">
-                            {{ Str::limit($category->description, 45) }}
-                        </p>
-                        @else
-                        <p class="text-xs text-gray-500 mt-auto min-h-[2rem]">&nbsp;</p>
-                        @endif
-                    </x-card>
+                    </div>
                 </a>
                 @endforeach
             </div>
