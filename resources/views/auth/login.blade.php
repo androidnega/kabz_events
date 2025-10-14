@@ -6,11 +6,9 @@
                 {{-- Header Section --}}
                 <div class="bg-gradient-to-br from-indigo-50 to-white px-6 py-6">
                     <div class="text-center">
-                        <a href="/" class="inline-block">
-                            <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-indigo-600 shadow-lg mb-4">
-                                <span class="text-xl font-bold text-white">K</span>
-                            </div>
-                        </a>
+                        <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-indigo-600 shadow-lg mb-4">
+                            <i class="fas fa-sign-in-alt text-white text-lg"></i>
+                        </div>
                         <h2 class="text-lg font-bold text-gray-900 mb-2">
                             Welcome Back
                         </h2>
