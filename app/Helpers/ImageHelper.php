@@ -16,9 +16,9 @@ if (!function_exists('get_image_url')) {
             $imageData = $imageData['url'] ?? null;
         }
 
-        // If no image data, return default or placeholder
+        // If no image data, return default or null
         if (empty($imageData)) {
-            return $default ?? asset('images/placeholder.png');
+            return $default ?? '';
         }
 
         // If it's already a full URL (Cloudinary), return as is

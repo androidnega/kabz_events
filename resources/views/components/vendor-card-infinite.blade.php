@@ -7,16 +7,18 @@
         @php
             $previewUrl = $vendor->getPreviewImageUrl();
             if (!$previewUrl && $vendor->sample_work_images && count($vendor->sample_work_images) > 0) {
-                $previewUrl = $vendor->getImageUrl($vendor->sample_work_images[0]);
+                $firstImage = is_array($vendor->sample_work_images) ? $vendor->sample_work_images[0] : $vendor->sample_work_images;
+                $previewUrl = $vendor->getImageUrl($firstImage);
             }
         @endphp
         
-        @if($previewUrl)
+        @if($previewUrl && $previewUrl !== '')
             <div class="h-48 bg-gray-100 overflow-hidden">
                 <img src="{{ $previewUrl }}" 
                      alt="{{ $vendor->business_name }}" 
                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                     loading="lazy">
+                     loading="lazy"
+                     onerror="this.parentElement.innerHTML='<div class=\'h-full bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center\'><div class=\'text-6xl font-bold text-purple-300\'>{{ strtoupper(substr($vendor->business_name, 0, 1)) }}</div></div>'">
             </div>
         @else
             <div class="h-48 bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center overflow-hidden">
