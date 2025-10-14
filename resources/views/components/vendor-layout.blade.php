@@ -24,20 +24,36 @@
     <style>
         [x-cloak] { display: none !important; }
         
-        /* Force sidebar visibility on desktop */
+        /* Sidebar styling on desktop */
         @media (min-width: 768px) {
             .vendor-sidebar {
                 display: block !important;
                 position: fixed !important;
                 top: 64px !important;
                 left: 0 !important;
-                width: 256px !important;
                 height: calc(100vh - 64px) !important;
                 z-index: 20 !important;
+                transition: width 0.3s ease !important;
+            }
+            
+            .vendor-sidebar.sidebar-open {
+                width: 256px !important;
+            }
+            
+            .vendor-sidebar.sidebar-collapsed {
+                width: 80px !important;
             }
             
             .vendor-main-content {
+                transition: margin-left 0.3s ease !important;
+            }
+            
+            .vendor-main-content.content-expanded {
                 margin-left: 256px !important;
+            }
+            
+            .vendor-main-content.content-collapsed {
+                margin-left: 80px !important;
             }
         }
     </style>
@@ -49,10 +65,12 @@
     <x-vendor-topbar />
     
     <!-- Sidebar (Fixed, Desktop only) -->
-    <x-vendor-nav />
+    <div :class="sidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'">
+        <x-vendor-nav />
+    </div>
     
     <!-- Main Content Area -->
-    <main class="vendor-main-content min-h-screen pt-16 pb-20 md:pb-6">
+    <main class="vendor-main-content min-h-screen pt-16 pb-20 md:pb-6" :class="sidebarOpen ? 'content-expanded' : 'content-collapsed'">
         <div class="p-4 sm:p-6">
             {{ $slot }}
         </div>
