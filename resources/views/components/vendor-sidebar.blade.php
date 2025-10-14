@@ -147,7 +147,7 @@
            style="display: none;">
         
         <!-- Modal panel - Centered and Compact -->
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-xs mx-auto" 
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-xs mx-auto overflow-hidden" 
              x-transition:enter="transition ease-out duration-300 transform"
              x-transition:enter-start="opacity-0 scale-95"
              x-transition:enter-end="opacity-100 scale-100"
@@ -155,44 +155,53 @@
              x-transition:leave-start="opacity-100 scale-100"
              x-transition:leave-end="opacity-0 scale-95"
              @click.stop>
-          <div class="bg-white px-6 py-6">
+          <!-- Header Section -->
+          <div class="bg-white px-5 py-6">
             <div class="text-center">
-              <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-indigo-100 mb-3">
-                <i class="fas fa-lock text-indigo-600 text-xl"></i>
+              <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 mb-3">
+                <i class="fas fa-lock text-indigo-600 text-lg"></i>
               </div>
-              <h3 class="text-xl font-bold text-gray-900 mb-2">
+              <h3 class="text-lg font-bold text-gray-900 mb-1.5">
                 Login Required
               </h3>
-              <p class="text-sm text-gray-600">
+              <p class="text-xs text-gray-600 leading-relaxed px-2">
                 Please sign in to contact this vendor and access full details
               </p>
             </div>
           </div>
           
-          <div class="bg-gray-50 px-6 py-5 space-y-2.5 rounded-b-2xl">
+          <!-- Actions Section -->
+          <div class="bg-gray-50 px-5 py-4 space-y-2.5 rounded-b-2xl">
             <a href="{{ route('login') }}" class="block w-full">
               <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition shadow-sm text-sm">
-                <i class="fas fa-sign-in-alt mr-2"></i> Sign In
+                <i class="fas fa-sign-in-alt mr-1.5"></i> Sign In
               </button>
             </a>
             
             <a href="{{ route('register') }}" class="block w-full">
               <button class="w-full bg-white hover:bg-gray-50 text-indigo-600 border-2 border-indigo-600 px-4 py-2.5 rounded-lg font-medium transition text-sm">
-                <i class="fas fa-user-plus mr-2"></i> Create Account
+                <i class="fas fa-user-plus mr-1.5"></i> Create Account
               </button>
             </a>
 
-            <div class="text-center pt-1">
+            <!-- Divider -->
+            <div class="pt-2 pb-1">
+              <div class="border-t border-gray-200"></div>
+            </div>
+
+            <!-- Vendor Registration Link -->
+            <div class="text-center py-1">
               <p class="text-xs text-gray-600">
                 Are you a vendor? 
-                <a href="{{ route('vendor.public.register') }}" class="text-indigo-600 hover:text-indigo-700 font-medium underline">
+                <a href="{{ route('vendor.public.register') }}" class="text-indigo-600 hover:text-indigo-700 font-semibold underline">
                   Register here
                 </a>
               </p>
             </div>
 
-            <button @click="showLoginModal = false" class="w-full text-gray-600 hover:text-gray-800 px-4 py-2 text-xs font-medium hover:bg-gray-100 rounded-lg transition">
-              Maybe Later
+            <!-- Close Button -->
+            <button @click="showLoginModal = false" class="w-full text-gray-500 hover:text-gray-700 px-3 py-2 text-xs font-medium hover:bg-gray-100 rounded-lg transition">
+              <i class="fas fa-times mr-1"></i> Maybe Later
             </button>
           </div>
         </div>
