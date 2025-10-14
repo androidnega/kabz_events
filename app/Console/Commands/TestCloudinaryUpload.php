@@ -154,8 +154,9 @@ class TestCloudinaryUpload extends Command
 
         // Summary
         $this->newLine();
+        $totalImages = count($testImages);
         if ($successful > 0) {
-            $this->info("✅ SUCCESS! Uploaded {$successful}/{count($testImages)} images to Cloudinary");
+            $this->info("✅ SUCCESS! Uploaded {$successful}/{$totalImages} images to Cloudinary");
             $this->info('🔗 View your images at: https://cloudinary.com/console/media_library');
             $this->newLine();
             $this->info('Next steps:');
