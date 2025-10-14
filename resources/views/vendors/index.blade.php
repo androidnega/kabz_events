@@ -18,15 +18,14 @@
                 <!-- Desktop Layout -->
                 <div class="hidden md:flex items-center gap-3">
                     <!-- Search Input -->
-                    <div class="flex-1 relative">
+                    <div class="flex-1">
                         <input 
                             type="text" 
                             name="search"
                             value="{{ request('search') }}"
                             placeholder="Search for photographer, caterer, decorator..."
-                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
+                            class="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
                         >
-                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
                     </div>
 
                     <!-- Category Select -->
@@ -94,15 +93,14 @@
                 <!-- Mobile Layout -->
                 <div class="md:hidden space-y-2">
                     <!-- Search Input -->
-                    <div class="relative">
+                    <div>
                         <input 
                             type="text" 
                             name="search"
                             value="{{ request('search') }}"
                             placeholder="Search vendors..."
-                            class="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
+                            class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-200 transition-colors"
                         >
-                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
                     </div>
 
                     <!-- Filters Grid -->
