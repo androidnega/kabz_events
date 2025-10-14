@@ -71,21 +71,18 @@
         {{-- Media Grid --}}
         @if($media->count() > 0)
             <div id="mediaGrid" 
-                 class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2"
+                 class="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3"
                  data-has-more="{{ $media->count() >= 24 ? '1' : '0' }}">
                 @foreach($media as $item)
                     <div class="media-item bg-white rounded border border-gray-200 overflow-hidden hover:border-purple-400 transition-all duration-200">
                         {{-- Image/Video Preview --}}
-                        <div class="aspect-square bg-gray-100 relative group cursor-pointer view-media-trigger" 
+                        <div class="h-40 bg-gray-100 relative group cursor-pointer view-media-trigger" 
                              data-url="{{ $item['url'] }}" 
                              data-title="{{ basename($item['public_id']) }}" 
                              data-type="{{ $item['resource_type'] }}">
                             @if($item['resource_type'] === 'video')
-                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-                                    <i class="fas fa-play-circle text-white text-5xl drop-shadow-lg"></i>
-                                </div>
-                                <div class="absolute top-2 left-2 px-2.5 py-1 bg-red-600 text-white text-xs font-bold rounded-md shadow-lg">
-                                    <i class="fas fa-video mr-1"></i> VIDEO
+                                <div class="w-full h-full flex items-center justify-center bg-gray-800">
+                                    <i class="fas fa-play-circle text-white text-3xl"></i>
                                 </div>
                             @else
                                 <img src="{{ $item['url'] }}" 
@@ -94,34 +91,30 @@
                                      loading="lazy">
                             @endif
 
+                            {{-- Icon Actions on Hover --}}
+                            <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                                <i class="fas fa-eye text-white text-2xl cursor-pointer hover:text-blue-300 transition" 
+                                   title="View"></i>
+                                <i class="fas fa-download download-btn text-white text-2xl cursor-pointer hover:text-green-300 transition" 
+                                   data-url="{{ $item['url'] }}" 
+                                   data-filename="{{ basename($item['public_id']) }}.{{ $item['format'] }}" 
+                                   title="Download"></i>
+                                <i class="fas fa-trash delete-btn text-white text-2xl cursor-pointer hover:text-red-300 transition" 
+                                   data-public-id="{{ $item['public_id'] }}" 
+                                   data-filename="{{ basename($item['public_id']) }}" 
+                                   data-folder="{{ $folder }}" 
+                                   title="Delete"></i>
+                            </div>
                         </div>
 
-                        {{-- Action Buttons - Always Visible --}}
-                        <div class="flex gap-1 p-1 bg-gray-100 border-t border-gray-200">
-                            {{-- Download Button --}}
-                            <button type="button" class="download-btn flex-1 px-2 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 transition text-xs" 
-                                    data-url="{{ $item['url'] }}" 
-                                    data-filename="{{ basename($item['public_id']) }}.{{ $item['format'] }}" 
-                                    title="Download">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            
-                            {{-- Delete Button --}}
-                            <button type="button" class="delete-btn flex-1 px-2 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition text-xs" 
-                                    data-public-id="{{ $item['public_id'] }}" 
-                                    data-filename="{{ basename($item['public_id']) }}" 
-                                    data-folder="{{ $folder }}" 
-                                    title="Delete">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-
-                        {{-- Media Info - Minimal --}}
-                        <div class="p-1 bg-gray-50 text-center">
+                        {{-- Media Info --}}
+                        <div class="p-2 bg-gray-50">
                             @if($item['owner'])
-                                <p class="text-xs text-gray-600 truncate" title="{{ $item['owner']['name'] }}">{{ Str::limit($item['owner']['name'], 8) }}</p>
+                                <p class="text-xs text-gray-600 truncate font-medium" title="{{ $item['owner']['name'] }}">
+                                    <i class="fas fa-user text-purple-500 mr-1"></i>{{ Str::limit($item['owner']['name'], 12) }}
+                                </p>
                             @endif
-                            <p class="text-xs text-gray-400">{{ number_format($item['bytes'] / 1024, 0) }}KB</p>
+                            <p class="text-xs text-gray-400 mt-1">{{ number_format($item['bytes'] / 1024, 0) }}KB</p>
                         </div>
                     </div>
                 @endforeach
@@ -378,37 +371,46 @@
             });
         }
 
-        // Event delegation for dynamically loaded media items
+        // Event delegation for media items
         document.addEventListener('click', function(e) {
-            // View media trigger (click on image/video itself)
-            const viewTrigger = e.target.closest('.view-media-trigger');
-            if (viewTrigger && !e.target.closest('button')) {
-                const url = viewTrigger.dataset.url;
-                const title = viewTrigger.dataset.title;
-                const type = viewTrigger.dataset.type;
-                const index = Array.from(document.querySelectorAll('.view-media-trigger')).indexOf(viewTrigger);
-                viewMedia(url, title, type, index);
-                return;
-            }
-
-            // Download button
-            const downloadBtn = e.target.closest('.download-btn');
-            if (downloadBtn) {
+            // Download icon
+            const downloadIcon = e.target.closest('.download-btn');
+            if (downloadIcon) {
                 e.stopPropagation();
-                const url = downloadBtn.dataset.url;
-                const filename = downloadBtn.dataset.filename;
+                e.preventDefault();
+                const url = downloadIcon.dataset.url || downloadIcon.getAttribute('data-url');
+                const filename = downloadIcon.dataset.filename || downloadIcon.getAttribute('data-filename');
                 downloadMedia(url, filename);
                 return;
             }
 
-            // Delete button
-            const deleteBtn = e.target.closest('.delete-btn');
-            if (deleteBtn) {
+            // Delete icon
+            const deleteIcon = e.target.closest('.delete-btn');
+            if (deleteIcon) {
                 e.stopPropagation();
-                const publicId = deleteBtn.dataset.publicId;
-                const filename = deleteBtn.dataset.filename;
-                const folder = deleteBtn.dataset.folder;
+                e.preventDefault();
+                const publicId = deleteIcon.dataset.publicId || deleteIcon.getAttribute('data-public-id');
+                const filename = deleteIcon.dataset.filename || deleteIcon.getAttribute('data-filename');
+                const folder = deleteIcon.dataset.folder || deleteIcon.getAttribute('data-folder');
                 deleteMedia(publicId, filename, folder);
+                return;
+            }
+
+            // View icon or image click
+            const viewIcon = e.target.closest('.fa-eye');
+            const viewTrigger = e.target.closest('.view-media-trigger');
+            
+            if (viewIcon || (viewTrigger && !e.target.closest('.download-btn') && !e.target.closest('.delete-btn'))) {
+                e.stopPropagation();
+                e.preventDefault();
+                const trigger = viewTrigger;
+                if (trigger) {
+                    const url = trigger.dataset.url;
+                    const title = trigger.dataset.title;
+                    const type = trigger.dataset.type;
+                    const index = Array.from(document.querySelectorAll('.view-media-trigger')).indexOf(trigger);
+                    viewMedia(url, title, type, index);
+                }
                 return;
             }
 
