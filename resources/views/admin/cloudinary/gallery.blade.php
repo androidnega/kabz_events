@@ -436,59 +436,7 @@
             }
         });
 
-        // Infinite Scroll
-        let page = 1;
-        let loading = false;
-        const mediaGrid = document.getElementById('mediaGrid');
-        let hasMore = mediaGrid ? mediaGrid.dataset.hasMore === '1' : false;
-
-        window.addEventListener('scroll', function() {
-            if (loading || !hasMore) return;
-
-            const scrollPosition = window.innerHeight + window.scrollY;
-            const pageHeight = document.documentElement.scrollHeight;
-
-            if (scrollPosition >= pageHeight - 500) {
-                loadMoreImages();
-            }
-        });
-
-        function loadMoreImages() {
-            if (loading || !hasMore) return;
-            
-            loading = true;
-            document.getElementById('loadingIndicator').classList.remove('hidden');
-            
-            page++;
-            const url = new URL(window.location.href);
-            url.searchParams.set('page', page);
-
-            fetch(url)
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newItems = doc.querySelectorAll('.media-item');
-                    
-                    if (newItems.length === 0) {
-                        hasMore = false;
-                        document.getElementById('endMessage').classList.remove('hidden');
-                    } else {
-                        const grid = document.getElementById('mediaGrid');
-                        newItems.forEach(item => grid.appendChild(item.cloneNode(true)));
-                        updateMediaItemsArray(); // Update the array for lightbox navigation
-                    }
-                    
-                    loading = false;
-                    document.getElementById('loadingIndicator').classList.add('hidden');
-                })
-                .catch(error => {
-                    console.error('Error loading more images:', error);
-                    loading = false;
-                    hasMore = false;
-                    document.getElementById('loadingIndicator').classList.add('hidden');
-                });
-        }
+        // Infinite Scroll disabled - All images load at once (max 500 per folder)
     </script>
     @endpush
 </x-admin-layout>
