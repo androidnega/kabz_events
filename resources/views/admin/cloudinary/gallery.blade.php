@@ -71,10 +71,10 @@
         {{-- Media Grid --}}
         @if($media->count() > 0)
             <div id="mediaGrid" 
-                 class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+                 class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2"
                  data-has-more="{{ $media->count() >= 24 ? '1' : '0' }}">
                 @foreach($media as $item)
-                    <div class="media-item bg-white rounded-lg border-2 border-gray-200 overflow-hidden hover:border-purple-400 hover:shadow-lg transition-all duration-200">
+                    <div class="media-item bg-white rounded border border-gray-200 overflow-hidden hover:border-purple-400 transition-all duration-200">
                         {{-- Image/Video Preview --}}
                         <div class="aspect-square bg-gray-100 relative group cursor-pointer view-media-trigger" 
                              data-url="{{ $item['url'] }}" 
@@ -94,60 +94,37 @@
                                      loading="lazy">
                             @endif
 
-                            {{-- Hover Actions Overlay --}}
-                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-2 p-3">
-                                <div class="flex gap-2">
-                                    {{-- View/Zoom Button --}}
-                                    <button class="view-media-btn p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-lg" 
-                                            title="View Full Size">
-                                        <i class="fas fa-search-plus text-lg"></i>
-                                    </button>
-                                    
+                            {{-- Hover Actions Overlay - Always visible buttons at bottom --}}
+                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <div class="flex gap-1 justify-center">
                                     {{-- Download Button --}}
-                                    <button class="download-btn p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-lg" 
+                                    <button type="button" class="download-btn p-2 bg-green-600 text-white rounded hover:bg-green-700 transition" 
                                             data-url="{{ $item['url'] }}" 
                                             data-filename="{{ basename($item['public_id']) }}.{{ $item['format'] }}" 
+                                            onclick="event.stopPropagation();"
                                             title="Download">
-                                        <i class="fas fa-download text-lg"></i>
+                                        <i class="fas fa-download"></i>
                                     </button>
                                     
                                     {{-- Delete Button --}}
-                                    <button class="delete-btn p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-lg" 
+                                    <button type="button" class="delete-btn p-2 bg-red-600 text-white rounded hover:bg-red-700 transition" 
                                             data-public-id="{{ $item['public_id'] }}" 
                                             data-filename="{{ basename($item['public_id']) }}" 
                                             data-folder="{{ $folder }}" 
+                                            onclick="event.stopPropagation();"
                                             title="Delete">
-                                        <i class="fas fa-trash text-lg"></i>
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Media Info --}}
-                        <div class="p-3 bg-gray-50">
+                        {{-- Media Info - Minimal --}}
+                        <div class="p-1.5 bg-gray-50 text-center">
                             @if($item['owner'])
-                                <p class="text-xs text-gray-700 truncate mb-1.5 font-medium" title="{{ $item['owner']['name'] }}">
-                                    <i class="fas fa-user text-purple-600 mr-1"></i>
-                                    {{ $item['owner']['name'] }}
-                                </p>
-                            @else
-                                <p class="text-xs text-gray-400 mb-1.5 italic">
-                                    <i class="fas fa-user-slash mr-1"></i>
-                                    No owner found
-                                </p>
+                                <p class="text-xs text-gray-600 truncate" title="{{ $item['owner']['name'] }}">{{ Str::limit($item['owner']['name'], 10) }}</p>
                             @endif
-                            <div class="flex items-center justify-between text-xs text-gray-500">
-                                <span>
-                                    <i class="fas fa-hdd mr-1"></i>
-                                    {{ number_format($item['bytes'] / 1024, 1) }} KB
-                                </span>
-                                @if(isset($item['width']) && isset($item['height']))
-                                    <span>
-                                        <i class="fas fa-expand-arrows-alt mr-1"></i>
-                                        {{ $item['width'] }}x{{ $item['height'] }}
-                                    </span>
-                                @endif
-                            </div>
+                            <p class="text-xs text-gray-400">{{ number_format($item['bytes'] / 1024, 0) }}KB</p>
                         </div>
                     </div>
                 @endforeach
