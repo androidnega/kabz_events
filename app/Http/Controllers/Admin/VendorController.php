@@ -48,7 +48,7 @@ class VendorController extends Controller
             });
         }
 
-        $vendors = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
+        $vendors = $query->orderBy('created_at', 'desc')->paginate(15)->appends($request->query());
         
         return view('admin.vendors.index', compact('vendors'));
     }
