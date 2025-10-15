@@ -42,7 +42,7 @@ class SubscriptionApprovedNotification extends Notification implements ShouldQue
                     ->line('Your subscription is now active and you can enjoy all the benefits.')
                     ->line('Subscription Details:')
                     ->line('• Plan: ' . $this->subscription->plan)
-                    ->line('• Amount: GHS ' . number_format($this->subscription->price_amount, 2))
+                    ->line('• Amount: GHS ' . number_format((float)($this->subscription->price_amount ?? 0), 2))
                     ->line('• Started: ' . $this->subscription->started_at->format('M d, Y'))
                     ->line('• Expires: ' . ($this->subscription->ends_at ? $this->subscription->ends_at->format('M d, Y') : 'Lifetime'))
                     ->action('View Subscriptions', route('vendor.subscriptions'))

@@ -52,6 +52,12 @@ class SubscriptionPaymentController extends Controller
             return back()->with('info', 'You are already on the Free plan');
         }
 
+        // Calculate subscription end date
+        $endsAt = null;
+        if (isset($planData['duration']) && $planData['duration'] !== null && $planData['duration'] > 0) {
+            $endsAt = now()->addDays((int) $planData['duration']);
+        }
+
         // Create subscription record
         $subscription = VendorSubscription::create([
             'vendor_id' => $vendor->id,
@@ -62,7 +68,7 @@ class SubscriptionPaymentController extends Controller
             'payment_status' => 'pending',
             'approval_status' => 'pending',
             'started_at' => now(),
-            'ends_at' => $planData['duration'] ? now()->addDays($planData['duration']) : null,
+            'ends_at' => $endsAt,
         ]);
 
         // Generate unique payment reference

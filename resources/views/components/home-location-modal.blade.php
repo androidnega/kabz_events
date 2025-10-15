@@ -14,7 +14,10 @@
     ];
 @endphp
 
-<div x-data="homeLocationModal()" x-cloak data-locations='@json($ghanaLocations)'>
+<div x-data="homeLocationModal()" 
+     @open-location-modal.window="openModal()"
+     x-cloak 
+     data-locations='@json($ghanaLocations)'>
     <!-- Modal Overlay -->
     <div x-show="isOpen" 
          @keydown.escape.window="closeModal()"
@@ -284,20 +287,5 @@ function homeLocationModal() {
         }
     }
 }
-
-// Global function to open modal
-function openHomeLocationModal() {
-    window.dispatchEvent(new CustomEvent('open-home-location-modal'));
-}
-</script>
-
-<script>
-// Listen for global event to open modal
-window.addEventListener('open-home-location-modal', function() {
-    const modalElement = document.querySelector('[x-data*="homeLocationModal"]');
-    if (modalElement && modalElement.__x) {
-        modalElement.__x.$data.openModal();
-    }
-});
 </script>
 

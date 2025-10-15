@@ -43,7 +43,7 @@ class NewSubscriptionPendingNotification extends Notification implements ShouldQ
                     ->line('A vendor has completed payment for a subscription and is awaiting approval.')
                     ->line('Vendor: ' . $vendor->business_name)
                     ->line('Plan: ' . $this->subscription->plan)
-                    ->line('Amount: GHS ' . number_format($this->subscription->price_amount, 2))
+                    ->line('Amount: GHS ' . number_format((float)($this->subscription->price_amount ?? 0), 2))
                     ->line('Payment Method: ' . ucfirst($this->subscription->payment_method ?? 'Paystack'))
                     ->line('Paid At: ' . $this->subscription->paid_at->format('M d, Y h:i A'))
                     ->action('Review Subscription', route('admin.subscriptions.pending'))
