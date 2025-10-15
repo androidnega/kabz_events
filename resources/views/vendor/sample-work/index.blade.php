@@ -53,14 +53,14 @@
 
         {{-- Sample Work Title --}}
         <div class="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
-            <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Gallery Title</h3>
+            <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Sample Work Title</h3>
             <form action="{{ route('vendor.sample-work.title') }}" method="POST">
                 @csrf
                 <div class="flex flex-col sm:flex-row gap-3">
                     <input 
                         type="text" 
                         name="sample_work_title"
-                        value="{{ $vendor->sample_work_title }}"
+                        value="{{ $vendor->sample_work_title ?? 'Sample Work' }}"
                         placeholder="e.g., Our Recent Events, Portfolio, Sample Work"
                         class="flex-1 rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500 text-sm sm:text-base"
                     />
