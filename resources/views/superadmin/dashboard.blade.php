@@ -420,6 +420,10 @@
                     <i class="fas fa-home text-3xl text-gray-400 group-hover:text-amber-600 mb-2 transition"></i>
                     <span class="text-xs font-medium text-gray-700 group-hover:text-amber-700 block transition">Public Site</span>
                 </a>
+                <a href="{{ route('superadmin.settings.index') }}" class="bg-gray-50 hover:bg-slate-50 border border-gray-200 hover:border-slate-300 rounded-lg p-4 text-center transition-all group">
+                    <i class="fas fa-cog text-3xl text-gray-400 group-hover:text-slate-600 mb-2 transition"></i>
+                    <span class="text-xs font-medium text-gray-700 group-hover:text-slate-700 block transition">Settings</span>
+                </a>
             </div>
         </div>
     </div>
