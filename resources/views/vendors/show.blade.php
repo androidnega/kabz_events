@@ -30,17 +30,19 @@
         showLoginModal: false, 
         showContactSheet: false,
         showCallbackSheet: false,
+        showChatSheet: false,
         callbackForm: {
             name: '',
             phone: ''
         },
-        callbackSubmitting: false
+        callbackSubmitting: false,
+        chatMessage: 'Avoid paying in advance! '
     }">
         <div class="container mx-auto">
             <!-- Vendor Name Header -->
             <div class="mb-4 md:mb-8 px-2 md:px-0">
                 <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">{{ $vendor->business_name }}</h1>
-            </div>
+                </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
                 <!-- Main Column -->
@@ -53,8 +55,8 @@
                             <h2 class="text-2xl font-bold text-gray-900">
                                 {{ $vendor->sample_work_title ?? 'Sample Work' }}
                             </h2>
-                        </div>
-                        
+                    </div>
+
                         <!-- Image Gallery -->
                         <div class="p-3 md:p-6">
                             <!-- Main Image Display -->
@@ -82,11 +84,11 @@
                                     <div class="absolute bottom-4 left-4 bg-white bg-opacity-90 text-gray-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                        </svg>
+                            </svg>
                                         <span id="imageCounter">1</span>/{{ count($vendor->sample_work_images) }}
                                     </div>
                                 </div>
-                            </div>
+                    </div>
 
                             <!-- Thumbnail Gallery - Hidden on Mobile, Desktop Only -->
                             @if(count($vendor->sample_work_images) > 1)
@@ -105,20 +107,20 @@
                                             </div>
                                         </div>
                                         @endif
-                                    @endforeach
+                        @endforeach
                                     
                                     @if(count($vendor->sample_work_images) > 5)
                                     <div class="flex-shrink-0 relative">
                                         <div class="w-24 h-16 bg-blue-600 rounded-lg border-2 border-gray-300 flex items-center justify-center">
                                             <span class="text-white text-sm font-medium">+{{ count($vendor->sample_work_images) - 5 }}</span>
                                         </div>
-                                    </div>
-                                    @endif
-                                </div>
-                            </div>
-                            @endif
-                        </div>
                     </div>
+                    @endif
+                </div>
+            </div>
+                            @endif
+        </div>
+    </div>
                     @endif
 
                     <!-- About Section (moved after pictures) -->
@@ -153,7 +155,7 @@
 
                     <!-- Mobile Only: Action Buttons (After About Section) -->
                     <div class="lg:hidden">
-                        <x-card>
+                    <x-card>
                             <div class="p-3">
                                 <div class="grid grid-cols-2 gap-2">
                                     <!-- Call Button -->
@@ -167,19 +169,6 @@
                                         <i class="fas fa-phone-volume text-sm"></i>
                                         <span class="text-sm font-medium">Callback</span>
                                     </button>
-
-                                    <!-- Message Button -->
-                                    @auth
-                                    <a href="{{ route('client.messages.conversation', $vendor->id) }}" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all active:scale-95">
-                                        <i class="fas fa-comment-dots text-sm"></i>
-                                        <span class="text-sm font-medium">Message</span>
-                                    </a>
-                                    @else
-                                    <button @click="showLoginModal = true" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all active:scale-95">
-                                        <i class="fas fa-comment-dots text-sm"></i>
-                                        <span class="text-sm font-medium">Message</span>
-                                    </button>
-                                    @endauth
 
                                     <!-- WhatsApp Button -->
                                     @if($vendor->whatsapp)
@@ -195,9 +184,52 @@
                                         <span class="text-sm font-medium">WhatsApp</span>
                                     </a>
                                     @endif
+                                    </div>
                                 </div>
-                            </div>
                         </x-card>
+                            </div>
+
+                    <!-- Mobile Only: Quick Chat Card -->
+                    <div class="lg:hidden">
+                        <x-card>
+                            <div class="p-4">
+                                <h3 class="text-base font-semibold text-gray-900 mb-3">Chat with the vendor</h3>
+                                
+                                @auth
+                                <!-- Message Input -->
+                                <div class="mb-3">
+                                    <textarea 
+                                        x-model="chatMessage"
+                                        rows="2"
+                                        placeholder="Write your message here..."
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm resize-none"
+                                    ></textarea>
+                                    <p class="text-xs text-amber-600 mt-1.5 flex items-center">
+                                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                                        Avoid paying in advance!
+                                    </p>
+                                    </div>
+
+                                <!-- Start Chat Button -->
+                                <button 
+                                    @click="showChatSheet = true"
+                                    class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all active:scale-95 flex items-center justify-center gap-2">
+                                    <i class="fas fa-paper-plane text-sm"></i>
+                                    <span class="text-sm">Start Chat</span>
+                                </button>
+                                @else
+                                <!-- Login Required for Chat -->
+                                <div class="text-center py-4">
+                                    <p class="text-sm text-gray-600 mb-3">Sign in to chat with this vendor</p>
+                                    <button 
+                                        @click="showLoginModal = true"
+                                        class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all active:scale-95">
+                                        Sign In to Chat
+                                    </button>
+                                </div>
+                                @endauth
+                        </div>
+                    </x-card>
                     </div>
 
                     <!-- Services Section -->
@@ -399,8 +431,8 @@
                             :averageResponseTime="$averageResponseTime"
                         />
 
-                        <!-- Similar Vendors -->
-                        @if($similarVendors->count() > 0)
+                    <!-- Similar Vendors -->
+                    @if($similarVendors->count() > 0)
                         <div class="bg-white p-3 rounded-2xl shadow">
                             <h3 class="text-[13px] font-bold text-gray-900 mb-3">Similar Vendors</h3>
                             <div class="space-y-3">
@@ -430,7 +462,7 @@
                                 @endforeach
                             </div>
                         </div>
-                        @endif
+                    @endif
                     </div>
                 </div>
             </div>
@@ -500,7 +532,7 @@
               <!-- Divider -->
               <div class="my-4">
                 <div class="border-t border-gray-300"></div>
-              </div>
+                        </div>
 
               <!-- Vendor Registration Link -->
               <div class="text-center">
@@ -510,7 +542,7 @@
                     Register here
                   </a>
                 </p>
-              </div>
+                </div>
             </div>
           </div>
         </div>
@@ -614,6 +646,96 @@
                 </div>
               </div>
               @endif
+            </div>
+          </div>
+        </div>
+
+        {{-- Chat Bottom Sheet (Mobile Only) --}}
+        <div x-show="showChatSheet" 
+             x-cloak
+             @click="showChatSheet = false"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" 
+             style="display: none;">
+          
+          <!-- Bottom Sheet Content -->
+          <div @click.stop
+               x-transition:enter="transition ease-out duration-300 transform"
+               x-transition:enter-start="translate-y-full"
+               x-transition:enter-end="translate-y-0"
+               x-transition:leave="transition ease-in duration-200 transform"
+               x-transition:leave-start="translate-y-0"
+               x-transition:leave-end="translate-y-full"
+               class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl h-[85vh] flex flex-col">
+            
+            <!-- Handle Bar -->
+            <div class="flex justify-center pt-3 pb-2 flex-shrink-0">
+              <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+            </div>
+
+            <!-- Header -->
+            <div class="px-4 py-3 border-b border-gray-200 flex-shrink-0">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full flex items-center justify-center">
+                    <span class="text-sm font-bold text-purple-600">{{ strtoupper(substr($vendor->business_name, 0, 1)) }}</span>
+                  </div>
+                  <div>
+                    <h3 class="text-base font-bold text-gray-900">{{ $vendor->business_name }}</h3>
+                    <p class="text-xs text-gray-500">Chat</p>
+                  </div>
+                </div>
+                <button @click="showChatSheet = false" class="text-gray-400 hover:text-gray-600">
+                  <i class="fas fa-times text-xl"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Warning Banner -->
+            <div class="px-4 py-2 bg-amber-50 border-b border-amber-100 flex-shrink-0">
+              <div class="flex items-center gap-2 text-xs text-amber-800">
+                <i class="fas fa-exclamation-triangle text-amber-600"></i>
+                <span class="font-medium">Avoid paying in advance! Use secure payment methods.</span>
+              </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="flex-1 overflow-y-auto p-4 bg-gray-50">
+              <div class="flex justify-center mb-4">
+                <span class="text-xs text-gray-500 bg-white px-3 py-1 rounded-full">Starting new conversation</span>
+              </div>
+              
+              <!-- Initial Message Preview (if user typed something) -->
+              <div x-show="chatMessage.trim()" class="flex justify-end mb-3">
+                <div class="bg-purple-600 text-white px-4 py-2 rounded-2xl rounded-tr-sm max-w-[80%]">
+                  <p class="text-sm" x-text="chatMessage"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Message Input Area -->
+            <div class="p-4 bg-white border-t border-gray-200 flex-shrink-0">
+              <form @submit.prevent="
+                window.location.href = '{{ route('client.messages.conversation', $vendor->id) }}?message=' + encodeURIComponent(chatMessage);
+              " class="flex gap-2">
+                <textarea 
+                  x-model="chatMessage"
+                  rows="1"
+                  placeholder="Type your message..."
+                  class="flex-1 px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm resize-none"
+                  @keydown.enter.prevent="$el.form.requestSubmit()"
+                ></textarea>
+                <button 
+                  type="submit"
+                  class="bg-purple-600 hover:bg-purple-700 text-white w-11 h-11 rounded-full flex items-center justify-center transition-all active:scale-95">
+                  <i class="fas fa-paper-plane text-sm"></i>
+                </button>
+              </form>
             </div>
           </div>
         </div>
@@ -730,7 +852,7 @@
                 </span>
               </button>
             </form>
-          </div>
+            </div>
         </div>
     </div>
 </x-layouts.base>
