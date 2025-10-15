@@ -91,6 +91,10 @@ class PublicVendorController extends Controller
             'price_amount' => 0.00,
             'currency' => 'GHS',
             'status' => 'active',
+            'payment_status' => 'paid', // Free = no payment needed
+            'payment_method' => 'free',
+            'approval_status' => 'approved', // Free = auto-approved
+            'approved_at' => now(),
             'started_at' => now(),
             'ends_at' => null, // Lifetime
             'payment_reference' => null,
