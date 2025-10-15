@@ -202,7 +202,8 @@
                                         x-model="chatMessage"
                                         rows="2"
                                         placeholder="Write your message here..."
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm resize-none placeholder:text-gray-400"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm resize-none placeholder:text-gray-400 leading-relaxed"
+                                        style="padding-top: 0.5rem; padding-bottom: 0.5rem;"
                                     ></textarea>
                                 </div>
 
@@ -732,7 +733,8 @@
                   x-model="chatMessage"
                   rows="1"
                   placeholder="Type your message..."
-                  class="flex-1 px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm resize-none placeholder:text-gray-400"
+                  class="flex-1 px-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm resize-none placeholder:text-gray-400 leading-tight"
+                  style="padding-top: 0.65rem; padding-bottom: 0.65rem;"
                   @keydown.enter.prevent="$el.form.requestSubmit()"
                 ></textarea>
 
