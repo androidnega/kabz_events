@@ -36,7 +36,7 @@
             phone: ''
         },
         callbackSubmitting: false,
-        chatMessage: 'Avoid paying in advance! '
+        chatMessage: ''
     }">
         <div class="container mx-auto">
             <!-- Vendor Name Header -->
@@ -196,27 +196,25 @@
                                 <h3 class="text-base font-semibold text-gray-900 mb-3">Chat with the vendor</h3>
                                 
                                 @auth
-                                <!-- Message Input -->
+                                <!-- Message Input (Click to open chat) -->
                                 <div class="mb-3">
                                     <textarea 
-                                        x-model="chatMessage"
+                                        @click="
+                                            showChatSheet = true;
+                                            if (!chatMessage.trim()) {
+                                                chatMessage = 'Avoid paying in advance! ';
+                                            }
+                                        "
+                                        readonly
                                         rows="2"
                                         placeholder="Write your message here..."
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm resize-none"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none cursor-pointer bg-white"
                                     ></textarea>
                                     <p class="text-xs text-amber-600 mt-1.5 flex items-center">
                                         <i class="fas fa-exclamation-triangle mr-1"></i>
                                         Avoid paying in advance!
                                     </p>
                                     </div>
-
-                                <!-- Start Chat Button -->
-                                <button 
-                                    @click="showChatSheet = true"
-                                    class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all active:scale-95 flex items-center justify-center gap-2">
-                                    <i class="fas fa-paper-plane text-sm"></i>
-                                    <span class="text-sm">Start Chat</span>
-                                </button>
                                 @else
                                 <!-- Login Required for Chat -->
                                 <div class="text-center py-4">
