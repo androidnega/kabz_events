@@ -92,6 +92,27 @@
                     Configure <i class="fas fa-arrow-right ml-2"></i>
                 </a>
             </x-card>
+
+            {{-- Maintenance Mode Configuration --}}
+            <x-card class="p-6 hover:shadow-lg transition">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                        <i class="fas fa-tools text-red-600 text-xl"></i>
+                    </div>
+                    @php
+                        $siteModeEnabled = \App\Services\SettingsService::get('site_mode_enabled', false);
+                        $siteMode = \App\Services\SettingsService::get('site_mode', 'live');
+                    @endphp
+                    <span class="px-3 py-1 text-xs rounded-full {{ $siteModeEnabled ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
+                        {{ $siteModeEnabled ? ucfirst($siteMode) : 'Live' }}
+                    </span>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Site Mode</h3>
+                <p class="text-sm text-gray-600 mb-4">Maintenance, coming soon, or update mode</p>
+                <a href="{{ route('superadmin.settings.maintenance') }}" class="inline-flex items-center text-primary hover:underline">
+                    Configure <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </x-card>
         </div>
 
         {{-- Quick Info --}}

@@ -173,4 +173,46 @@ class SettingsController extends Controller
 
         return back()->with('success', '⚙️ System configuration updated successfully!');
     }
+
+    // ============================================================
+    // Site Mode / Maintenance Configuration
+    // ============================================================
+    
+    public function maintenance()
+    {
+        $settings = SettingsService::getByGroup('maintenance');
+        return view('superadmin.settings.maintenance', compact('settings'));
+    }
+
+    public function updateMaintenance(Request $request)
+    {
+        $request->validate([
+            'site_mode' => 'required|in:live,maintenance,coming_soon,update',
+            'maintenance_message' => 'nullable|string',
+            'coming_soon_message' => 'nullable|string',
+            'update_message' => 'nullable|string',
+            'maintenance_end_time' => 'nullable|date',
+        ]);
+
+        SettingsService::set('site_mode', $request->site_mode, 'string', 'maintenance');
+        SettingsService::set('site_mode_enabled', $request->has('site_mode_enabled') ? '1' : '0', 'boolean', 'maintenance');
+        SettingsService::set('maintenance_message', $request->maintenance_message, 'string', 'maintenance');
+        SettingsService::set('coming_soon_message', $request->coming_soon_message, 'string', 'maintenance');
+        SettingsService::set('update_message', $request->update_message, 'string', 'maintenance');
+        SettingsService::set('maintenance_end_time', $request->maintenance_end_time, 'string', 'maintenance');
+        
+        SettingsService::clearCache();
+
+        $modeLabels = [
+            'live' => '🟢 Live',
+            'maintenance' => '🔧 Maintenance',
+            'coming_soon' => '🚀 Coming Soon',
+            'update' => '⬆️ Update',
+        ];
+
+        $modeLabel = $modeLabels[$request->site_mode] ?? 'Site';
+        $status = $request->has('site_mode_enabled') ? 'enabled' : 'disabled';
+
+        return back()->with('success', "{$modeLabel} mode {$status} successfully!");
+    }
 }

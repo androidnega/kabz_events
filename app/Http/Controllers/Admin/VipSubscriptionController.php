@@ -7,6 +7,7 @@ use App\Models\VipSubscription;
 use App\Models\VipPlan;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class VipSubscriptionController extends Controller
 {
@@ -168,8 +169,10 @@ class VipSubscriptionController extends Controller
             'extend_days' => 'required|integer|min:1',
         ]);
 
+        $newEndDate = Carbon::parse($subscription->end_date)->addDays($validated['extend_days']);
+
         $subscription->update([
-            'end_date' => $subscription->end_date->addDays($validated['extend_days']),
+            'end_date' => $newEndDate,
         ]);
 
         return back()->with('success', "VIP subscription extended by {$validated['extend_days']} days!");

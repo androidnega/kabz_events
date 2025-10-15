@@ -166,13 +166,17 @@
     </form>
 </x-vendor-layout>
 
+<script type="application/json" id="pricingData">
+    @json([
+        'homepage' => $pricing['homepage'] ?? 0,
+        'category' => $pricing['category'] ?? 0,
+        'search' => $pricing['search'] ?? 0
+    ])
+</script>
+
 <script>
     // Price calculation
-    const pricing = {
-        homepage: {{ $pricing['homepage'] }},
-        category: {{ $pricing['category'] }},
-        search: {{ $pricing['search'] }}
-    };
+    const pricing = JSON.parse(document.getElementById('pricingData').textContent);
 
     const placementSelect = document.getElementById('placement');
     const durationSelect = document.getElementById('duration');

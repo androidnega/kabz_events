@@ -50,6 +50,19 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/api/load-more-vendors', [HomeController::class, 'loadMoreVendors'])->name('home.load-more-vendors');
 Route::get('/search/advanced', [\App\Http\Controllers\AdvancedSearchController::class, 'index'])->name('search.advanced');
 
+// Site Mode Pages (Maintenance, Coming Soon, Update)
+Route::get('/maintenance', function() {
+    return view('site.maintenance');
+})->name('site.maintenance');
+
+Route::get('/coming-soon', function() {
+    return view('site.coming-soon');
+})->name('site.coming-soon');
+
+Route::get('/update', function() {
+    return view('site.update');
+})->name('site.update');
+
 // Location and Nearby Vendors (AJAX endpoints)
 Route::post('/api/location/update', [\App\Http\Controllers\AdvancedSearchController::class, 'updateLocation'])
     ->middleware('auth')
@@ -131,6 +144,9 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         
         Route::get('/settings/system', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'system'])->name('settings.system');
         Route::post('/settings/system', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateSystem'])->name('settings.system.update');
+        
+        Route::get('/settings/maintenance', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'maintenance'])->name('settings.maintenance');
+        Route::post('/settings/maintenance', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateMaintenance'])->name('settings.maintenance.update');
         
         // SMS Test Interface
         Route::get('/sms-test', [SMSTestController::class, 'index'])->name('sms.test');

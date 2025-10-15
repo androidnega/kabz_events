@@ -38,8 +38,8 @@ class FeaturedAd extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
         'price' => 'decimal:2',
         'views' => 'integer',
         'clicks' => 'integer',
