@@ -120,8 +120,3 @@
         </x-card>
     </div>
 </x-admin-layout>
-
-        </x-card>
-    </div>
-</x-admin-layout>
-
