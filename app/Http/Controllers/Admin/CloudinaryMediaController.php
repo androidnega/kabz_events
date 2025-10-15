@@ -117,7 +117,7 @@ class CloudinaryMediaController extends Controller
         }
 
         try {
-            $perPage = 24;
+            $perPage = 500; // Increased from 24 to show all files
             $search = $request->get('search');
             $sortBy = $request->get('sort', 'created_desc');
 
@@ -154,11 +154,20 @@ class CloudinaryMediaController extends Controller
 
             $response = $cloudinary->adminApi()->assets($options);
             
+            // Debug log for troubleshooting
+            Log::info('Cloudinary API Response', [
+                'folder' => $folder,
+                'total_count' => $response['total_count'] ?? 0,
+                'resources_count' => count($response['resources'] ?? []),
+                'options' => $options
+            ]);
+            
             $media = collect($response['resources'] ?? [])->map(function ($resource) use ($folder) {
                 return $this->enrichMediaData($resource, $folder);
             });
 
-            $totalCount = $response['total_count'] ?? 0;
+            // Use actual resources count instead of total_count (Cloudinary API sometimes returns 0)
+            $totalCount = count($response['resources'] ?? []);
 
             $folderDisplayNames = [
                 'vendor_sample_work' => 'Vendor Sample Work',
