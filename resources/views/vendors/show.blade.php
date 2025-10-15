@@ -154,30 +154,30 @@
                     <!-- Mobile Only: Action Buttons (After About Section) -->
                     <div class="lg:hidden">
                         <x-card>
-                            <div class="p-4">
-                                <div class="grid grid-cols-2 gap-3">
+                            <div class="p-3">
+                                <div class="grid grid-cols-2 gap-2">
                                     <!-- Call Button -->
-                                    <button @click="showContactSheet = true" class="flex flex-col items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2.5 rounded-xl transition-all active:scale-95">
-                                        <i class="fas fa-phone text-lg"></i>
-                                        <span class="text-xs font-medium">Call</span>
+                                    <button @click="showContactSheet = true" class="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-all active:scale-95">
+                                        <i class="fas fa-phone text-sm"></i>
+                                        <span class="text-sm font-medium">Call</span>
                                     </button>
 
                                     <!-- Request Callback Button -->
-                                    <button @click="showCallbackSheet = true" class="flex flex-col items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 text-white px-3 py-2.5 rounded-xl transition-all active:scale-95">
-                                        <i class="fas fa-phone-volume text-lg"></i>
-                                        <span class="text-xs font-medium">Request Callback</span>
+                                    <button @click="showCallbackSheet = true" class="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all active:scale-95">
+                                        <i class="fas fa-phone-volume text-sm"></i>
+                                        <span class="text-sm font-medium">Callback</span>
                                     </button>
 
                                     <!-- Message Button -->
                                     @auth
-                                    <button onclick="alert('Message feature coming soon')" class="flex flex-col items-center justify-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white px-3 py-2.5 rounded-xl transition-all active:scale-95">
-                                        <i class="fas fa-comment-dots text-lg"></i>
-                                        <span class="text-xs font-medium">Message</span>
+                                    <button onclick="alert('Message feature coming soon')" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all active:scale-95">
+                                        <i class="fas fa-comment-dots text-sm"></i>
+                                        <span class="text-sm font-medium">Message</span>
                                     </button>
                                     @else
-                                    <button @click="showLoginModal = true" class="flex flex-col items-center justify-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white px-3 py-2.5 rounded-xl transition-all active:scale-95">
-                                        <i class="fas fa-comment-dots text-lg"></i>
-                                        <span class="text-xs font-medium">Message</span>
+                                    <button @click="showLoginModal = true" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all active:scale-95">
+                                        <i class="fas fa-comment-dots text-sm"></i>
+                                        <span class="text-sm font-medium">Message</span>
                                     </button>
                                     @endauth
 
@@ -190,9 +190,9 @@
                                         }
                                         $whatsappNumber = ltrim($whatsappNumber, '+');
                                     @endphp
-                                    <a href="https://wa.me/{{ $whatsappNumber }}" target="_blank" class="flex flex-col items-center justify-center gap-1.5 bg-green-500 hover:bg-green-600 text-white px-3 py-2.5 rounded-xl transition-all active:scale-95">
-                                        <i class="fab fa-whatsapp text-lg"></i>
-                                        <span class="text-xs font-medium">WhatsApp</span>
+                                    <a href="https://wa.me/{{ $whatsappNumber }}" target="_blank" class="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all active:scale-95">
+                                        <i class="fab fa-whatsapp text-sm"></i>
+                                        <span class="text-sm font-medium">WhatsApp</span>
                                     </a>
                                     @endif
                                 </div>
