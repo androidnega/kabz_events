@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maintenance Mode - {{ config('app.name') }}</title>
     <style>
+        @php
+            $primaryColor = \App\Services\SettingsService::get('primary_color', '#9333ea');
+        @endphp
+
         * {
             margin: 0;
             padding: 0;
@@ -41,7 +45,7 @@
             font-size: 42px;
             margin-bottom: 20px;
             font-weight: 700;
-            color: #667eea;
+            color: {{ $primaryColor }};
         }
 
         p {

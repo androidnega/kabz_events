@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coming Soon - {{ config('app.name') }}</title>
     <style>
+        @php
+            $primaryColor = \App\Services\SettingsService::get('primary_color', '#9333ea');
+        @endphp
+
         * {
             margin: 0;
             padding: 0;
@@ -51,7 +55,7 @@
             font-size: 42px;
             margin-bottom: 20px;
             font-weight: 700;
-            color: #f093fb;
+            color: {{ $primaryColor }};
         }
 
         p {
@@ -81,7 +85,7 @@
             font-size: 32px;
             font-weight: 700;
             display: block;
-            color: #f093fb;
+            color: {{ $primaryColor }};
         }
 
         .countdown-label {

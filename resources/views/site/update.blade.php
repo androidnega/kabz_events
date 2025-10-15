@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Update - {{ config('app.name') }}</title>
     <style>
+        @php
+            $primaryColor = \App\Services\SettingsService::get('primary_color', '#9333ea');
+        @endphp
+
         * {
             margin: 0;
             padding: 0;
@@ -51,7 +55,7 @@
             font-size: 42px;
             margin-bottom: 20px;
             font-weight: 700;
-            color: #4facfe;
+            color: {{ $primaryColor }};
         }
 
         p {
@@ -79,7 +83,7 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            background: {{ $primaryColor }};
             width: 0%;
             animation: progress 3s ease-in-out infinite;
         }
