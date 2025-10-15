@@ -66,6 +66,28 @@
                 <span x-show="sidebarOpen" x-transition class="ml-3 font-medium whitespace-nowrap">Messages</span>
             </a>
 
+            <!-- Callback Requests -->
+            <a href="{{ route('vendor.callbacks') }}" 
+               class="flex items-center px-3 py-3 rounded-lg transition {{ request()->routeIs('vendor.callbacks*') ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-50' }}"
+               :class="!sidebarOpen ? 'justify-center' : ''"
+               :title="!sidebarOpen ? 'Callback Requests' : ''">
+                <i class="fas fa-phone-volume text-lg w-6 relative">
+                    @php
+                        $pendingCallbacks = $vendor->callbackRequests()->where('status', 'pending')->count();
+                    @endphp
+                    @if($pendingCallbacks > 0)
+                        <span x-show="!sidebarOpen" class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center">
+                            <span class="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping"></span>
+                            <span class="relative inline-flex rounded-full h-5 w-5 bg-green-500 text-white text-xs items-center justify-center font-bold">{{ $pendingCallbacks }}</span>
+                        </span>
+                    @endif
+                </i>
+                <span x-show="sidebarOpen" x-transition class="ml-3 font-medium whitespace-nowrap">Callbacks</span>
+                @if($pendingCallbacks > 0)
+                    <span x-show="sidebarOpen" x-transition class="ml-auto bg-green-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">{{ $pendingCallbacks }}</span>
+                @endif
+            </a>
+
             <!-- Divider -->
             <div x-show="sidebarOpen" x-transition class="border-t border-gray-200 my-4"></div>
             <div x-show="!sidebarOpen" class="border-t border-gray-200 my-4"></div>

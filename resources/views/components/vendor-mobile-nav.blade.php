@@ -106,6 +106,18 @@
                 <span class="ml-3 font-medium">Sample Work</span>
             </a>
 
+            <a href="{{ route('vendor.callbacks') }}" 
+               class="flex items-center p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('vendor.callbacks*') ? 'bg-purple-50 text-purple-700' : 'text-gray-700' }}">
+                <i class="fas fa-phone-volume w-6"></i>
+                <span class="ml-3 font-medium">Callback Requests</span>
+                @php
+                    $pendingCallbacks = $vendor->callbackRequests()->where('status', 'pending')->count();
+                @endphp
+                @if($pendingCallbacks > 0)
+                    <span class="ml-auto bg-green-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">{{ $pendingCallbacks }}</span>
+                @endif
+            </a>
+
             <a href="{{ route('vendor.profile') }}" 
                class="flex items-center p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('vendor.profile') ? 'bg-purple-50 text-purple-700' : 'text-gray-700' }}">
                 <i class="fas fa-user-circle w-6"></i>

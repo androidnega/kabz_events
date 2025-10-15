@@ -199,13 +199,14 @@
                                 <!-- Message Input -->
                                 <div class="mb-3">
                                     <textarea 
+                                        @click="showChatSheet = true"
                                         x-model="chatMessage"
                                         rows="2"
                                         placeholder="Write your message here..."
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm resize-none placeholder:text-gray-400 leading-relaxed"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm resize-none placeholder:text-gray-400 leading-relaxed cursor-pointer"
                                         style="padding-top: 0.5rem; padding-bottom: 0.5rem;"
                                     ></textarea>
-                                </div>
+                                    </div>
 
                                 <!-- Start Chat Button -->
                                 <button 
