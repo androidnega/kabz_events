@@ -82,6 +82,9 @@ Route::post('/signup/vendor', [PublicVendorController::class, 'store'])->name('v
 Route::get('/vendors', [VendorProfileController::class, 'index'])->name('vendors.index');
 Route::get('/vendors/{slug}', [VendorProfileController::class, 'show'])->name('vendors.show');
 
+// Callback Request (Public - no auth required)
+Route::post('/vendors/{vendor}/callback-request', [\App\Http\Controllers\Vendor\CallbackRequestController::class, 'store'])->name('vendor.callback.request');
+
 // Log vendor view for recommendations
 Route::post('/vendors/{vendor}/log-view', function (\App\Models\Vendor $vendor) {
     $user = auth()->user();
@@ -273,6 +276,11 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::get('/business-profile', [\App\Http\Controllers\Vendor\ProfileController::class, 'index'])->name('profile');
         Route::get('/business-profile/edit', [\App\Http\Controllers\Vendor\ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/business-profile', [\App\Http\Controllers\Vendor\ProfileController::class, 'update'])->name('profile.update');
+        
+        // Callback Requests Management
+        Route::get('/callbacks', [\App\Http\Controllers\Vendor\CallbackRequestController::class, 'index'])->name('callbacks');
+        Route::post('/callbacks/{callbackRequest}/complete', [\App\Http\Controllers\Vendor\CallbackRequestController::class, 'complete'])->name('callbacks.complete');
+        Route::post('/callbacks/{callbackRequest}/cancel', [\App\Http\Controllers\Vendor\CallbackRequestController::class, 'cancel'])->name('callbacks.cancel');
         
         // Service Management (CRUD)
         Route::resource('services', ServiceController::class);

@@ -26,7 +26,16 @@
     </div>
 
     <!-- Main Content -->
-    <div class="py-4 md:py-12 px-2 md:px-4" x-data="{ showLoginModal: false }">
+    <div class="py-4 md:py-12 px-2 md:px-4" x-data="{ 
+        showLoginModal: false, 
+        showContactSheet: false,
+        showCallbackSheet: false,
+        callbackForm: {
+            name: '',
+            phone: ''
+        },
+        callbackSubmitting: false
+    }">
         <div class="container mx-auto">
             <!-- Vendor Name Header -->
             <div class="mb-4 md:mb-8 px-2 md:px-0">
@@ -79,14 +88,14 @@
                                 </div>
                             </div>
 
-                            <!-- Thumbnail Gallery -->
+                            <!-- Thumbnail Gallery - Hidden on Mobile, Desktop Only -->
                             @if(count($vendor->sample_work_images) > 1)
-                            <div class="overflow-x-auto -mx-6 px-6 md:mx-0 md:px-0">
-                                <div class="flex gap-2 md:gap-3 min-w-max md:min-w-0">
+                            <div class="hidden md:block overflow-x-auto">
+                                <div class="flex gap-3">
                                     @foreach($vendor->sample_work_images as $index => $image)
                                         @if($index < 5)
                                         <div class="flex-shrink-0 relative cursor-pointer group thumbnail-item" data-image="{{ asset('storage/' . $image) }}" data-index="{{ $index + 1 }}">
-                                            <div class="w-20 h-14 md:w-24 md:h-16 overflow-hidden rounded-lg border-2 border-gray-300 group-hover:border-primary transition-all duration-200">
+                                            <div class="w-24 h-16 overflow-hidden rounded-lg border-2 border-gray-300 group-hover:border-primary transition-all duration-200">
                                                 <img src="{{ asset('storage/' . $image) }}" 
                                                      alt="Sample work {{ $index + 1 }}" 
                                                      class="w-full h-full object-cover">
@@ -97,8 +106,8 @@
                                     
                                     @if(count($vendor->sample_work_images) > 5)
                                     <div class="flex-shrink-0 relative">
-                                        <div class="w-20 h-14 md:w-24 md:h-16 bg-blue-600 rounded-lg border-2 border-gray-300 flex items-center justify-center">
-                                            <span class="text-white text-xs md:text-sm font-medium">+{{ count($vendor->sample_work_images) - 5 }}</span>
+                                        <div class="w-24 h-16 bg-blue-600 rounded-lg border-2 border-gray-300 flex items-center justify-center">
+                                            <span class="text-white text-sm font-medium">+{{ count($vendor->sample_work_images) - 5 }}</span>
                                         </div>
                                     </div>
                                     @endif
@@ -139,121 +148,51 @@
                         </div>
                     </x-card>
 
-                    <!-- Mobile Only: Contact & Business Info (After About Section) -->
-                    <div class="lg:hidden space-y-4">
-                        <!-- Contact Information -->
+                    <!-- Mobile Only: Action Buttons (After About Section) -->
+                    <div class="lg:hidden">
                         <x-card>
                             <div class="p-4">
-                                <h3 class="text-lg font-bold text-gray-900 mb-4">Contact Information</h3>
-                                <div class="space-y-3 text-sm">
-                                    @if($vendor->phone)
-                                    <div class="flex items-start">
-                                        <i class="fas fa-phone text-primary mr-3 mt-1"></i>
-                                        <div>
-                                            <p class="text-xs text-gray-500 mb-1">Phone</p>
-                                            <a href="tel:{{ $vendor->phone }}" class="text-gray-900 font-medium hover:text-primary">{{ $vendor->phone }}</a>
-                                        </div>
-                                    </div>
-                                    @endif
+                                <div class="grid grid-cols-2 gap-3">
+                                    <!-- Call Button -->
+                                    <button @click="showContactSheet = true" class="flex flex-col items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-4 rounded-xl transition-all active:scale-95">
+                                        <i class="fas fa-phone text-xl"></i>
+                                        <span class="text-sm font-medium">Call</span>
+                                    </button>
 
+                                    <!-- Request Callback Button -->
+                                    <button @click="showCallbackSheet = true" class="flex flex-col items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-4 rounded-xl transition-all active:scale-95">
+                                        <i class="fas fa-phone-volume text-xl"></i>
+                                        <span class="text-sm font-medium">Request Callback</span>
+                                    </button>
+
+                                    <!-- Message Button -->
+                                    @auth
+                                    <button onclick="alert('Message feature coming soon')" class="flex flex-col items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-4 rounded-xl transition-all active:scale-95">
+                                        <i class="fas fa-comment-dots text-xl"></i>
+                                        <span class="text-sm font-medium">Message</span>
+                                    </button>
+                                    @else
+                                    <button @click="showLoginModal = true" class="flex flex-col items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-4 rounded-xl transition-all active:scale-95">
+                                        <i class="fas fa-comment-dots text-xl"></i>
+                                        <span class="text-sm font-medium">Message</span>
+                                    </button>
+                                    @endauth
+
+                                    <!-- WhatsApp Button -->
                                     @if($vendor->whatsapp)
-                                    <div class="flex items-start">
-                                        <i class="fab fa-whatsapp text-green-600 mr-3 mt-1"></i>
-                                        <div>
-                                            <p class="text-xs text-gray-500 mb-1">WhatsApp</p>
-                                            <p class="text-gray-900 font-medium">{{ $vendor->whatsapp }}</p>
-                                        </div>
-                                    </div>
-                                    @endif
-
-                                    @if($vendor->email)
-                                    <div class="flex items-start">
-                                        <i class="fas fa-envelope text-primary mr-3 mt-1"></i>
-                                        <div>
-                                            <p class="text-xs text-gray-500 mb-1">Email</p>
-                                            <a href="mailto:{{ $vendor->email }}" class="text-gray-900 font-medium hover:text-primary break-all">{{ $vendor->email }}</a>
-                                        </div>
-                                    </div>
-                                    @endif
-
-                                    @if($vendor->address)
-                                    <div class="flex items-start">
-                                        <i class="fas fa-map-marker-alt text-primary mr-3 mt-1"></i>
-                                        <div>
-                                            <p class="text-xs text-gray-500 mb-1">Location</p>
-                                            <p class="text-gray-900 font-medium">{{ $vendor->address }}</p>
-                                        </div>
-                                    </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </x-card>
-
-                        <!-- Social Media Links -->
-                        @if($vendor->facebook || $vendor->instagram || $vendor->twitter || $vendor->website)
-                        <x-card>
-                            <div class="p-4">
-                                <h3 class="text-lg font-bold text-gray-900 mb-4">Connect With Us</h3>
-                                <div class="flex flex-wrap gap-3">
-                                    @if($vendor->facebook)
-                                    <a href="{{ $vendor->facebook }}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
-                                        <i class="fab fa-facebook-f"></i>
-                                        <span>Facebook</span>
-                                    </a>
-                                    @endif
-
-                                    @if($vendor->instagram)
-                                    <a href="{{ $vendor->instagram }}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition text-sm">
-                                        <i class="fab fa-instagram"></i>
-                                        <span>Instagram</span>
-                                    </a>
-                                    @endif
-
-                                    @if($vendor->twitter)
-                                    <a href="{{ $vendor->twitter }}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition text-sm">
-                                        <i class="fab fa-twitter"></i>
-                                        <span>Twitter</span>
-                                    </a>
-                                    @endif
-
-                                    @if($vendor->website)
-                                    <a href="{{ $vendor->website }}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition text-sm">
-                                        <i class="fas fa-globe"></i>
-                                        <span>Website</span>
+                                    @php
+                                        $whatsappNumber = preg_replace('/[^0-9+]/', '', $vendor->whatsapp);
+                                        if (str_starts_with($whatsappNumber, '0')) {
+                                            $whatsappNumber = '233' . substr($whatsappNumber, 1);
+                                        }
+                                        $whatsappNumber = ltrim($whatsappNumber, '+');
+                                    @endphp
+                                    <a href="https://wa.me/{{ $whatsappNumber }}" target="_blank" class="flex flex-col items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-4 rounded-xl transition-all active:scale-95">
+                                        <i class="fab fa-whatsapp text-xl"></i>
+                                        <span class="text-sm font-medium">WhatsApp</span>
                                     </a>
                                     @endif
                                 </div>
-                            </div>
-                        </x-card>
-                        @endif
-
-                        <!-- Business Stats -->
-                        <x-card>
-                            <div class="p-4">
-                                <h3 class="text-lg font-bold text-gray-900 mb-4">Business Info</h3>
-                                <div class="grid grid-cols-3 gap-4 text-center">
-                                    <div>
-                                        <p class="text-2xl font-bold text-primary">{{ $vendor->services->count() }}</p>
-                                        <p class="text-xs text-gray-500 mt-1">Services</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-2xl font-bold text-accent">{{ number_format($averageRating, 1) }}</p>
-                                        <p class="text-xs text-gray-500 mt-1">Rating</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-2xl font-bold text-secondary">{{ $totalReviews }}</p>
-                                        <p class="text-xs text-gray-500 mt-1">Reviews</p>
-                                    </div>
-                                </div>
-                                
-                                @if($vendor->created_at)
-                                <div class="mt-4 pt-4 border-t border-gray-200">
-                                    <div class="flex items-center text-sm text-gray-600">
-                                        <i class="fas fa-calendar-check text-primary mr-2"></i>
-                                        <span>Member Since {{ $vendor->created_at->format('F Y') }}</span>
-                                    </div>
-                                </div>
-                                @endif
                             </div>
                         </x-card>
                     </div>
@@ -570,6 +509,224 @@
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+
+        {{-- Contact Bottom Sheet (Mobile Only) --}}
+        <div x-show="showContactSheet" 
+             x-cloak
+             @click="showContactSheet = false"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" 
+             style="display: none;">
+          
+          <!-- Bottom Sheet Content -->
+          <div @click.stop
+               x-transition:enter="transition ease-out duration-300 transform"
+               x-transition:enter-start="translate-y-full"
+               x-transition:enter-end="translate-y-0"
+               x-transition:leave="transition ease-in duration-200 transform"
+               x-transition:leave-start="translate-y-0"
+               x-transition:leave-end="translate-y-full"
+               class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl max-h-[80vh] overflow-y-auto">
+            
+            <!-- Handle Bar -->
+            <div class="flex justify-center pt-3 pb-2">
+              <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+            </div>
+
+            <!-- Header -->
+            <div class="px-6 py-4 border-b border-gray-200">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xl font-bold text-gray-900">Contact Vendor</h3>
+                <button @click="showContactSheet = false" class="text-gray-400 hover:text-gray-600">
+                  <i class="fas fa-times text-xl"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Contact Options -->
+            <div class="p-6 space-y-4">
+              @if($vendor->phone)
+              <a href="tel:{{ $vendor->phone }}" class="flex items-center gap-4 p-4 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition active:scale-95">
+                <div class="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i class="fas fa-phone text-white"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm text-gray-500">Phone</p>
+                  <p class="text-lg font-semibold text-gray-900">{{ $vendor->phone }}</p>
+                </div>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+              </a>
+              @endif
+
+              @if($vendor->whatsapp)
+              @php
+                $whatsappNumber = preg_replace('/[^0-9+]/', '', $vendor->whatsapp);
+                if (str_starts_with($whatsappNumber, '0')) {
+                    $whatsappNumber = '233' . substr($whatsappNumber, 1);
+                }
+                $whatsappNumber = ltrim($whatsappNumber, '+');
+              @endphp
+              <a href="https://wa.me/{{ $whatsappNumber }}" target="_blank" class="flex items-center gap-4 p-4 bg-green-50 hover:bg-green-100 rounded-xl transition active:scale-95">
+                <div class="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i class="fab fa-whatsapp text-white text-xl"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm text-gray-500">WhatsApp</p>
+                  <p class="text-lg font-semibold text-gray-900">{{ $vendor->whatsapp }}</p>
+                </div>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+              </a>
+              @endif
+
+              @if($vendor->email)
+              <a href="mailto:{{ $vendor->email }}" class="flex items-center gap-4 p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition active:scale-95">
+                <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i class="fas fa-envelope text-white"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm text-gray-500">Email</p>
+                  <p class="text-base font-semibold text-gray-900 break-all">{{ $vendor->email }}</p>
+                </div>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+              </a>
+              @endif
+
+              @if($vendor->address)
+              <div class="p-4 bg-gray-50 rounded-xl">
+                <div class="flex items-start gap-4">
+                  <div class="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-map-marker-alt text-white"></i>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-sm text-gray-500 mb-1">Location</p>
+                    <p class="text-base font-medium text-gray-900">{{ $vendor->address }}</p>
+                  </div>
+                </div>
+              </div>
+              @endif
+            </div>
+          </div>
+        </div>
+
+        {{-- Callback Request Bottom Sheet (Mobile Only) --}}
+        <div x-show="showCallbackSheet" 
+             x-cloak
+             @click="showCallbackSheet = false"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" 
+             style="display: none;">
+          
+          <!-- Bottom Sheet Content -->
+          <div @click.stop
+               x-transition:enter="transition ease-out duration-300 transform"
+               x-transition:enter-start="translate-y-full"
+               x-transition:enter-end="translate-y-0"
+               x-transition:leave="transition ease-in duration-200 transform"
+               x-transition:leave-start="translate-y-0"
+               x-transition:leave-end="translate-y-full"
+               class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl">
+            
+            <!-- Handle Bar -->
+            <div class="flex justify-center pt-3 pb-2">
+              <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+            </div>
+
+            <!-- Header -->
+            <div class="px-6 py-4 border-b border-gray-200">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-xl font-bold text-gray-900">Request Callback</h3>
+                  <p class="text-sm text-gray-500 mt-1">{{ $vendor->business_name }} will call you back</p>
+                </div>
+                <button @click="showCallbackSheet = false" class="text-gray-400 hover:text-gray-600">
+                  <i class="fas fa-times text-xl"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Callback Form -->
+            <form @submit.prevent="
+              callbackSubmitting = true;
+              fetch('{{ route('vendor.callback.request', $vendor->id) }}', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(callbackForm)
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  alert('Callback request sent successfully!');
+                  showCallbackSheet = false;
+                  callbackForm.name = '';
+                  callbackForm.phone = '';
+                } else {
+                  alert(data.message || 'Something went wrong');
+                }
+                callbackSubmitting = false;
+              })
+              .catch(error => {
+                alert('Error sending request. Please try again.');
+                callbackSubmitting = false;
+              });
+            " class="p-6 space-y-4">
+              
+              <!-- Name Field -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Your Name</label>
+                <input 
+                  type="text" 
+                  x-model="callbackForm.name"
+                  required
+                  placeholder="Enter your full name"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent text-base">
+              </div>
+
+              <!-- Phone Field -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Your Phone Number</label>
+                <input 
+                  type="tel" 
+                  x-model="callbackForm.phone"
+                  required
+                  placeholder="e.g., 0244123456"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent text-base">
+              </div>
+
+              <!-- Info Text -->
+              <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-info-circle text-green-600 mt-0.5"></i>
+                  <p class="text-sm text-green-800">The vendor will receive your contact details and call you back as soon as possible.</p>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <button 
+                type="submit"
+                :disabled="callbackSubmitting"
+                class="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-6 py-4 rounded-xl font-semibold text-base transition active:scale-95">
+                <span x-show="!callbackSubmitting">Request Callback</span>
+                <span x-show="callbackSubmitting" class="flex items-center justify-center gap-2">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  Sending...
+                </span>
+              </button>
+            </form>
           </div>
         </div>
     </div>

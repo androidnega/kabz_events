@@ -104,6 +104,14 @@ class Vendor extends Model
     }
 
     /**
+     * Get the callback requests for the vendor.
+     */
+    public function callbackRequests(): HasMany
+    {
+        return $this->hasMany(CallbackRequest::class);
+    }
+
+    /**
      * Get the verification request for the vendor.
      */
     public function verificationRequest(): HasOne
