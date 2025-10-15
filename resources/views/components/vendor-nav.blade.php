@@ -116,6 +116,15 @@
                 <i class="fas fa-crown text-lg w-6"></i>
                 <span x-show="sidebarOpen" x-transition class="ml-3 font-medium whitespace-nowrap">Subscription</span>
             </a>
+
+            <!-- VIP Plans -->
+            <a href="{{ route('vendor.vip-subscriptions.index') }}" 
+               class="flex items-center px-3 py-3 rounded-lg transition {{ request()->routeIs('vendor.vip-subscriptions.*') ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-50' }}"
+               :class="!sidebarOpen ? 'justify-center' : ''"
+               :title="!sidebarOpen ? 'VIP Plans' : ''">
+                <i class="fas fa-gem text-lg w-6"></i>
+                <span x-show="sidebarOpen" x-transition class="ml-3 font-medium whitespace-nowrap">VIP Plans</span>
+            </a>
         </nav>
 
         <!-- Verification Status Card (collapsed sidebar shows icon only) -->

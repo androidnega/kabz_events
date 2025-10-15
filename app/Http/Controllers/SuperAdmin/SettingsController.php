@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Services\SettingsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SettingsController extends Controller
 {
@@ -177,12 +178,10 @@ class SettingsController extends Controller
 
             return back()->with('success', '✅ Test email sent successfully to ' . $request->test_email . '! Please check your inbox (and spam folder).');
             
-        } catch (\Swift_TransportException $e) {
-            return back()->with('error', '❌ SMTP Connection Error: ' . $this->getSmtpErrorMessage($e->getMessage()));
         } catch (\Symfony\Component\Mailer\Exception\TransportException $e) {
             return back()->with('error', '❌ SMTP Connection Error: ' . $this->getSmtpErrorMessage($e->getMessage()));
         } catch (\Exception $e) {
-            \Log::error('SMTP Test Failed: ' . $e->getMessage());
+            Log::error('SMTP Test Failed: ' . $e->getMessage());
             return back()->with('error', '❌ Failed to send test email: ' . $this->getSmtpErrorMessage($e->getMessage()));
         } finally {
             // Restore original timeout if it was changed

@@ -132,6 +132,12 @@
                 <span class="ml-3 font-medium">Subscription</span>
             </a>
 
+            <a href="{{ route('vendor.vip-subscriptions.index') }}" 
+               class="flex items-center p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('vendor.vip-subscriptions.*') ? 'bg-purple-50 text-purple-700' : 'text-gray-700' }}">
+                <i class="fas fa-gem w-6"></i>
+                <span class="ml-3 font-medium">VIP Plans</span>
+            </a>
+
             <div class="border-t border-gray-200 my-4"></div>
 
             <a href="{{ route('vendors.show', $vendor->slug) }}" 
