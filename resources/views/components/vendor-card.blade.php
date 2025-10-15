@@ -29,21 +29,25 @@
 
         {{-- Vendor Details --}}
         <div class="p-3 md:p-4">
-            {{-- Business Name with Badges --}}
+            {{-- VIP Badge (Prominent at Top) --}}
+            @if($vendor->hasVipBadge())
+                <div class="mb-2">
+                    <x-vip-badge :tier="$vendor->getVipTier()" size="sm" />
+                </div>
+            @endif
+
+            {{-- Business Name with Verified Badge --}}
             <div class="flex items-start justify-between mb-2">
                 <h3 class="text-sm md:text-base font-semibold text-gray-800 group-hover:text-purple-600 transition-colors line-clamp-2 flex-1">
                     {{ $vendor->business_name }}
                 </h3>
-                <div class="flex items-center gap-1 ml-1 flex-shrink-0">
-                    @if($vendor->hasVipBadge())
-                        <span class="text-purple-600" title="VIP Member">👑</span>
-                    @endif
-                    @if($vendor->is_verified)
-                        <svg class="w-4 h-4 md:w-5 md:h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                @if($vendor->is_verified)
+                    <div class="flex-shrink-0 ml-1">
+                        <svg class="w-4 h-4 md:w-5 md:h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20" title="Verified">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
-                    @endif
-                </div>
+                    </div>
+                @endif
             </div>
 
             {{-- Rating --}}

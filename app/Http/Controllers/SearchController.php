@@ -73,7 +73,7 @@ class SearchController extends Controller
             $query->where('rating_cached', '>=', $minRating);
         }
 
-        // Priority Sorting: Subscribed > Verified > Unverified
+        // Priority Sorting: VIP (by tier) > Subscribed > Verified > Unverified
         $query->leftJoin('vendor_subscriptions', function ($join) {
             $join->on('vendors.id', '=', 'vendor_subscriptions.vendor_id')
                  ->where('vendor_subscriptions.status', '=', 'active')
@@ -82,8 +82,16 @@ class SearchController extends Controller
                        ->orWhere('vendor_subscriptions.ends_at', '>=', now());
                  });
         })
+        ->leftJoin('vip_subscriptions', function ($join) {
+            $join->on('vendors.id', '=', 'vip_subscriptions.vendor_id')
+                 ->where('vip_subscriptions.status', '=', 'active')
+                 ->where('vip_subscriptions.start_date', '<=', now())
+                 ->where('vip_subscriptions.end_date', '>=', now());
+        })
+        ->leftJoin('vip_plans', 'vip_subscriptions.vip_plan_id', '=', 'vip_plans.id')
         ->selectRaw('vendors.*, 
             CASE 
+                WHEN vip_plans.priority_level IS NOT NULL THEN (10 + vip_plans.priority_level)
                 WHEN vendor_subscriptions.id IS NOT NULL THEN 3
                 WHEN vendors.is_verified = 1 THEN 2
                 ELSE 1
@@ -182,7 +190,7 @@ class SearchController extends Controller
                 ->havingRaw("distance <= ?", [$radius]);
         }
 
-        // Priority Sorting: Subscribed > Verified > Unverified
+        // Priority Sorting: VIP (by tier) > Subscribed > Verified > Unverified
         $query->leftJoin('vendor_subscriptions', function ($join) {
             $join->on('vendors.id', '=', 'vendor_subscriptions.vendor_id')
                  ->where('vendor_subscriptions.status', '=', 'active')
@@ -191,8 +199,16 @@ class SearchController extends Controller
                        ->orWhere('vendor_subscriptions.ends_at', '>=', now());
                  });
         })
+        ->leftJoin('vip_subscriptions', function ($join) {
+            $join->on('vendors.id', '=', 'vip_subscriptions.vendor_id')
+                 ->where('vip_subscriptions.status', '=', 'active')
+                 ->where('vip_subscriptions.start_date', '<=', now())
+                 ->where('vip_subscriptions.end_date', '>=', now());
+        })
+        ->leftJoin('vip_plans', 'vip_subscriptions.vip_plan_id', '=', 'vip_plans.id')
         ->selectRaw('vendors.*, 
             CASE 
+                WHEN vip_plans.priority_level IS NOT NULL THEN (10 + vip_plans.priority_level)
                 WHEN vendor_subscriptions.id IS NOT NULL THEN 3
                 WHEN vendors.is_verified = 1 THEN 2
                 ELSE 1

@@ -187,6 +187,68 @@ class Vendor extends Model
     }
 
     /**
+     * Get VIP tier name (Bronze, Silver, Gold, Platinum).
+     */
+    public function getVipTier(): ?string
+    {
+        $subscription = $this->activeVipSubscription();
+        return $subscription?->vipPlan?->name;
+    }
+
+    /**
+     * Get VIP priority level for sorting (higher is better).
+     * Platinum = 4, Gold = 3, Silver = 2, Bronze = 1, None = 0
+     */
+    public function getVipPriority(): int
+    {
+        $subscription = $this->activeVipSubscription();
+        return $subscription?->vipPlan?->priority_level ?? 0;
+    }
+
+    /**
+     * Check if vendor has priority status (verified OR VIP).
+     */
+    public function hasPriority(): bool
+    {
+        return $this->is_verified || $this->hasActiveVip();
+    }
+
+    /**
+     * Check if vendor has active VIP (alias for hasVipBadge).
+     */
+    public function hasActiveVip(): bool
+    {
+        return $this->hasVipBadge();
+    }
+
+    /**
+     * Get combined ranking score for prioritization.
+     * Factors: VIP priority (40%), Verification (30%), Rating (20%), Reviews (10%)
+     */
+    public function getRankingScore(): float
+    {
+        $score = 0;
+        
+        // VIP Priority: 0-40 points (Platinum=40, Gold=30, Silver=20, Bronze=10)
+        $vipPriority = $this->getVipPriority();
+        $score += ($vipPriority * 10); // 4*10=40, 3*10=30, etc.
+        
+        // Verification: 30 points
+        if ($this->is_verified) {
+            $score += 30;
+        }
+        
+        // Rating: 0-20 points (5.0 rating = 20 points)
+        $score += ($this->rating_cached ?? 0) * 4; // 5.0 * 4 = 20
+        
+        // Reviews count: 0-10 points (capped at 10)
+        $reviewCount = $this->reviews()->count();
+        $score += min($reviewCount, 10);
+        
+        return $score;
+    }
+
+    /**
      * Get vendor's priority level for search ranking.
      */
     public function getPriorityLevel(): int
