@@ -153,6 +153,12 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::get('/settings/maintenance', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'maintenance'])->name('settings.maintenance');
         Route::post('/settings/maintenance', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateMaintenance'])->name('settings.maintenance.update');
         
+        // Payment & Subscription Settings (Super Admin Only - Critical System Settings)
+        Route::get('/settings/subscription-approval', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'subscriptionSettings'])->name('settings.subscriptions');
+        Route::post('/settings/subscription-approval', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updateSubscriptionSettings'])->name('settings.subscriptions.update');
+        Route::get('/settings/payment-gateway', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'paymentSettings'])->name('settings.payments');
+        Route::post('/settings/payment-gateway', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updatePaymentSettings'])->name('settings.payments.update');
+        
         // SMS Test Interface
         Route::get('/sms-test', [SMSTestController::class, 'index'])->name('sms.test');
         Route::post('/sms-test', [SMSTestController::class, 'send'])->name('sms.test.send');
@@ -173,23 +179,15 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 
     // Admin Routes (also accessible to super_admin)
     Route::middleware(['role:admin|super_admin'])->name('admin.')->group(function () {
-        // Subscription Approvals
+        // Subscription Approvals (Both Admin & Super Admin can approve)
         Route::get('/subscriptions/pending', [\App\Http\Controllers\Admin\SubscriptionApprovalController::class, 'pendingSubscriptions'])->name('subscriptions.pending');
         Route::post('/subscriptions/{id}/approve', [\App\Http\Controllers\Admin\SubscriptionApprovalController::class, 'approveSubscription'])->name('subscriptions.approve');
         Route::post('/subscriptions/{id}/reject', [\App\Http\Controllers\Admin\SubscriptionApprovalController::class, 'rejectSubscription'])->name('subscriptions.reject');
         
-        // Featured Ad Approvals
+        // Featured Ad Approvals (Both Admin & Super Admin can approve)
         Route::get('/featured-ads/pending', [\App\Http\Controllers\Admin\SubscriptionApprovalController::class, 'pendingFeaturedAds'])->name('featured-ads.pending');
         Route::post('/featured-ads/{id}/approve', [\App\Http\Controllers\Admin\SubscriptionApprovalController::class, 'approveFeaturedAd'])->name('featured-ads.approve');
         Route::post('/featured-ads/{id}/reject', [\App\Http\Controllers\Admin\SubscriptionApprovalController::class, 'rejectFeaturedAd'])->name('featured-ads.reject');
-        
-        // Admin Settings
-        Route::get('/settings', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'index'])->name('settings.index');
-        Route::post('/settings', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'update'])->name('settings.update');
-        Route::get('/settings/subscriptions', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'subscriptionSettings'])->name('settings.subscriptions');
-        Route::post('/settings/subscriptions', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updateSubscriptionSettings'])->name('settings.subscriptions.update');
-        Route::get('/settings/payments', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'paymentSettings'])->name('settings.payments');
-        Route::post('/settings/payments', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updatePaymentSettings'])->name('settings.payments.update');
         
         // Cloudinary Media Management
         Route::get('/media', [\App\Http\Controllers\Admin\CloudinaryMediaController::class, 'index'])->name('media.index');
