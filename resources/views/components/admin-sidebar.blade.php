@@ -106,6 +106,36 @@
             </a>
         </div>
 
+        <!-- Monetization Section -->
+        <div class="mt-6">
+            <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Monetization</h3>
+            <div class="space-y-1">
+                <!-- Featured Ads -->
+                <a href="{{ route('admin.featured-ads.index') }}" 
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
+                          {{ request()->routeIs('admin.featured-ads.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+                    <i class="fas fa-bullhorn text-lg w-5"></i>
+                    <span>Featured Ads</span>
+                </a>
+
+                <!-- VIP Plans -->
+                <a href="{{ route('admin.vip-plans.index') }}" 
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
+                          {{ request()->routeIs('admin.vip-plans.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+                    <i class="fas fa-crown text-lg w-5"></i>
+                    <span>VIP Plans</span>
+                </a>
+
+                <!-- VIP Subscriptions -->
+                <a href="{{ route('admin.vip-subscriptions.index') }}" 
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
+                          {{ request()->routeIs('admin.vip-subscriptions.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+                    <i class="fas fa-gem text-lg w-5"></i>
+                    <span>VIP Subscriptions</span>
+                </a>
+            </div>
+        </div>
+
         <!-- System Section -->
         <div class="mt-6">
             <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">System</h3>
