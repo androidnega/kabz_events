@@ -202,9 +202,9 @@
                                         x-model="chatMessage"
                                         rows="2"
                                         placeholder="Write your message here..."
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm resize-none"
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm resize-none placeholder:text-gray-400"
                                     ></textarea>
-                                    </div>
+                                </div>
 
                                 <!-- Start Chat Button -->
                                 <button 
@@ -718,17 +718,36 @@
             <div class="p-4 bg-white border-t border-gray-200 flex-shrink-0">
               <form @submit.prevent="
                 window.location.href = '{{ route('client.messages.conversation', $vendor->id) }}?message=' + encodeURIComponent(chatMessage);
-              " class="flex gap-2">
+              " class="flex items-end gap-2">
+                <!-- Image Icon Button -->
+                <button 
+                  type="button"
+                  @click="alert('Image upload available in full chat')"
+                  class="flex-shrink-0 w-9 h-9 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-full flex items-center justify-center transition-all active:scale-95">
+                  <i class="fas fa-image text-lg"></i>
+                </button>
+
+                <!-- Message Input -->
                 <textarea 
                   x-model="chatMessage"
                   rows="1"
                   placeholder="Type your message..."
-                  class="flex-1 px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm resize-none"
+                  class="flex-1 px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm resize-none placeholder:text-gray-400"
                   @keydown.enter.prevent="$el.form.requestSubmit()"
                 ></textarea>
+
+                <!-- Voice Icon Button -->
+                <button 
+                  type="button"
+                  @click="alert('Voice message available in full chat')"
+                  class="flex-shrink-0 w-9 h-9 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-full flex items-center justify-center transition-all active:scale-95">
+                  <i class="fas fa-microphone text-lg"></i>
+                </button>
+                
+                <!-- Send Button -->
                 <button 
                   type="submit"
-                  class="bg-purple-600 hover:bg-purple-700 text-white w-11 h-11 rounded-full flex items-center justify-center transition-all active:scale-95">
+                  class="flex-shrink-0 bg-purple-600 hover:bg-purple-700 text-white w-11 h-11 rounded-full flex items-center justify-center transition-all active:scale-95">
                   <i class="fas fa-paper-plane text-sm"></i>
                 </button>
               </form>
