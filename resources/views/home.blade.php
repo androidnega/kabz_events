@@ -92,8 +92,9 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 @foreach($featuredAds as $ad)
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-purple-300 hover:border-purple-500 transition-all duration-300"
-                         onclick="window.location='{{ route('vendors.show', $ad->vendor->slug) }}'; event.target.closest('.featured-ad-card').querySelector('.ad-click-tracker')?.click();">
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-purple-300 hover:border-purple-500 transition-all duration-300 cursor-pointer"
+                         data-href="{{ route('vendors.show', $ad->vendor->slug) }}"
+                         onclick="window.location=this.getAttribute('data-href')">
                         @if($ad->image_path)
                             <img src="{{ asset('storage/' . $ad->image_path) }}" 
                                  alt="{{ $ad->headline }}" 
