@@ -1,0 +1,155 @@
+═══════════════════════════════════════════════════════════════════════
+   SMTP EMAIL CONFIGURATION GUIDE - KABZS EVENT
+═══════════════════════════════════════════════════════════════════════
+
+📧 OVERVIEW
+-----------
+This guide will help you configure the no-reply email system for automatic
+email notifications including:
+  ✓ User account registration/verification emails
+  ✓ Password reset emails
+  ✓ System notifications
+
+
+🔧 CONFIGURATION STEPS
+----------------------
+
+Step 1: Access Settings Page
+  1. Log in as Super Admin
+  2. Go to Dashboard → Settings (gear icon)
+  3. Click on "SMTP Email Configuration"
+
+Step 2: Enter SMTP Settings
+  Use the following configuration for KABZS EVENT:
+
+  ┌─────────────────────────────────────────────────────────┐
+  │  SMTP Host:        mail.kabzevents.com                  │
+  │  SMTP Port:        465 (for SSL) or 587 (for TLS)      │
+  │  SMTP Username:    noreply@kabzevents.com               │
+  │  SMTP Password:    [Your email password]                │
+  │  Encryption:       SSL (if port 465) or TLS (587)       │
+  │  From Email:       noreply@kabzevents.com               │
+  │  From Name:        KABZS EVENT                          │
+  └─────────────────────────────────────────────────────────┘
+
+  ⚠️ IMPORTANT: Do NOT share your SMTP password publicly!
+
+Step 3: Save Configuration
+  - Click "Save Configuration" button
+  - Wait for success message
+
+Step 4: Test Email Sending
+  - Enter your email address in the "Test Email" section
+  - Click "Send Test Email"
+  - Check your inbox for the test email
+  - If you don't receive it, check spam folder
+
+
+🔐 SECURITY NOTES
+-----------------
+  • The email is configured as "noreply@kabzevents.com" to prevent users
+    from replying to automated emails
+  • All SMTP credentials are stored securely in the database
+  • Emails are sent over encrypted SSL/TLS connections
+
+
+📨 AUTOMATED EMAILS
+-------------------
+Once configured, the system will automatically send emails for:
+
+  1. NEW USER REGISTRATION
+     - Sent to: New user's email
+     - Content: Email verification link
+     - Trigger: When user creates account
+
+  2. PASSWORD RESET
+     - Sent to: User's registered email
+     - Content: Password reset link (expires in 60 minutes)
+     - Trigger: When user clicks "Forgot Password"
+
+  3. EMAIL VERIFICATION
+     - Sent to: User's email
+     - Content: Verification link
+     - Trigger: When user needs to verify email
+
+
+🛠️ TROUBLESHOOTING
+-------------------
+
+Problem: "Failed to send test email"
+Solutions:
+  □ Verify SMTP host is correct (mail.kabzevents.com)
+  □ Check username and password are correct
+  □ Ensure port matches encryption (465=SSL, 587=TLS)
+  □ Contact hosting provider to ensure outgoing mail is enabled
+  □ Check firewall isn't blocking SMTP ports
+
+Problem: "Emails go to spam"
+Solutions:
+  □ Ask hosting provider to configure SPF records
+  □ Set up DKIM authentication
+  □ Verify DMARC policy is configured
+
+Problem: "Cannot connect to SMTP server"
+Solutions:
+  □ Verify your hosting provider allows SMTP on port 465/587
+  □ Check if your hosting requires specific authentication
+  □ Try alternative port (587 if 465 fails, or vice versa)
+
+
+📊 EMAIL SETTINGS REFERENCE
+----------------------------
+
+SECURE SSL/TLS SETTINGS (RECOMMENDED):
+  Server:     mail.kabzevents.com
+  IMAP Port:  993
+  POP3 Port:  995
+  SMTP Port:  465
+  Username:   noreply@kabzevents.com
+  Encryption: SSL/TLS
+  Auth:       Required
+
+NON-SSL SETTINGS (NOT RECOMMENDED):
+  Server:     mail.kabzevents.com
+  IMAP Port:  143
+  POP3 Port:  110
+  SMTP Port:  587
+  Username:   noreply@kabzevents.com
+  Encryption: TLS (STARTTLS)
+  Auth:       Required
+
+
+✅ VERIFICATION CHECKLIST
+--------------------------
+After configuration, verify the following:
+
+  □ Test email received successfully
+  □ New user registration sends verification email
+  □ Password reset link is sent via email
+  □ From address shows "KABZS EVENT <noreply@kabzevents.com>"
+  □ Users cannot reply to noreply emails
+  □ All emails arrive in inbox (not spam)
+
+
+💡 ADDITIONAL TIPS
+------------------
+  • The system dynamically loads SMTP settings from database
+  • No need to edit .env file manually
+  • Settings take effect immediately after saving
+  • Clear cache after changing settings (optional)
+  • Keep backup of your SMTP credentials securely
+
+
+📞 SUPPORT
+----------
+If you encounter any issues:
+  1. Check the error message in the settings page
+  2. Review the troubleshooting section above
+  3. Contact your hosting provider about SMTP access
+  4. Verify your email account is active and not suspended
+
+
+═══════════════════════════════════════════════════════════════════════
+   SYSTEM STATUS: ✅ SMTP CONFIGURED AND READY FOR PRODUCTION
+═══════════════════════════════════════════════════════════════════════
+
