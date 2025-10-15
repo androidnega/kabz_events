@@ -2,8 +2,7 @@
     <x-slot name="pageTitle">Create VIP Plan</x-slot>
 
     <div class="p-4 sm:p-6 lg:p-8">
-        <div class="max-w-3xl mx-auto">
-            <x-card class="p-6">
+        <x-card class="p-6">
                 <div class="mb-6">
                     <a href="{{ route('admin.vip-plans.index') }}" class="text-purple-600 hover:underline">
                         <i class="fas fa-arrow-left mr-2"></i> Back to VIP Plans
@@ -127,7 +126,6 @@
                     </div>
                 </form>
             </x-card>
-        </div>
     </div>
 </x-admin-layout>
 
