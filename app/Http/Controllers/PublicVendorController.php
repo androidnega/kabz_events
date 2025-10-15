@@ -7,6 +7,7 @@ use App\Models\Region;
 use App\Models\Service;
 use App\Models\User;
 use App\Models\Vendor;
+use App\Models\VendorSubscription;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -81,6 +82,18 @@ class PublicVendorController extends Controller
             'description' => $validated['description'],
             'address' => $validated['address'] . ', ' . $validated['city'] . ', ' . $validated['region'],
             'website' => $validated['website'] ?? null,
+        ]);
+
+        // Create default Free Plan subscription
+        VendorSubscription::create([
+            'vendor_id' => $vendor->id,
+            'plan' => 'Free',
+            'price_amount' => 0.00,
+            'currency' => 'GHS',
+            'status' => 'active',
+            'started_at' => now(),
+            'ends_at' => null, // Lifetime
+            'payment_reference' => null,
         ]);
 
         // Create the first service listing

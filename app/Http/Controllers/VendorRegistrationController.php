@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Vendor;
+use App\Models\VendorSubscription;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -64,6 +65,18 @@ class VendorRegistrationController extends Controller
 
         // Assign vendor role to user
         Auth::user()->assignRole('vendor');
+
+        // Create default Free Plan subscription
+        VendorSubscription::create([
+            'vendor_id' => $vendor->id,
+            'plan' => 'Free',
+            'price_amount' => 0.00,
+            'currency' => 'GHS',
+            'status' => 'active',
+            'started_at' => now(),
+            'ends_at' => null, // Lifetime
+            'payment_reference' => null,
+        ]);
 
         // Redirect to unified dashboard with success message
         return redirect()
