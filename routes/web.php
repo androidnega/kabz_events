@@ -141,6 +141,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         
         Route::get('/settings/smtp', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'smtp'])->name('settings.smtp');
         Route::post('/settings/smtp', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateSmtp'])->name('settings.smtp.update');
+        Route::get('/settings/smtp/test', function() { return redirect()->route('superadmin.settings.smtp'); });
         Route::post('/settings/smtp/test', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'testSmtp'])->name('settings.smtp.test');
         
         Route::get('/settings/appearance', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'appearance'])->name('appearance.index');
