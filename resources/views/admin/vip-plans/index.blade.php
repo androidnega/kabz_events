@@ -44,48 +44,83 @@
                 </div>
             </div>
 
-            {{-- Plans Grid --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {{-- Plans Grid - Compact Design with Tier Colors --}}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 @foreach($plans as $plan)
-                    <div class="bg-white border-2 @if($plan->status) border-purple-500 @else border-gray-300 @endif rounded-lg shadow-md overflow-hidden">
-                        <div class="@if($plan->status) bg-gradient-to-r from-purple-600 to-pink-500 @else bg-gray-400 @endif text-white p-6">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-2xl font-bold">{{ $plan->name }}</h3>
-                                <form action="{{ route('admin.vip-plans.toggle-status', $plan->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="text-white text-sm hover:underline">
-                                        {{ $plan->status ? 'Deactivate' : 'Activate' }}
-                                    </button>
-                                </form>
+                    @php
+                        // Assign tier-specific solid colors (no gradients)
+                        $tierColors = [
+                            'VIP Bronze' => ['bg' => 'bg-amber-600', 'border' => 'border-amber-500'],
+                            'VIP Silver' => ['bg' => 'bg-slate-600', 'border' => 'border-slate-500'],
+                            'VIP Gold' => ['bg' => 'bg-yellow-600', 'border' => 'border-yellow-500'],
+                            'VIP Platinum' => ['bg' => 'bg-purple-600', 'border' => 'border-purple-500'],
+                        ];
+                        
+                        $colors = $tierColors[$plan->name] ?? ['bg' => 'bg-gray-600', 'border' => 'border-gray-500'];
+                    @endphp
+                    
+                    <div class="bg-white border @if($plan->status) {{ $colors['border'] }} @else border-gray-300 @endif rounded-lg shadow-sm overflow-hidden hover:shadow-md transition">
+                        {{-- Header with solid color --}}
+                        <div class="@if($plan->status) {{ $colors['bg'] }} @else bg-gray-400 @endif text-white p-4">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="text-lg font-bold">{{ str_replace('VIP ', '', $plan->name) }}</h3>
+                                @if($plan->status)
+                                    <span class="text-xs bg-white bg-opacity-20 px-2 py-0.5 rounded">Active</span>
+                                @else
+                                    <span class="text-xs bg-white bg-opacity-20 px-2 py-0.5 rounded">Inactive</span>
+                                @endif
                             </div>
-                            <div class="text-4xl font-bold">GH₵{{ number_format($plan->price, 0) }}</div>
-                            <p class="text-sm opacity-90">{{ $plan->getDurationLabel() }} ({{ $plan->duration_days }} days)</p>
+                            <div class="text-3xl font-bold">GH₵{{ number_format($plan->price, 0) }}</div>
+                            <p class="text-xs opacity-90">{{ $plan->getDurationLabel() }}</p>
                         </div>
 
-                        <div class="p-6">
-                            <ul class="space-y-2 mb-4 text-sm">
-                                <li>📦 <strong>Free Ads:</strong> {{ $plan->free_ads }}</li>
-                                <li>🖼️ <strong>Image Limit:</strong> {{ $plan->image_limit }}</li>
-                                <li>⭐ <strong>Priority:</strong> Level {{ $plan->priority_level }}</li>
-                                <li>📊 <strong>Subscriptions:</strong> {{ $plan->subscriptions_count }}</li>
+                        {{-- Content --}}
+                        <div class="p-4">
+                            <ul class="space-y-1.5 mb-3 text-xs">
+                                <li class="flex items-center">
+                                    <i class="fas fa-bullhorn w-4 text-amber-600"></i>
+                                    <span class="ml-2"><strong>{{ $plan->free_ads }}</strong> Free Ads</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-images w-4 text-blue-600"></i>
+                                    <span class="ml-2"><strong>{{ $plan->image_limit == -1 ? '∞' : $plan->image_limit }}</strong> Images</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-star w-4 text-yellow-600"></i>
+                                    <span class="ml-2">Priority <strong>{{ $plan->priority_level }}</strong></span>
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-users w-4 text-green-600"></i>
+                                    <span class="ml-2"><strong>{{ $plan->subscriptions_count }}</strong> Users</span>
+                                </li>
                             </ul>
 
-                            @if($plan->description)
-                                <p class="text-xs text-gray-600 mb-4">{{ $plan->description }}</p>
-                            @endif
-
+                            {{-- Action Buttons --}}
                             <div class="flex gap-2">
-                                <a href="{{ route('admin.vip-plans.show', $plan->id) }}" class="flex-1 text-center px-3 py-2 bg-blue-500 text-white rounded text-sm hover:bg-blue-600">
-                                    View
+                                <a href="{{ route('admin.vip-plans.show', $plan->id) }}" 
+                                   class="flex-1 text-center px-2 py-1.5 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition">
+                                    <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('admin.vip-plans.edit', $plan->id) }}" class="flex-1 text-center px-3 py-2 bg-gray-500 text-white rounded text-sm hover:bg-gray-600">
-                                    Edit
+                                <a href="{{ route('admin.vip-plans.edit', $plan->id) }}" 
+                                   class="flex-1 text-center px-2 py-1.5 bg-gray-500 text-white rounded text-xs hover:bg-gray-600 transition">
+                                    <i class="fas fa-edit"></i>
                                 </a>
+                                <form action="{{ route('admin.vip-plans.toggle-status', $plan->id) }}" method="POST" class="flex-1">
+                                    @csrf
+                                    <button type="submit" 
+                                            class="w-full px-2 py-1.5 @if($plan->status) bg-red-500 hover:bg-red-600 @else bg-green-500 hover:bg-green-600 @endif text-white rounded text-xs transition">
+                                        <i class="fas fa-{{ $plan->status ? 'times' : 'check' }}"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 @endforeach
             </div>
+        </x-card>
+    </div>
+</x-admin-layout>
+
         </x-card>
     </div>
 </x-admin-layout>
