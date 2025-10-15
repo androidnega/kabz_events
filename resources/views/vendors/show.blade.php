@@ -170,10 +170,10 @@
 
                                     <!-- Message Button -->
                                     @auth
-                                    <button onclick="alert('Message feature coming soon')" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all active:scale-95">
+                                    <a href="{{ route('client.messages.show', $vendor->id) }}" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all active:scale-95">
                                         <i class="fas fa-comment-dots text-sm"></i>
                                         <span class="text-sm font-medium">Message</span>
-                                    </button>
+                                    </a>
                                     @else
                                     <button @click="showLoginModal = true" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all active:scale-95">
                                         <i class="fas fa-comment-dots text-sm"></i>
