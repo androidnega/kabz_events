@@ -60,7 +60,7 @@
                             <!-- Main Image Display -->
                             <div class="relative mb-4">
                                 <div class="w-full h-64 md:h-96 bg-gray-100 rounded-lg overflow-hidden group relative">
-                                    <img id="mainSampleImage" src="{{ asset('storage/' . $vendor->sample_work_images[0]) }}" 
+                                    <img id="mainSampleImage" src="{{ $vendor->getImageUrl($vendor->sample_work_images[0]) }}" 
                                          alt="Sample work from {{ $vendor->business_name }}" 
                                          class="w-full h-full object-contain md:object-cover">
                                     
@@ -92,11 +92,14 @@
                             @if(count($vendor->sample_work_images) > 1)
                             <div class="hidden md:block overflow-x-auto">
                                 <div class="flex gap-3">
-                                    @foreach($vendor->sample_work_images as $index => $image)
+                                    @foreach($vendor->sample_work_images as $index => $imageData)
                                         @if($index < 5)
-                                        <div class="flex-shrink-0 relative cursor-pointer group thumbnail-item" data-image="{{ asset('storage/' . $image) }}" data-index="{{ $index + 1 }}">
+                                        @php
+                                            $imageUrl = $vendor->getImageUrl($imageData);
+                                        @endphp
+                                        <div class="flex-shrink-0 relative cursor-pointer group thumbnail-item" data-image="{{ $imageUrl }}" data-index="{{ $index + 1 }}">
                                             <div class="w-24 h-16 overflow-hidden rounded-lg border-2 border-gray-300 group-hover:border-primary transition-all duration-200">
-                                                <img src="{{ asset('storage/' . $image) }}" 
+                                                <img src="{{ $imageUrl }}" 
                                                      alt="Sample work {{ $index + 1 }}" 
                                                      class="w-full h-full object-cover">
                                             </div>
@@ -734,8 +737,8 @@
 
 <script id="vendor-images-data" type="application/json">
 @json([
-    'images' => $vendor->sample_work_images ? array_map(function($image) { 
-        return asset('storage/' . $image); 
+    'images' => $vendor->sample_work_images ? array_map(function($imageData) use ($vendor) { 
+        return $vendor->getImageUrl($imageData); 
     }, $vendor->sample_work_images) : [],
     'count' => count($vendor->sample_work_images ?? [])
 ])
