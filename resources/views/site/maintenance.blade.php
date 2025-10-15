@@ -34,16 +34,6 @@
         .icon {
             font-size: 80px;
             margin-bottom: 20px;
-            animation: rotate 3s linear infinite;
-        }
-
-        @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
         }
 
         h1 {
@@ -77,8 +67,8 @@
 <body>
     <div class="container">
         <div class="icon">🔧</div>
-        <h1>Under Maintenance</h1>
-        <p>{{ \App\Services\SettingsService::get('maintenance_message', 'We are currently performing scheduled maintenance. We\'ll be back shortly!') }}</p>
+        <h1>We'll Be Right Back!</h1>
+        <p>{{ \App\Services\SettingsService::get('maintenance_message', 'Our site is currently undergoing scheduled maintenance to improve your experience. We appreciate your patience and will be back online soon!') }}</p>
         
         @php
             $endTime = \App\Services\SettingsService::get('maintenance_end_time');

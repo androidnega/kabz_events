@@ -118,8 +118,8 @@
 <body>
     <div class="container">
         <div class="icon">⬆️</div>
-        <h1>System Update</h1>
-        <p>{{ \App\Services\SettingsService::get('update_message', 'We are currently updating our system with exciting new features. Please check back soon!') }}</p>
+        <h1>System Update in Progress</h1>
+        <p>{{ \App\Services\SettingsService::get('update_message', 'We\'re rolling out exciting new features and improvements to enhance your experience. Our system is currently being updated and will be available shortly. Thank you for your patience!') }}</p>
 
         <div class="progress-container">
             <div class="progress-bar">

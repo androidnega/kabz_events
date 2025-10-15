@@ -91,8 +91,8 @@
 <body>
     <div class="container">
         <div class="icon">🚀</div>
-        <h1>Coming Soon</h1>
-        <p>{{ \App\Services\SettingsService::get('coming_soon_message', 'Something amazing is coming soon! Stay tuned.') }}</p>
+        <h1>Something Exciting Is Coming!</h1>
+        <p>{{ \App\Services\SettingsService::get('coming_soon_message', 'We\'re working hard to bring you an amazing experience. Our platform will be launching soon with incredible features designed just for you. Stay tuned!') }}</p>
 
         @php
             $endTime = \App\Services\SettingsService::get('maintenance_end_time');
