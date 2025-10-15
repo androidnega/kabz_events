@@ -4,16 +4,7 @@
     </x-slot>
 
     <!-- Hero Section -->
-    <div class="text-white relative overflow-hidden" 
-         style="
-            @if($appearance['hero_bg_type'] === 'image' && $appearance['hero_bg_image'])
-                background-image: url('{{ asset('storage/' . $appearance['hero_bg_image']) }}'); 
-                background-size: cover; 
-                background-position: center;
-            @else
-                background: linear-gradient(to right, {{ $appearance['primary_color'] }}, {{ $appearance['secondary_color'] }});
-            @endif
-         ">
+    <div id="heroSection" class="text-white relative overflow-hidden">
         @if($appearance['hero_bg_type'] === 'image' && $appearance['hero_bg_image'])
             <div class="absolute inset-0 bg-black bg-opacity-50"></div>
         @endif
@@ -209,6 +200,25 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Set hero section background
+    const heroSection = document.getElementById('heroSection');
+    if (heroSection) {
+        const bgType = '{{ $appearance["hero_bg_type"] }}';
+        const bgImage = '{{ $appearance["hero_bg_image"] ?? "" }}';
+        const bgImageUrl = '{{ $appearance["hero_bg_image"] ? asset("storage/" . $appearance["hero_bg_image"]) : "" }}';
+        const primaryColor = '{{ $appearance["primary_color"] }}';
+        const secondaryColor = '{{ $appearance["secondary_color"] }}';
+        
+        if (bgType === 'image' && bgImage) {
+            heroSection.style.backgroundImage = `url('${bgImageUrl}')`;
+            heroSection.style.backgroundSize = 'cover';
+            heroSection.style.backgroundPosition = 'center';
+        } else {
+            heroSection.style.background = `linear-gradient(to right, ${primaryColor}, ${secondaryColor})`;
+        }
+    }
+    
+    // Existing infinite scroll code
     let currentPage = 2;
     let isLoading = false;
     let hasMore = true;
