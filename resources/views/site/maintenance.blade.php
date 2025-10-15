@@ -24,6 +24,7 @@
 
         .container {
             max-width: 600px;
+            width: 90%;
             text-align: center;
             background: #ffffff;
             border-radius: 20px;
@@ -62,11 +63,59 @@
         .end-time strong {
             color: #333;
         }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 25px;
+            }
+
+            .icon {
+                font-size: 60px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+
+            .end-time {
+                font-size: 14px;
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+                width: 95%;
+            }
+
+            .icon {
+                font-size: 50px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            p {
+                font-size: 15px;
+            }
+
+            .end-time {
+                font-size: 13px;
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="icon">🔧</div>
+        <div class="icon">⚙️</div>
         <h1>We'll Be Right Back!</h1>
         <p>{{ \App\Services\SettingsService::get('maintenance_message', 'Our site is currently undergoing scheduled maintenance to improve your experience. We appreciate your patience and will be back online soon!') }}</p>
         

@@ -24,6 +24,7 @@
 
         .container {
             max-width: 600px;
+            width: 90%;
             text-align: center;
             background: #ffffff;
             border-radius: 20px;
@@ -63,6 +64,7 @@
         .countdown {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
             gap: 20px;
             margin-top: 30px;
         }
@@ -72,6 +74,7 @@
             border-radius: 10px;
             padding: 15px 20px;
             min-width: 80px;
+            flex: 0 1 auto;
         }
 
         .countdown-number {
@@ -85,6 +88,78 @@
             font-size: 12px;
             color: #666;
             text-transform: uppercase;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 25px;
+            }
+
+            .icon {
+                font-size: 60px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+
+            .countdown {
+                gap: 15px;
+            }
+
+            .countdown-item {
+                padding: 12px 16px;
+                min-width: 70px;
+            }
+
+            .countdown-number {
+                font-size: 28px;
+            }
+
+            .countdown-label {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+                width: 95%;
+            }
+
+            .icon {
+                font-size: 50px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            p {
+                font-size: 15px;
+            }
+
+            .countdown {
+                gap: 10px;
+            }
+
+            .countdown-item {
+                padding: 10px 12px;
+                min-width: 60px;
+            }
+
+            .countdown-number {
+                font-size: 24px;
+            }
+
+            .countdown-label {
+                font-size: 10px;
+            }
         }
     </style>
 </head>
