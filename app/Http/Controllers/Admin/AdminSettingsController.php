@@ -13,7 +13,7 @@ class AdminSettingsController extends Controller
      */
     public function index()
     {
-        $settings = AdminSetting::orderBy('group')->orderBy('key')->get()->groupBy('group');
+        $settings = AdminSetting::query()->orderBy('group')->orderBy('key')->get()->groupBy('group');
         
         return view('admin.settings.index', compact('settings'));
     }
@@ -42,7 +42,7 @@ class AdminSettingsController extends Controller
      */
     public function subscriptionSettings()
     {
-        $settings = AdminSetting::where('group', 'subscriptions')->get();
+        $settings = AdminSetting::query()->where('group', 'subscriptions')->get();
         
         return view('admin.settings.subscriptions', compact('settings'));
     }
@@ -72,7 +72,7 @@ class AdminSettingsController extends Controller
      */
     public function paymentSettings()
     {
-        $settings = AdminSetting::where('group', 'payments')->get();
+        $settings = AdminSetting::query()->where('group', 'payments')->get();
         
         return view('admin.settings.payments', compact('settings'));
     }

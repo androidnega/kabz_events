@@ -147,8 +147,17 @@ function homeLocationModal() {
         searchTerm: '',
         currentTowns: [],
         gpsLoading: false,
+        regions: {},
         
-        regions: JSON.parse(this.$el.dataset.locations || '{}'),
+        init() {
+            // Load regions from data attribute after Alpine initializes
+            try {
+                this.regions = JSON.parse(this.$el.getAttribute('data-locations') || '{}');
+            } catch (e) {
+                console.error('Failed to parse locations data:', e);
+                this.regions = {};
+            }
+        },
         
         get filteredRegions() {
             if (!this.searchTerm) return this.regions;

@@ -1,3 +1,7 @@
+@php
+    use App\Models\AdminSetting;
+@endphp
+
 <x-admin-layout>
     <x-slot name="pageTitle">Subscription Settings</x-slot>
 
