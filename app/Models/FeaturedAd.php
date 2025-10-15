@@ -30,6 +30,15 @@ class FeaturedAd extends Model
         'views',
         'clicks',
         'admin_notes',
+        'payment_status',
+        'payment_method',
+        'paystack_reference',
+        'paid_at',
+        'approval_status',
+        'approved_by',
+        'approved_at',
+        'approval_note',
+        'payment_expires_at',
     ];
 
     /**
@@ -43,6 +52,9 @@ class FeaturedAd extends Model
         'price' => 'decimal:2',
         'views' => 'integer',
         'clicks' => 'integer',
+        'paid_at' => 'datetime',
+        'approved_at' => 'datetime',
+        'payment_expires_at' => 'datetime',
     ];
 
     /**
@@ -59,6 +71,66 @@ class FeaturedAd extends Model
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
+    }
+
+    /**
+     * Get the admin who approved this ad.
+     */
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    /**
+     * Check if payment is completed
+     */
+    public function isPaid(): bool
+    {
+        return $this->payment_status === 'paid';
+    }
+
+    /**
+     * Check if ad is approved
+     */
+    public function isApproved(): bool
+    {
+        return $this->approval_status === 'approved';
+    }
+
+    /**
+     * Check if ad is pending approval
+     */
+    public function isPendingApproval(): bool
+    {
+        return $this->approval_status === 'pending' && $this->isPaid();
+    }
+
+    /**
+     * Approve the ad
+     */
+    public function approve($adminId = null, $note = null)
+    {
+        $this->update([
+            'approval_status' => 'approved',
+            'approved_by' => $adminId,
+            'approved_at' => now(),
+            'approval_note' => $note,
+            'status' => 'active',
+        ]);
+    }
+
+    /**
+     * Reject the ad
+     */
+    public function reject($adminId = null, $note = null)
+    {
+        $this->update([
+            'approval_status' => 'rejected',
+            'approved_by' => $adminId,
+            'approved_at' => now(),
+            'approval_note' => $note,
+            'status' => 'inactive',
+        ]);
     }
 
     /**

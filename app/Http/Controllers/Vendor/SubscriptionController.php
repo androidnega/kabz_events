@@ -62,41 +62,18 @@ class SubscriptionController extends Controller
     }
 
     /**
-     * Subscribe to a plan.
+     * Subscribe to a plan (Redirect to payment flow).
      */
-    public function subscribe($plan)
+    public function subscribe(Request $request, $plan)
     {
-        $vendor = Auth::user()->vendor;
-
-        // Define plan details
-        $planDetails = [
-            'Free' => ['price' => 0, 'days' => null],
-            'Premium' => ['price' => 99, 'days' => 30],
-            'Gold' => ['price' => 249, 'days' => 90],
-        ];
-
-        // Validate plan
-        if (!isset($planDetails[$plan])) {
-            return back()->with('error', 'Invalid subscription plan selected.');
+        // Redirect to new payment flow
+        if ($plan === 'Free') {
+            return back()->with('info', 'You are already on the Free plan');
         }
 
-        $details = $planDetails[$plan];
-
-        // Calculate end date
-        $endsAt = $details['days'] !== null ? now()->addDays($details['days']) : null;
-
-        // Create subscription
-        VendorSubscription::create([
-            'vendor_id' => $vendor->id,
-            'plan' => $plan,
-            'price_amount' => $details['price'],
-            'currency' => 'GHS',
-            'status' => 'active',
-            'started_at' => now(),
-            'ends_at' => $endsAt,
-            'payment_reference' => 'TEST_' . Str::uuid(),
-        ]);
-
-        return back()->with('success', $plan . ' plan activated successfully! (Test Mode)');
+        // Redirect to payment initiation
+        return app(\App\Http\Controllers\Vendor\SubscriptionPaymentController::class)
+            ->initiatePayment($request, $plan);
     }
 }
+

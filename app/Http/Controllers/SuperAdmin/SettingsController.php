@@ -147,7 +147,23 @@ class SettingsController extends Controller
             'test_email' => 'required|email',
         ]);
 
+        // Set a custom timeout for this operation
+        set_time_limit(120);
+
         try {
+            // First, verify SMTP settings are configured
+            $smtpHost = SettingsService::get('smtp_host');
+            $smtpPort = SettingsService::get('smtp_port');
+            $smtpUsername = SettingsService::get('smtp_username');
+            
+            if (empty($smtpHost) || empty($smtpPort)) {
+                return back()->with('error', '❌ SMTP settings not configured. Please configure SMTP host and port first.');
+            }
+
+            // Configure timeout for Swift Mailer
+            $originalTimeout = ini_get('default_socket_timeout');
+            ini_set('default_socket_timeout', 30);
+
             \Illuminate\Support\Facades\Mail::raw(
                 "This is a test email from KABZS EVENT.\n\nIf you received this, your SMTP configuration is working correctly!\n\nSent at: " . now()->format('Y-m-d H:i:s'),
                 function ($message) use ($request) {
@@ -156,10 +172,48 @@ class SettingsController extends Controller
                 }
             );
 
-            return back()->with('success', '✅ Test email sent successfully to ' . $request->test_email . '! Please check your inbox.');
+            // Restore original timeout
+            ini_set('default_socket_timeout', $originalTimeout);
+
+            return back()->with('success', '✅ Test email sent successfully to ' . $request->test_email . '! Please check your inbox (and spam folder).');
+            
+        } catch (\Swift_TransportException $e) {
+            return back()->with('error', '❌ SMTP Connection Error: ' . $this->getSmtpErrorMessage($e->getMessage()));
+        } catch (\Symfony\Component\Mailer\Exception\TransportException $e) {
+            return back()->with('error', '❌ SMTP Connection Error: ' . $this->getSmtpErrorMessage($e->getMessage()));
         } catch (\Exception $e) {
-            return back()->with('error', '❌ Failed to send test email: ' . $e->getMessage());
+            \Log::error('SMTP Test Failed: ' . $e->getMessage());
+            return back()->with('error', '❌ Failed to send test email: ' . $this->getSmtpErrorMessage($e->getMessage()));
+        } finally {
+            // Restore original timeout if it was changed
+            if (isset($originalTimeout)) {
+                ini_set('default_socket_timeout', $originalTimeout);
+            }
         }
+    }
+
+    /**
+     * Get user-friendly SMTP error message
+     */
+    private function getSmtpErrorMessage($error)
+    {
+        if (str_contains($error, 'timed out') || str_contains($error, 'Connection timeout')) {
+            return 'Connection timeout. Please check: 1) SMTP host is correct (mail.kabzevents.com), 2) Port is correct (465 for SSL, 587 for TLS), 3) Firewall is not blocking SMTP ports, 4) Your hosting provider allows outgoing SMTP connections.';
+        }
+        
+        if (str_contains($error, 'Authentication failed') || str_contains($error, '535')) {
+            return 'Authentication failed. Please verify your SMTP username and password are correct.';
+        }
+        
+        if (str_contains($error, 'Could not connect') || str_contains($error, 'Connection refused')) {
+            return 'Cannot connect to SMTP server. Please verify: 1) SMTP host is correct, 2) Port matches encryption (465=SSL, 587=TLS), 3) Server is accessible from your hosting.';
+        }
+
+        if (str_contains($error, 'certificate') || str_contains($error, 'SSL')) {
+            return 'SSL/TLS certificate error. Try changing encryption method: If using SSL (port 465), try TLS (port 587), or vice versa.';
+        }
+
+        return substr($error, 0, 200); // Limit error message length
     }
 
     // ============================================================

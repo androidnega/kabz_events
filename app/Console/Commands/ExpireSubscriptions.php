@@ -72,7 +72,7 @@ class ExpireSubscriptions extends Command
             $this->info("✅ No subscriptions to expire. All active subscriptions are still valid.");
         }
 
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 
     /**
