@@ -41,33 +41,9 @@ class HomeController extends Controller
             ->take(10)
             ->get();
 
-        // Get featured vendors with VIP priority (VIP > Subscribed > Verified > Unverified)
+        // Get featured vendors with VIP priority (dynamic ranking via service)
         $featuredVendors = Vendor::with(['services.category', 'subscriptions', 'vipSubscriptions.vipPlan'])
-            ->select('vendors.*')
-            ->leftJoin('vendor_subscriptions', function ($join) {
-                $join->on('vendors.id', '=', 'vendor_subscriptions.vendor_id')
-                     ->where('vendor_subscriptions.status', '=', 'active')
-                     ->where(function ($q) {
-                         $q->whereNull('vendor_subscriptions.ends_at')
-                           ->orWhere('vendor_subscriptions.ends_at', '>=', now());
-                     });
-            })
-            ->leftJoin('vip_subscriptions', function ($join) {
-                $join->on('vendors.id', '=', 'vip_subscriptions.vendor_id')
-                     ->where('vip_subscriptions.status', '=', 'active')
-                     ->where('vip_subscriptions.start_date', '<=', now())
-                     ->where('vip_subscriptions.end_date', '>=', now());
-            })
-            ->leftJoin('vip_plans', 'vip_subscriptions.vip_plan_id', '=', 'vip_plans.id')
-            ->selectRaw('vendors.*, 
-                CASE 
-                    WHEN vip_plans.priority_level IS NOT NULL THEN (10 + vip_plans.priority_level)
-                    WHEN vendor_subscriptions.id IS NOT NULL THEN 3
-                    WHEN vendors.is_verified = 1 THEN 2
-                    ELSE 1
-                END as priority_score')
-            ->orderByDesc('priority_score')
-            ->orderByDesc('rating_cached')
+            ->rankedWithSort()
             ->take(6)
             ->get();
 
@@ -83,33 +59,9 @@ class HomeController extends Controller
         $perPage = 6;
         $offset = ($page - 1) * $perPage;
 
-        // Show ALL vendors with VIP priority sorting
+        // Show ALL vendors with VIP priority sorting (dynamic via service)
         $vendors = Vendor::with(['services.category', 'subscriptions', 'vipSubscriptions.vipPlan'])
-            ->select('vendors.*')
-            ->leftJoin('vendor_subscriptions', function ($join) {
-                $join->on('vendors.id', '=', 'vendor_subscriptions.vendor_id')
-                     ->where('vendor_subscriptions.status', '=', 'active')
-                     ->where(function ($q) {
-                         $q->whereNull('vendor_subscriptions.ends_at')
-                           ->orWhere('vendor_subscriptions.ends_at', '>=', now());
-                     });
-            })
-            ->leftJoin('vip_subscriptions', function ($join) {
-                $join->on('vendors.id', '=', 'vip_subscriptions.vendor_id')
-                     ->where('vip_subscriptions.status', '=', 'active')
-                     ->where('vip_subscriptions.start_date', '<=', now())
-                     ->where('vip_subscriptions.end_date', '>=', now());
-            })
-            ->leftJoin('vip_plans', 'vip_subscriptions.vip_plan_id', '=', 'vip_plans.id')
-            ->selectRaw('vendors.*, 
-                CASE 
-                    WHEN vip_plans.priority_level IS NOT NULL THEN (10 + vip_plans.priority_level)
-                    WHEN vendor_subscriptions.id IS NOT NULL THEN 3
-                    WHEN vendors.is_verified = 1 THEN 2
-                    ELSE 1
-                END as priority_score')
-            ->orderByDesc('priority_score')
-            ->orderByDesc('rating_cached')
+            ->rankedWithSort()
             ->offset($offset)
             ->limit($perPage)
             ->get();

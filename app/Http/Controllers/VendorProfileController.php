@@ -59,29 +59,8 @@ class VendorProfileController extends Controller
         // Sort filter
         $sortBy = $request->input('sort', 'rating');
 
-        // Priority Sorting: VIP (by tier) > Subscribed > Verified > Unverified
-        $query->leftJoin('vendor_subscriptions', function ($join) {
-            $join->on('vendors.id', '=', 'vendor_subscriptions.vendor_id')
-                 ->where('vendor_subscriptions.status', '=', 'active')
-                 ->where(function ($q) {
-                     $q->whereNull('vendor_subscriptions.ends_at')
-                       ->orWhere('vendor_subscriptions.ends_at', '>=', now());
-                 });
-        })
-        ->leftJoin('vip_subscriptions', function ($join) {
-            $join->on('vendors.id', '=', 'vip_subscriptions.vendor_id')
-                 ->where('vip_subscriptions.status', '=', 'active')
-                 ->where('vip_subscriptions.start_date', '<=', now())
-                 ->where('vip_subscriptions.end_date', '>=', now());
-        })
-        ->leftJoin('vip_plans', 'vip_subscriptions.vip_plan_id', '=', 'vip_plans.id')
-        ->selectRaw('vendors.*, 
-            CASE 
-                WHEN vip_plans.priority_level IS NOT NULL THEN (10 + vip_plans.priority_level)
-                WHEN vendor_subscriptions.id IS NOT NULL THEN 3
-                WHEN vendors.is_verified = 1 THEN 2
-                ELSE 1
-            END as priority_score');
+        // Apply dynamic VIP ranking via centralized service
+        \App\Services\VendorRankingService::applyRanking($query);
 
         // Apply sorting based on user selection
         match ($sortBy) {

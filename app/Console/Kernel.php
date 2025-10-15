@@ -30,10 +30,11 @@ class Kernel extends ConsoleKernel
             ->dailyAt('01:00')
             ->withoutOverlapping();
         
-        // Expire VIP subscriptions daily at 2 AM
-        $schedule->command('vip-subscriptions:expire')
+        // Expire all subscriptions (VIP + Vendor) daily at 2 AM - Dynamic expiration
+        $schedule->command('subscriptions:expire')
             ->dailyAt('02:00')
-            ->withoutOverlapping();
+            ->withoutOverlapping()
+            ->runInBackground();
     }
 
     /**
