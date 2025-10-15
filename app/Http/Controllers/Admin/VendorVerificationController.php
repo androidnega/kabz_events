@@ -24,8 +24,8 @@ class VendorVerificationController extends Controller
             
             return view('admin.verifications.index', compact('vendors', 'tab'));
         } else {
-            // Show pending verification requests
-            $requests = VerificationRequest::with('vendor')
+            // Show pending and reviewed verification requests with admin info
+            $requests = VerificationRequest::with(['vendor', 'decidedBy'])
                 ->where('status', 'pending')
                 ->latest()
                 ->paginate(15);
@@ -44,7 +44,8 @@ class VendorVerificationController extends Controller
         $verificationRequest->update([
             'status' => 'approved',
             'decided_at' => now(),
-            'admin_note' => 'Approved by admin',
+            'decided_by' => auth()->id(),
+            'admin_note' => 'Approved by ' . auth()->user()->name,
         ]);
 
         // Update vendor verification status
@@ -65,6 +66,7 @@ class VendorVerificationController extends Controller
         
         $verificationRequest->update([
             'status' => 'rejected',
+            'decided_by' => auth()->id(),
             'admin_note' => $request->input('admin_note', 'Rejected by admin'),
             'decided_at' => now(),
         ]);

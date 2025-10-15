@@ -46,6 +46,7 @@ class VerificationRequest extends Model
         'admin_note',
         'submitted_at',
         'decided_at',
+        'decided_by',
     ];
 
     /**
@@ -68,5 +69,13 @@ class VerificationRequest extends Model
     public function vendor(): BelongsTo
     {
         return $this->belongsTo(Vendor::class);
+    }
+
+    /**
+     * Get the admin who decided on this request.
+     */
+    public function decidedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'decided_by');
     }
 }

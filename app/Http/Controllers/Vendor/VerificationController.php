@@ -18,6 +18,11 @@ class VerificationController extends Controller
         $vendor = Auth::user()->vendor;
         $request = $vendor->verificationRequest;
         
+        // Load decidedBy relationship if request exists
+        if ($request) {
+            $request->load('decidedBy');
+        }
+        
         // Load Ghana regions with districts and towns for location selection
         $regions = \App\Models\Region::with(['districts.towns'])->orderBy('name')->get();
         

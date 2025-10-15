@@ -59,6 +59,11 @@
                 </div>
                 @if($subscription->approved_at)
                     <p class="text-xs text-gray-500 mt-1">{{ $subscription->approved_at->format('M d, Y') }}</p>
+                    @if($subscription->approver)
+                        <p class="text-xs text-gray-600 mt-1">
+                            By: {{ $subscription->approver->name }}
+                        </p>
+                    @endif
                 @endif
             </div>
 
@@ -144,6 +149,11 @@
                                 <p class="text-sm text-green-800 mt-1">
                                     Your subscription has been approved and is now active. Enjoy your {{ $subscription->plan }} benefits!
                                 </p>
+                                @if($subscription->approver)
+                                    <p class="text-xs text-green-700 mt-2">
+                                        <strong>Approved by:</strong> {{ $subscription->approver->name }}
+                                    </p>
+                                @endif
                                 @if($subscription->approval_note)
                                     <p class="text-xs text-green-700 mt-2">
                                         <strong>Note:</strong> {{ $subscription->approval_note }}
@@ -163,6 +173,11 @@
                                 <p class="text-sm text-red-800 mt-1">
                                     Unfortunately, your subscription was not approved.
                                 </p>
+                                @if($subscription->approver)
+                                    <p class="text-xs text-red-700 mt-2">
+                                        <strong>Rejected by:</strong> {{ $subscription->approver->name }}
+                                    </p>
+                                @endif
                                 @if($subscription->approval_note)
                                     <p class="text-xs text-red-700 mt-2">
                                         <strong>Reason:</strong> {{ $subscription->approval_note }}

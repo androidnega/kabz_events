@@ -17,7 +17,7 @@ class SubscriptionApprovalController extends Controller
      */
     public function pendingSubscriptions()
     {
-        $subscriptions = VendorSubscription::with(['vendor.user', 'payments'])
+        $subscriptions = VendorSubscription::with(['vendor.user', 'payments', 'approver'])
             ->where('payment_status', 'paid')
             ->where('approval_status', 'pending')
             ->orderBy('paid_at', 'desc')

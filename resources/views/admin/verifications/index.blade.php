@@ -189,12 +189,23 @@
                                 </tr>
 
                                 {{-- Admin Note Row (if exists) --}}
-                                @if($req->admin_note && $req->status !== 'pending')
+                                @if(($req->admin_note || $req->decidedBy) && $req->status !== 'pending')
                                     <tr class="bg-gray-50">
                                         <td colspan="5" class="px-6 py-3">
-                                            <div class="text-sm">
-                                                <span class="font-semibold text-gray-700">Admin Note:</span>
-                                                <span class="text-gray-600">{{ $req->admin_note }}</span>
+                                            <div class="text-sm space-y-1">
+                                                @if($req->decidedBy)
+                                                    <div>
+                                                        <span class="font-semibold text-gray-700">Reviewed by:</span>
+                                                        <span class="text-gray-900">{{ $req->decidedBy->name }}</span>
+                                                        <span class="text-xs text-gray-500">({{ $req->decidedBy->getRoleNames()->first() }})</span>
+                                                    </div>
+                                                @endif
+                                                @if($req->admin_note)
+                                                    <div>
+                                                        <span class="font-semibold text-gray-700">Note:</span>
+                                                        <span class="text-gray-600">{{ $req->admin_note }}</span>
+                                                    </div>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>

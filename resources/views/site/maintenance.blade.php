@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maintenance Mode - {{ config('app.name') }}</title>
+    @php
+        $primaryColor = \App\Services\SettingsService::get('primary_color', '#9333ea');
+    @endphp
+    
     <style>
-        @php
-            $primaryColor = \App\Services\SettingsService::get('primary_color', '#9333ea');
-        @endphp
+        :root {
+            --primary-color: {{ $primaryColor }};
+        }
 
         * {
             margin: 0;
@@ -45,7 +49,7 @@
             font-size: 42px;
             margin-bottom: 20px;
             font-weight: 700;
-            color: {{ $primaryColor }};
+            color: var(--primary-color);
         }
 
         p {

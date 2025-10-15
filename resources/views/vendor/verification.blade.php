@@ -42,6 +42,13 @@
                                 </p>
                             @endif
 
+                            @if($request->decidedBy)
+                                <p class="text-gray-700 mb-2">
+                                    <strong>Reviewed by:</strong> {{ $request->decidedBy->name }}
+                                    <span class="text-xs text-gray-500">({{ $request->decidedBy->getRoleNames()->first() }})</span>
+                                </p>
+                            @endif
+
                             @if($request->admin_note)
                                 <div class="mt-3 p-3 bg-white rounded border border-gray-200">
                                     <p class="text-sm font-semibold text-gray-700 mb-1">Admin Note:</p>

@@ -100,6 +100,12 @@
 
         <!-- Navigation Links -->
         <nav class="space-y-2">
+            <a href="{{ route('vendor.sample-work') }}" 
+               class="flex items-center p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('vendor.sample-work*') ? 'bg-purple-50 text-purple-700' : 'text-gray-700' }}">
+                <i class="fas fa-images w-6"></i>
+                <span class="ml-3 font-medium">Sample Work</span>
+            </a>
+
             <a href="{{ route('vendor.profile') }}" 
                class="flex items-center p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('vendor.profile') ? 'bg-purple-50 text-purple-700' : 'text-gray-700' }}">
                 <i class="fas fa-user-circle w-6"></i>

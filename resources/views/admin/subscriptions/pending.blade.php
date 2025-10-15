@@ -75,15 +75,20 @@
                                     <div class="flex space-x-2">
                                         {{-- Approve Button --}}
                                         <button
-                                            onclick="openApproveModal({{ $subscription->id }}, '{{ $subscription->vendor->business_name }}', '{{ $subscription->plan }}')"
-                                            class="text-green-600 hover:text-green-900">
+                                            data-action="approve"
+                                            data-id="{{ $subscription->id }}"
+                                            data-vendor="{{ $subscription->vendor->business_name }}"
+                                            data-plan="{{ $subscription->plan }}"
+                                            class="approve-btn text-green-600 hover:text-green-900">
                                             <i class="fas fa-check-circle"></i> Approve
                                         </button>
 
                                         {{-- Reject Button --}}
                                         <button
-                                            onclick="openRejectModal({{ $subscription->id }}, '{{ $subscription->vendor->business_name }}')"
-                                            class="text-red-600 hover:text-red-900">
+                                            data-action="reject"
+                                            data-id="{{ $subscription->id }}"
+                                            data-vendor="{{ $subscription->vendor->business_name }}"
+                                            class="reject-btn text-red-600 hover:text-red-900">
                                             <i class="fas fa-times-circle"></i> Reject
                                         </button>
                                     </div>
@@ -156,6 +161,27 @@
 
     @push('scripts')
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Approve button event listeners
+            document.querySelectorAll('.approve-btn').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const vendor = this.dataset.vendor;
+                    const plan = this.dataset.plan;
+                    openApproveModal(id, vendor, plan);
+                });
+            });
+
+            // Reject button event listeners
+            document.querySelectorAll('.reject-btn').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const vendor = this.dataset.vendor;
+                    openRejectModal(id, vendor);
+                });
+            });
+        });
+
         function openApproveModal(id, vendor, plan) {
             document.getElementById('approveModalText').textContent = 
                 `Approve ${vendor}'s ${plan} subscription?`;
