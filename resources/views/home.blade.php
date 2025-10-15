@@ -27,49 +27,21 @@
                             >
                         </div>
                         
-                        <!-- Location Dropdown -->
-                        <div class="relative" x-data="{ open: false }">
-                            <button 
-                                type="button"
-                                @click="open = !open"
-                                class="w-full md:w-56 px-4 py-2.5 md:py-3 rounded-full bg-white text-gray-700 text-sm md:text-base border border-white hover:bg-gray-50 transition flex items-center justify-between gap-2"
-                            >
-                                <div class="flex items-center gap-2 flex-1 min-w-0">
-                                    <i class="fas fa-map-marker-alt text-purple-600 flex-shrink-0"></i>
-                                    <span id="homeLocationDisplay" class="truncate">All Locations</span>
-                                </div>
-                                <i class="fas fa-chevron-down text-xs flex-shrink-0"></i>
-                            </button>
-                            
-                            <input type="hidden" name="region" id="homeSelectedRegion" value="">
-                            <input type="hidden" name="district" id="homeSelectedDistrict" value="">
-                            
-                            <!-- Location Dropdown Menu -->
-                            <div x-show="open" 
-                                 @click.away="open = false"
-                                 x-cloak
-                                 class="absolute top-full left-0 right-0 md:left-auto md:right-0 md:w-72 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 max-h-80 overflow-y-auto z-50">
-                                <div class="p-2">
-                                    @foreach(['Greater Accra', 'Ashanti', 'Western', 'Central', 'Northern', 'Eastern', 'Volta', 'Upper East', 'Upper West', 'Bono'] as $region)
-                                    <button 
-                                        type="button"
-                                        @click="document.getElementById('homeSelectedRegion').value = '{{ $region }}'; document.getElementById('homeLocationDisplay').textContent = '{{ $region }}'; open = false"
-                                        class="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 rounded transition"
-                                    >
-                                        {{ $region }}
-                                    </button>
-                                    @endforeach
-                                    <div class="border-t border-gray-200 my-1"></div>
-                                    <button 
-                                        type="button"
-                                        @click="document.getElementById('homeSelectedRegion').value = ''; document.getElementById('homeSelectedDistrict').value = ''; document.getElementById('homeLocationDisplay').textContent = 'All Locations'; open = false"
-                                        class="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded transition"
-                                    >
-                                        Clear Location
-                                    </button>
-                                </div>
+                        <!-- Location Button -->
+                        <button 
+                            type="button"
+                            onclick="openHomeLocationModal()"
+                            class="w-full md:w-56 px-4 py-2.5 md:py-3 rounded-full bg-white text-gray-700 text-sm md:text-base border border-white hover:bg-gray-50 transition flex items-center justify-between gap-2"
+                        >
+                            <div class="flex items-center gap-2 flex-1 min-w-0">
+                                <i class="fas fa-map-marker-alt text-purple-600 flex-shrink-0"></i>
+                                <span id="homeLocationDisplay" class="truncate">All Locations</span>
                             </div>
-                        </div>
+                            <i class="fas fa-chevron-down text-xs flex-shrink-0"></i>
+                        </button>
+                        
+                        <input type="hidden" name="region" id="homeSelectedRegion" value="">
+                        <input type="hidden" name="district" id="homeSelectedDistrict" value="">
                         
                         <!-- Search Button -->
                         <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 md:py-3 px-6 md:px-8 rounded-full transition-colors text-sm md:text-base">
@@ -217,6 +189,9 @@
             @endif
         </div>
     </div>
+
+    <!-- Beautiful Location Modal -->
+    <x-home-location-modal />
 
 </x-layouts.base>
 
