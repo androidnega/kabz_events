@@ -21,7 +21,14 @@ class VerificationController extends Controller
         // Load Ghana regions with districts and towns for location selection
         $regions = \App\Models\Region::with(['districts.towns'])->orderBy('name')->get();
         
-        return view('vendor.verification', compact('vendor', 'request', 'regions'));
+        // Get vendor's primary category from their first service
+        $vendorCategory = 'Other Services'; // Default
+        $firstService = $vendor->services()->with('category')->first();
+        if ($firstService && $firstService->category) {
+            $vendorCategory = $firstService->category->name;
+        }
+        
+        return view('vendor.verification', compact('vendor', 'request', 'regions', 'vendorCategory'));
     }
 
     /**

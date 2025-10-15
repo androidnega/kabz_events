@@ -79,7 +79,7 @@
                     </p>
                 </div>
 
-                <div x-data="createVerificationWizard('{{ addslashes($vendor->business_name) }}', '{{ addslashes(auth()->user()->name) }}', '{{ addslashes(auth()->user()->email) }}')" x-init="$nextTick(() => {
+                <div x-data="createVerificationWizard('{{ addslashes($vendor->business_name) }}', '{{ addslashes(auth()->user()->name) }}', '{{ addslashes(auth()->user()->email) }}', '{{ addslashes($vendorCategory) }}')" x-init="$nextTick(() => {
                     window.verificationStoreUrl = '{{ route('vendor.verification.store') }}';
                     window.verificationIndexUrl = '{{ route('vendor.verification') }}';
                     window.regionsData = {{ $regions->toJson() }};
@@ -135,27 +135,20 @@
                                 <p class="mt-1 text-xs text-gray-500">Pre-filled from your profile</p>
                             </div>
 
-                            {{-- Business Category --}}
+                            {{-- Business Category (Read-only) --}}
                             <div class="mb-3 sm:mb-4">
                                 <x-input-label for="business_category" value="Business Category *" class="text-sm" />
-                                <select 
+                                <x-text-input 
+                                    type="text" 
                                     id="business_category"
                                     x-model="formData.business_category"
-                                    class="mt-1 block w-full border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-md shadow-sm text-sm sm:text-base"
+                                    class="mt-1 block w-full bg-gray-50 text-gray-500 cursor-not-allowed text-sm sm:text-base"
                                     required
-                                >
-                                    <option value="">Select a category</option>
-                                    <option value="Food & Catering">Food & Catering</option>
-                                    <option value="Drinks & Beverages">Drinks & Beverages</option>
-                                    <option value="Decor & Design">Decor & Design</option>
-                                    <option value="Photography & Videography">Photography & Videography</option>
-                                    <option value="Equipment Rentals">Equipment Rentals</option>
-                                    <option value="Venue & Spaces">Venue & Spaces</option>
-                                    <option value="Entertainment & Music">Entertainment & Music</option>
-                                    <option value="Transportation">Transportation</option>
-                                    <option value="Planning & Coordination">Planning & Coordination</option>
-                                    <option value="Other Services">Other Services</option>
-                                </select>
+                                    value="{{ $vendorCategory }}"
+                                    readonly
+                                />
+                                <input type="hidden" name="business_category" :value="formData.business_category">
+                                <p class="mt-1 text-xs text-gray-500">Pre-filled from your vendor services</p>
                             </div>
 
                             {{-- Business Registration Number --}}

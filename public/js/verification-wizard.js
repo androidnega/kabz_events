@@ -1,4 +1,4 @@
-function createVerificationWizard(businessName, userName, userEmail) {
+function createVerificationWizard(businessName, userName, userEmail, vendorCategory = '') {
     return {
         step: 1,
         submitting: false,
@@ -7,7 +7,7 @@ function createVerificationWizard(businessName, userName, userEmail) {
         selectedTown: null,
         formData: {
             business_name: businessName,
-            business_category: '',
+            business_category: vendorCategory,
             business_registration_number: '',
             business_description: '',
             years_in_operation: '',
