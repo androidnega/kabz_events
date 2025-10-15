@@ -14,7 +14,7 @@
     ];
 @endphp
 
-<div x-data="homeLocationModal()" x-cloak>
+<div x-data="homeLocationModal()" x-cloak data-locations='@json($ghanaLocations)'>
     <!-- Modal Overlay -->
     <div x-show="isOpen" 
          @keydown.escape.window="closeModal()"
@@ -148,7 +148,7 @@ function homeLocationModal() {
         currentTowns: [],
         gpsLoading: false,
         
-        regions: @json($ghanaLocations),
+        regions: JSON.parse(this.$el.dataset.locations || '{}'),
         
         get filteredRegions() {
             if (!this.searchTerm) return this.regions;

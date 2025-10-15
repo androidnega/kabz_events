@@ -408,7 +408,7 @@
                     <i class="fas fa-flag text-3xl text-gray-400 group-hover:text-red-600 mb-2 transition"></i>
                     <span class="text-xs font-medium text-gray-700 group-hover:text-red-700 block transition">View Reports</span>
                 </a>
-                <a href="{{ route('search.index') }}" class="bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg p-4 text-center transition-all group">
+                <a href="{{ route('search.advanced') }}" class="bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg p-4 text-center transition-all group">
                     <i class="fas fa-search text-3xl text-gray-400 group-hover:text-blue-600 mb-2 transition"></i>
                     <span class="text-xs font-medium text-gray-700 group-hover:text-blue-700 block transition">Browse Vendors</span>
                 </a>
