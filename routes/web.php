@@ -143,6 +143,9 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         Route::post('/settings/smtp', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateSmtp'])->name('settings.smtp.update');
         Route::post('/settings/smtp/test', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'testSmtp'])->name('settings.smtp.test');
         
+        Route::get('/settings/appearance', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'appearance'])->name('appearance.index');
+        Route::post('/settings/appearance', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateAppearance'])->name('appearance.update');
+        
         Route::get('/settings/system', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'system'])->name('settings.system');
         Route::post('/settings/system', [\App\Http\Controllers\SuperAdmin\SettingsController::class, 'updateSystem'])->name('settings.system.update');
         

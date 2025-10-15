@@ -163,6 +163,48 @@ class SettingsController extends Controller
     }
 
     // ============================================================
+    // Appearance / Theme Configuration
+    // ============================================================
+    
+    public function appearance()
+    {
+        $settings = SettingsService::getByGroup('appearance');
+        return view('superadmin.settings.appearance', compact('settings'));
+    }
+
+    public function updateAppearance(Request $request)
+    {
+        $request->validate([
+            'hero_title' => 'nullable|string|max:255',
+            'hero_subtitle' => 'nullable|string|max:255',
+            'hero_bg_type' => 'required|in:gradient,image',
+            'hero_bg_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'primary_color' => 'nullable|string|max:7',
+            'secondary_color' => 'nullable|string|max:7',
+            'accent_color' => 'nullable|string|max:7',
+        ]);
+
+        // Handle hero background image upload
+        if ($request->hasFile('hero_bg_image')) {
+            $image = $request->file('hero_bg_image');
+            $filename = 'hero-bg-' . time() . '.' . $image->getClientOriginalExtension();
+            $path = $image->storeAs('public/appearance', $filename);
+            SettingsService::set('hero_bg_image', 'appearance/' . $filename, 'string', 'appearance');
+        }
+
+        SettingsService::set('hero_title', $request->hero_title, 'string', 'appearance');
+        SettingsService::set('hero_subtitle', $request->hero_subtitle, 'string', 'appearance');
+        SettingsService::set('hero_bg_type', $request->hero_bg_type, 'string', 'appearance');
+        SettingsService::set('primary_color', $request->primary_color, 'string', 'appearance');
+        SettingsService::set('secondary_color', $request->secondary_color, 'string', 'appearance');
+        SettingsService::set('accent_color', $request->accent_color, 'string', 'appearance');
+        
+        SettingsService::clearCache();
+
+        return back()->with('success', '🎨 Appearance settings updated successfully!');
+    }
+
+    // ============================================================
     // System Configuration
     // ============================================================
     

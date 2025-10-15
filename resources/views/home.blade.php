@@ -4,14 +4,26 @@
     </x-slot>
 
     <!-- Hero Section -->
-    <div class="bg-gradient-to-r from-primary to-purple-700 text-white">
-        <div class="container mx-auto py-6 md:py-16 lg:py-20 px-4">
+    <div class="text-white relative overflow-hidden" 
+         style="
+            @if($appearance['hero_bg_type'] === 'image' && $appearance['hero_bg_image'])
+                background-image: url('{{ asset('storage/' . $appearance['hero_bg_image']) }}'); 
+                background-size: cover; 
+                background-position: center;
+            @else
+                background: linear-gradient(to right, {{ $appearance['primary_color'] }}, {{ $appearance['secondary_color'] }});
+            @endif
+         ">
+        @if($appearance['hero_bg_type'] === 'image' && $appearance['hero_bg_image'])
+            <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        @endif
+        <div class="container mx-auto py-6 md:py-16 lg:py-20 px-4 relative z-10">
             <div class="text-center">
                 <h1 class="text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 md:mb-4 lg:mb-6 px-2">
-                    Find Perfect Event Vendors in Ghana
+                    {{ $appearance['hero_title'] }}
                 </h1>
                 <p class="text-xs sm:text-sm md:text-lg lg:text-xl xl:text-2xl mb-4 md:mb-8 lg:mb-10 text-purple-100 px-2">
-                    Connect with verified service providers
+                    {{ $appearance['hero_subtitle'] }}
                 </p>
                 
                 <!-- Search Bar -->

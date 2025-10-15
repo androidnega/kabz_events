@@ -424,6 +424,10 @@
                     <i class="fas fa-cog text-3xl text-gray-400 group-hover:text-slate-600 mb-2 transition"></i>
                     <span class="text-xs font-medium text-gray-700 group-hover:text-slate-700 block transition">Settings</span>
                 </a>
+                <a href="{{ route('superadmin.appearance.index') }}" class="bg-gray-50 hover:bg-pink-50 border border-gray-200 hover:border-pink-300 rounded-lg p-4 text-center transition-all group">
+                    <i class="fas fa-palette text-3xl text-gray-400 group-hover:text-pink-600 mb-2 transition"></i>
+                    <span class="text-xs font-medium text-gray-700 group-hover:text-pink-700 block transition">Appearance</span>
+                </a>
             </div>
         </div>
     </div>
