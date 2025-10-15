@@ -173,6 +173,24 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
 
     // Admin Routes (also accessible to super_admin)
     Route::middleware(['role:admin|super_admin'])->name('admin.')->group(function () {
+        // Subscription Approvals
+        Route::get('/subscriptions/pending', [\App\Http\Controllers\Admin\SubscriptionApprovalController::class, 'pendingSubscriptions'])->name('subscriptions.pending');
+        Route::post('/subscriptions/{id}/approve', [\App\Http\Controllers\Admin\SubscriptionApprovalController::class, 'approveSubscription'])->name('subscriptions.approve');
+        Route::post('/subscriptions/{id}/reject', [\App\Http\Controllers\Admin\SubscriptionApprovalController::class, 'rejectSubscription'])->name('subscriptions.reject');
+        
+        // Featured Ad Approvals
+        Route::get('/featured-ads/pending', [\App\Http\Controllers\Admin\SubscriptionApprovalController::class, 'pendingFeaturedAds'])->name('featured-ads.pending');
+        Route::post('/featured-ads/{id}/approve', [\App\Http\Controllers\Admin\SubscriptionApprovalController::class, 'approveFeaturedAd'])->name('featured-ads.approve');
+        Route::post('/featured-ads/{id}/reject', [\App\Http\Controllers\Admin\SubscriptionApprovalController::class, 'rejectFeaturedAd'])->name('featured-ads.reject');
+        
+        // Admin Settings
+        Route::get('/settings', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'update'])->name('settings.update');
+        Route::get('/settings/subscriptions', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'subscriptionSettings'])->name('settings.subscriptions');
+        Route::post('/settings/subscriptions', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updateSubscriptionSettings'])->name('settings.subscriptions.update');
+        Route::get('/settings/payments', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'paymentSettings'])->name('settings.payments');
+        Route::post('/settings/payments', [\App\Http\Controllers\Admin\AdminSettingsController::class, 'updatePaymentSettings'])->name('settings.payments.update');
+        
         // Cloudinary Media Management
         Route::get('/media', [\App\Http\Controllers\Admin\CloudinaryMediaController::class, 'index'])->name('media.index');
         Route::get('/media/{folder}', [\App\Http\Controllers\Admin\CloudinaryMediaController::class, 'gallery'])->name('media.gallery');
@@ -277,6 +295,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         // Subscription Plans
         Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions');
         Route::post('/subscriptions/{plan}', [SubscriptionController::class, 'subscribe'])->name('subscriptions.subscribe');
+        Route::get('/subscriptions/{id}/status', [\App\Http\Controllers\Vendor\SubscriptionPaymentController::class, 'status'])->name('subscriptions.status');
         
         // Vendor Tour
         Route::post('/tour/complete', [VendorDashboardControllerNew::class, 'completeTour'])->name('tour.complete');
@@ -412,5 +431,8 @@ Route::middleware('auth')->group(function () {
         return response()->json($recs);
     })->name('personal.recommendations');
 });
+
+// Paystack Payment Callback (outside middleware - webhook)
+Route::get('/paystack/callback', [\App\Http\Controllers\PaystackCallbackController::class, 'handleCallback'])->name('paystack.callback');
 
 require __DIR__.'/auth.php';

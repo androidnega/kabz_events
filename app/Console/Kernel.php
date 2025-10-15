@@ -35,6 +35,11 @@ class Kernel extends ConsoleKernel
             ->dailyAt('02:00')
             ->withoutOverlapping()
             ->runInBackground();
+        
+        // Auto-approve subscriptions and featured ads every hour
+        $schedule->job(new \App\Jobs\AutoApproveSubscriptions)
+            ->hourly()
+            ->withoutOverlapping();
     }
 
     /**

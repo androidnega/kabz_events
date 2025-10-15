@@ -104,17 +104,6 @@
                     </p>
                 </div>
 
-                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
-                    <p class="text-sm text-yellow-700">
-                        <strong>⚠️ Common Issues & Solutions:</strong><br>
-                        <strong>Connection Timeout:</strong> Firewall may be blocking ports 465/587. Contact your hosting provider.<br>
-                        <strong>Authentication Failed:</strong> Verify email password is correct (not your cPanel password).<br>
-                        <strong>SSL Certificate Error:</strong> Try switching between SSL (port 465) and TLS (port 587).<br>
-                        <strong>Connection Refused:</strong> Ensure SMTP server allows connections from your hosting IP.<br><br>
-                        <em>🔧 If issues persist, verify with your hosting provider that outgoing SMTP is enabled.</em>
-                    </p>
-                </div>
-
                 <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded">
                     <p class="text-sm text-indigo-700">
                         <strong>Other Common SMTP Settings:</strong><br>
@@ -136,7 +125,7 @@
         </x-card>
 
         @if($settings['smtp_host'] ?? false)
-        <x-card class="p-6 mt-6">
+        <x-card class="p-6 mt-6 mb-8">
             <h3 class="text-lg font-bold text-gray-800 mb-4">
                 <i class="fas fa-paper-plane text-blue-600 mr-2"></i> Test Email Configuration
             </h3>
