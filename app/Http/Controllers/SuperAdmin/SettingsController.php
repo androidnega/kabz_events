@@ -141,6 +141,27 @@ class SettingsController extends Controller
         return back()->with('success', '📧 SMTP configuration updated successfully!');
     }
 
+    public function testSmtp(Request $request)
+    {
+        $request->validate([
+            'test_email' => 'required|email',
+        ]);
+
+        try {
+            \Illuminate\Support\Facades\Mail::raw(
+                "This is a test email from KABZS EVENT.\n\nIf you received this, your SMTP configuration is working correctly!\n\nSent at: " . now()->format('Y-m-d H:i:s'),
+                function ($message) use ($request) {
+                    $message->to($request->test_email)
+                            ->subject('Test Email - KABZS EVENT');
+                }
+            );
+
+            return back()->with('success', '✅ Test email sent successfully to ' . $request->test_email . '! Please check your inbox.');
+        } catch (\Exception $e) {
+            return back()->with('error', '❌ Failed to send test email: ' . $e->getMessage());
+        }
+    }
+
     // ============================================================
     // System Configuration
     // ============================================================
