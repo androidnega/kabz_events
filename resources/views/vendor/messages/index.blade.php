@@ -60,7 +60,7 @@
                 </div>
 
                 <!-- Chat Container -->
-                <div id="chat-container" class="hidden flex-col h-full">
+                <div id="chat-container" class="hidden flex-col h-full overflow-hidden">
                     <!-- Chat Header -->
                     <div class="px-4 py-3 border-b border-gray-200 bg-white flex items-center justify-between">
                         <div class="flex items-center space-x-2">
@@ -76,9 +76,9 @@
                         </div>
                     </div>
 
-                    <!-- Messages -->
-                    <div class="flex-1 overflow-y-auto p-4">
-                        <div id="messages-area" class="space-y-3">
+                    <!-- Messages (Scrollable) -->
+                    <div class="flex-1 overflow-y-auto p-3" style="min-height: 0;">
+                        <div id="messages-area" class="space-y-2">
                             <!-- Messages loaded here -->
                         </div>
                     </div>
@@ -95,41 +95,40 @@
                         </div>
                     </div>
 
-                    <!-- Message Input -->
-                    <div class="px-3 py-2 border-t border-gray-200 bg-white">
-                        <form id="message-form" enctype="multipart/form-data">
+                    <!-- Message Input (Fixed) -->
+                    <div class="flex items-center gap-1.5 px-2 py-2 border-t border-gray-200 bg-white flex-shrink-0">
+                        <form id="message-form" class="flex items-center gap-1.5 w-full" enctype="multipart/form-data">
                             @csrf
-                            <div class="flex items-center gap-2">
-                                <input type="file" id="image-input" accept="image/*" class="hidden">
-                                <input type="file" id="audio-input" accept="audio/*" class="hidden">
-                                
-                                <button type="button" id="attach-image-btn" class="flex-shrink-0 p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                </button>
-                                
-                                <button type="button" id="attach-audio-btn" class="flex-shrink-0 p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                                    </svg>
-                                </button>
-                                
-                                <input 
-                                    type="text"
-                                    id="message-input" 
-                                    class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500" 
-                                    placeholder="Type a message..."
-                                    autocomplete="off"
-                                />
-                                <div id="attachment-preview" class="hidden"></div>
-                                
-                                <button type="submit" class="flex-shrink-0 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors">
-                                    Send
-                                </button>
-                            </div>
+                            <input type="file" id="image-input" accept="image/*" class="hidden">
+                            <input type="file" id="audio-input" accept="audio/*" class="hidden">
+                            
+                            <button type="button" id="attach-image-btn" class="flex-shrink-0 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </button>
+                            
+                            <button type="button" id="attach-audio-btn" class="flex-shrink-0 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                                </svg>
+                            </button>
+                            
+                            <input 
+                                type="text"
+                                id="message-input" 
+                                class="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500" 
+                                placeholder="Type message..."
+                                autocomplete="off"
+                                style="font-size: 16px;"
+                            />
+                            
+                            <button type="submit" class="flex-shrink-0 px-3 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700" style="font-size: 14px;">
+                                Send
+                            </button>
                         </form>
                     </div>
+                    <div id="attachment-preview" class="hidden px-3 py-1 text-xs text-gray-600 bg-gray-50 border-t border-gray-200"></div>
                 </div>
             </div>
         </div>
