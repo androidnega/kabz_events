@@ -96,37 +96,35 @@
                     </div>
 
                     <!-- Message Input -->
-                    <div class="px-4 py-3 border-t border-gray-200 bg-white">
+                    <div class="px-3 py-2 border-t border-gray-200 bg-white">
                         <form id="message-form" enctype="multipart/form-data">
                             @csrf
-                            <div class="flex items-end space-x-2">
+                            <div class="flex items-center gap-2">
                                 <input type="file" id="image-input" accept="image/*" class="hidden">
                                 <input type="file" id="audio-input" accept="audio/*" class="hidden">
                                 
-                                <button type="button" id="attach-image-btn" class="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100">
+                                <button type="button" id="attach-image-btn" class="flex-shrink-0 p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                 </button>
                                 
-                                <button type="button" id="attach-audio-btn" class="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100">
+                                <button type="button" id="attach-audio-btn" class="flex-shrink-0 p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                                     </svg>
                                 </button>
                                 
-                                <div class="flex-1">
-                                    <textarea 
-                                        id="message-input" 
-                                        rows="1"
-                                        class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none" 
-                                        placeholder="Type a message..."
-                                        style="min-height: 40px; max-height: 120px;"
-                                    ></textarea>
-                                    <div id="attachment-preview" class="hidden mt-1 text-xs text-gray-600"></div>
-                                </div>
+                                <input 
+                                    type="text"
+                                    id="message-input" 
+                                    class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500" 
+                                    placeholder="Type a message..."
+                                    autocomplete="off"
+                                />
+                                <div id="attachment-preview" class="hidden"></div>
                                 
-                                <button type="submit" class="px-5 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors">
+                                <button type="submit" class="flex-shrink-0 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors">
                                     Send
                                 </button>
                             </div>
@@ -327,14 +325,6 @@
             const preview = document.getElementById('attachment-preview');
             preview.innerHTML = `🎵 ${e.target.files[0].name}`;
             preview.classList.remove('hidden');
-        }
-    });
-    
-    // Enter to send
-    document.getElementById('message-input').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            document.getElementById('message-form').dispatchEvent(new Event('submit'));
         }
     });
     
