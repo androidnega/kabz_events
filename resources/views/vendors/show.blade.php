@@ -26,16 +26,16 @@
     </div>
 
     <!-- Main Content -->
-    <div class="py-12" x-data="{ showLoginModal: false }">
+    <div class="py-4 md:py-12 px-2 md:px-4" x-data="{ showLoginModal: false }">
         <div class="container mx-auto">
             <!-- Vendor Name Header -->
-            <div class="mb-8">
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-900">{{ $vendor->business_name }}</h1>
+            <div class="mb-4 md:mb-8 px-2 md:px-0">
+                <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">{{ $vendor->business_name }}</h1>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
                 <!-- Main Column -->
-                <div class="lg:col-span-2 space-y-8">
+                <div class="lg:col-span-2 space-y-4 md:space-y-8">
                     <!-- Sample Work Section -->
                     @if($vendor->sample_work_images && count($vendor->sample_work_images) > 0)
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -47,23 +47,23 @@
                         </div>
                         
                         <!-- Image Gallery -->
-                        <div class="p-6">
+                        <div class="p-3 md:p-6">
                             <!-- Main Image Display -->
                             <div class="relative mb-4">
-                                <div class="w-full h-96 bg-gray-100 rounded-lg overflow-hidden group relative">
+                                <div class="w-full h-64 md:h-96 bg-gray-100 rounded-lg overflow-hidden group relative">
                                     <img id="mainSampleImage" src="{{ asset('storage/' . $vendor->sample_work_images[0]) }}" 
                                          alt="Sample work from {{ $vendor->business_name }}" 
-                                         class="w-full h-full object-cover">
+                                         class="w-full h-full object-contain md:object-cover">
                                     
                                     <!-- Navigation Arrows -->
                                     @if(count($vendor->sample_work_images) > 1)
-                                    <button onclick="previousImage()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 p-2 rounded-full transition-all opacity-0 group-hover:opacity-100 shadow-lg">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button onclick="previousImage()" class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 p-2 rounded-full transition-all md:opacity-0 md:group-hover:opacity-100 shadow-lg">
+                                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                                         </svg>
                                     </button>
-                                    <button onclick="nextImage()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 p-2 rounded-full transition-all opacity-0 group-hover:opacity-100 shadow-lg">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button onclick="nextImage()" class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 p-2 rounded-full transition-all md:opacity-0 md:group-hover:opacity-100 shadow-lg">
+                                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                         </svg>
                                     </button>
@@ -81,26 +81,28 @@
 
                             <!-- Thumbnail Gallery -->
                             @if(count($vendor->sample_work_images) > 1)
-                            <div class="flex gap-3">
-                                @foreach($vendor->sample_work_images as $index => $image)
-                                    @if($index < 5)
-                                    <div class="flex-shrink-0 relative cursor-pointer group thumbnail-item" data-image="{{ asset('storage/' . $image) }}" data-index="{{ $index + 1 }}">
-                                        <div class="w-24 h-16 overflow-hidden rounded-lg border border-gray-300 group-hover:border-primary transition-all duration-200">
-                                            <img src="{{ asset('storage/' . $image) }}" 
-                                                 alt="Sample work {{ $index + 1 }}" 
-                                                 class="w-full h-full object-cover">
+                            <div class="overflow-x-auto -mx-6 px-6 md:mx-0 md:px-0">
+                                <div class="flex gap-2 md:gap-3 min-w-max md:min-w-0">
+                                    @foreach($vendor->sample_work_images as $index => $image)
+                                        @if($index < 5)
+                                        <div class="flex-shrink-0 relative cursor-pointer group thumbnail-item" data-image="{{ asset('storage/' . $image) }}" data-index="{{ $index + 1 }}">
+                                            <div class="w-20 h-14 md:w-24 md:h-16 overflow-hidden rounded-lg border-2 border-gray-300 group-hover:border-primary transition-all duration-200">
+                                                <img src="{{ asset('storage/' . $image) }}" 
+                                                     alt="Sample work {{ $index + 1 }}" 
+                                                     class="w-full h-full object-cover">
+                                            </div>
+                                        </div>
+                                        @endif
+                                    @endforeach
+                                    
+                                    @if(count($vendor->sample_work_images) > 5)
+                                    <div class="flex-shrink-0 relative">
+                                        <div class="w-20 h-14 md:w-24 md:h-16 bg-blue-600 rounded-lg border-2 border-gray-300 flex items-center justify-center">
+                                            <span class="text-white text-xs md:text-sm font-medium">+{{ count($vendor->sample_work_images) - 5 }}</span>
                                         </div>
                                     </div>
                                     @endif
-                                @endforeach
-                                
-                                @if(count($vendor->sample_work_images) > 5)
-                                <div class="flex-shrink-0 relative">
-                                    <div class="w-24 h-16 bg-blue-600 rounded-lg border border-gray-300 flex items-center justify-center">
-                                        <span class="text-white text-sm font-medium">+{{ count($vendor->sample_work_images) - 5 }}</span>
-                                    </div>
                                 </div>
-                                @endif
                             </div>
                             @endif
                         </div>
@@ -109,18 +111,18 @@
 
                     <!-- About Section (moved after pictures) -->
                     <x-card>
-                        <div class="p-6" x-data="{ expanded: false }">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-4">About This Business</h2>
+                        <div class="p-4 md:p-6" x-data="{ expanded: false }">
+                            <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">About This Business</h2>
                             @if($vendor->description)
                                 @php
                                     $descriptionLength = strlen($vendor->description);
-                                    $shortDescription = $descriptionLength > 300 ? substr($vendor->description, 0, 300) . '...' : $vendor->description;
+                                    $shortDescription = $descriptionLength > 200 ? substr($vendor->description, 0, 200) . '...' : $vendor->description;
                                 @endphp
-                                <div class="text-gray-700 leading-relaxed">
+                                <div class="text-gray-700 leading-relaxed text-sm md:text-base">
                                     <p x-show="!expanded">{{ $shortDescription }}</p>
                                     <p x-show="expanded" x-cloak>{{ $vendor->description }}</p>
                                 </div>
-                                @if($descriptionLength > 300)
+                                @if($descriptionLength > 200)
                                     <button @click="expanded = !expanded" class="mt-3 text-primary hover:text-purple-700 font-medium text-sm flex items-center">
                                         <span x-text="expanded ? 'Read less' : 'Read more'"></span>
                                         <svg x-show="!expanded" class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,15 +134,134 @@
                                     </button>
                                 @endif
                             @else
-                                <p class="text-gray-500 italic">No description provided yet.</p>
+                                <p class="text-gray-500 italic text-sm">No description provided yet.</p>
                             @endif
                         </div>
                     </x-card>
 
+                    <!-- Mobile Only: Contact & Business Info (After About Section) -->
+                    <div class="lg:hidden space-y-4">
+                        <!-- Contact Information -->
+                        <x-card>
+                            <div class="p-4">
+                                <h3 class="text-lg font-bold text-gray-900 mb-4">Contact Information</h3>
+                                <div class="space-y-3 text-sm">
+                                    @if($vendor->phone)
+                                    <div class="flex items-start">
+                                        <i class="fas fa-phone text-primary mr-3 mt-1"></i>
+                                        <div>
+                                            <p class="text-xs text-gray-500 mb-1">Phone</p>
+                                            <a href="tel:{{ $vendor->phone }}" class="text-gray-900 font-medium hover:text-primary">{{ $vendor->phone }}</a>
+                                        </div>
+                                    </div>
+                                    @endif
+
+                                    @if($vendor->whatsapp)
+                                    <div class="flex items-start">
+                                        <i class="fab fa-whatsapp text-green-600 mr-3 mt-1"></i>
+                                        <div>
+                                            <p class="text-xs text-gray-500 mb-1">WhatsApp</p>
+                                            <p class="text-gray-900 font-medium">{{ $vendor->whatsapp }}</p>
+                                        </div>
+                                    </div>
+                                    @endif
+
+                                    @if($vendor->email)
+                                    <div class="flex items-start">
+                                        <i class="fas fa-envelope text-primary mr-3 mt-1"></i>
+                                        <div>
+                                            <p class="text-xs text-gray-500 mb-1">Email</p>
+                                            <a href="mailto:{{ $vendor->email }}" class="text-gray-900 font-medium hover:text-primary break-all">{{ $vendor->email }}</a>
+                                        </div>
+                                    </div>
+                                    @endif
+
+                                    @if($vendor->address)
+                                    <div class="flex items-start">
+                                        <i class="fas fa-map-marker-alt text-primary mr-3 mt-1"></i>
+                                        <div>
+                                            <p class="text-xs text-gray-500 mb-1">Location</p>
+                                            <p class="text-gray-900 font-medium">{{ $vendor->address }}</p>
+                                        </div>
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </x-card>
+
+                        <!-- Social Media Links -->
+                        @if($vendor->facebook || $vendor->instagram || $vendor->twitter || $vendor->website)
+                        <x-card>
+                            <div class="p-4">
+                                <h3 class="text-lg font-bold text-gray-900 mb-4">Connect With Us</h3>
+                                <div class="flex flex-wrap gap-3">
+                                    @if($vendor->facebook)
+                                    <a href="{{ $vendor->facebook }}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
+                                        <i class="fab fa-facebook-f"></i>
+                                        <span>Facebook</span>
+                                    </a>
+                                    @endif
+
+                                    @if($vendor->instagram)
+                                    <a href="{{ $vendor->instagram }}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition text-sm">
+                                        <i class="fab fa-instagram"></i>
+                                        <span>Instagram</span>
+                                    </a>
+                                    @endif
+
+                                    @if($vendor->twitter)
+                                    <a href="{{ $vendor->twitter }}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition text-sm">
+                                        <i class="fab fa-twitter"></i>
+                                        <span>Twitter</span>
+                                    </a>
+                                    @endif
+
+                                    @if($vendor->website)
+                                    <a href="{{ $vendor->website }}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition text-sm">
+                                        <i class="fas fa-globe"></i>
+                                        <span>Website</span>
+                                    </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </x-card>
+                        @endif
+
+                        <!-- Business Stats -->
+                        <x-card>
+                            <div class="p-4">
+                                <h3 class="text-lg font-bold text-gray-900 mb-4">Business Info</h3>
+                                <div class="grid grid-cols-3 gap-4 text-center">
+                                    <div>
+                                        <p class="text-2xl font-bold text-primary">{{ $vendor->services->count() }}</p>
+                                        <p class="text-xs text-gray-500 mt-1">Services</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-2xl font-bold text-accent">{{ number_format($averageRating, 1) }}</p>
+                                        <p class="text-xs text-gray-500 mt-1">Rating</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-2xl font-bold text-secondary">{{ $totalReviews }}</p>
+                                        <p class="text-xs text-gray-500 mt-1">Reviews</p>
+                                    </div>
+                                </div>
+                                
+                                @if($vendor->created_at)
+                                <div class="mt-4 pt-4 border-t border-gray-200">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-calendar-check text-primary mr-2"></i>
+                                        <span>Member Since {{ $vendor->created_at->format('F Y') }}</span>
+                                    </div>
+                                </div>
+                                @endif
+                            </div>
+                        </x-card>
+                    </div>
+
                     <!-- Services Section -->
                     <x-card>
-                        <div class="p-6">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Services Offered</h2>
+                        <div class="p-4 md:p-6">
+                            <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">Services Offered</h2>
                             
                             @if($vendor->services->count() > 0)
                                 <div class="space-y-4">
@@ -182,9 +303,9 @@
                     <!-- Review Submission Form -->
                     @auth
                     <x-card>
-                        <div class="p-6">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-4">Share Your Experience</h2>
-                            <p class="text-sm text-gray-600 mb-6">Help other Ghanaians find trusted vendors by sharing your experience</p>
+                        <div class="p-4 md:p-6">
+                            <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">Share Your Experience</h2>
+                            <p class="text-sm text-gray-600 mb-4 md:mb-6">Help other Ghanaians find trusted vendors by sharing your experience</p>
                             
                             @if(session('success'))
                                 <x-alert type="success" class="mb-4">
@@ -286,8 +407,8 @@
 
                     <!-- Reviews Display Section -->
                     <x-card>
-                        <div class="p-6">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                        <div class="p-4 md:p-6">
+                            <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">
                                 Client Reviews (Ghana) - {{ $totalReviews }}
                             </h2>
                             
@@ -325,8 +446,8 @@
                     </x-card>
                 </div>
 
-                <!-- Sticky Sidebar -->
-                <div class="lg:col-span-1">
+                <!-- Sticky Sidebar - Hidden on Mobile -->
+                <div class="hidden lg:block lg:col-span-1">
                     <div class="lg:sticky lg:top-20 space-y-4">
                         <!-- Vendor Sidebar Component with all sidebar content -->
                         <x-vendor-sidebar 
