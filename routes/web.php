@@ -209,42 +209,42 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
         // User Management
         Route::resource('users', App\Http\Controllers\Admin\UserController::class);
         
-        // Featured Ads Management
-        Route::get('/featured-ads', [AdminFeaturedAdController::class, 'index'])->name('featured-ads.index');
-        Route::get('/featured-ads/create', [AdminFeaturedAdController::class, 'create'])->name('featured-ads.create');
-        Route::post('/featured-ads', [AdminFeaturedAdController::class, 'store'])->name('featured-ads.store');
-        Route::get('/featured-ads/{id}', [AdminFeaturedAdController::class, 'show'])->name('featured-ads.show');
-        Route::get('/featured-ads/{id}/edit', [AdminFeaturedAdController::class, 'edit'])->name('featured-ads.edit');
-        Route::put('/featured-ads/{id}', [AdminFeaturedAdController::class, 'update'])->name('featured-ads.update');
-        Route::delete('/featured-ads/{id}', [AdminFeaturedAdController::class, 'destroy'])->name('featured-ads.destroy');
-        Route::post('/featured-ads/{id}/approve', [AdminFeaturedAdController::class, 'approve'])->name('featured-ads.approve');
-        Route::post('/featured-ads/{id}/reject', [AdminFeaturedAdController::class, 'reject'])->name('featured-ads.reject');
-        Route::post('/featured-ads/{id}/suspend', [AdminFeaturedAdController::class, 'suspend'])->name('featured-ads.suspend');
-        Route::get('/featured-ads/export/csv', [AdminFeaturedAdController::class, 'export'])->name('featured-ads.export');
+        // Featured Ads Management (Admin) - Use /manage-featured-ads to avoid vendor route conflict
+        Route::get('/manage-featured-ads', [AdminFeaturedAdController::class, 'index'])->name('featured-ads.index');
+        Route::get('/manage-featured-ads/create', [AdminFeaturedAdController::class, 'create'])->name('featured-ads.create');
+        Route::post('/manage-featured-ads', [AdminFeaturedAdController::class, 'store'])->name('featured-ads.store');
+        Route::get('/manage-featured-ads/export/csv', [AdminFeaturedAdController::class, 'export'])->name('featured-ads.export');
+        Route::get('/manage-featured-ads/{id}', [AdminFeaturedAdController::class, 'show'])->name('featured-ads.show');
+        Route::get('/manage-featured-ads/{id}/edit', [AdminFeaturedAdController::class, 'edit'])->name('featured-ads.edit');
+        Route::put('/manage-featured-ads/{id}', [AdminFeaturedAdController::class, 'update'])->name('featured-ads.update');
+        Route::delete('/manage-featured-ads/{id}', [AdminFeaturedAdController::class, 'destroy'])->name('featured-ads.destroy');
+        Route::post('/manage-featured-ads/{id}/approve', [AdminFeaturedAdController::class, 'approve'])->name('featured-ads.approve');
+        Route::post('/manage-featured-ads/{id}/reject', [AdminFeaturedAdController::class, 'reject'])->name('featured-ads.reject');
+        Route::post('/manage-featured-ads/{id}/suspend', [AdminFeaturedAdController::class, 'suspend'])->name('featured-ads.suspend');
         Route::get('/vendors/{vendorId}/services', [AdminFeaturedAdController::class, 'getVendorServices'])->name('vendors.services');
         
-        // VIP Plans Management
-        Route::get('/vip-plans', [VipPlanController::class, 'index'])->name('vip-plans.index');
-        Route::get('/vip-plans/create', [VipPlanController::class, 'create'])->name('vip-plans.create');
-        Route::post('/vip-plans', [VipPlanController::class, 'store'])->name('vip-plans.store');
-        Route::get('/vip-plans/{id}', [VipPlanController::class, 'show'])->name('vip-plans.show');
-        Route::get('/vip-plans/{id}/edit', [VipPlanController::class, 'edit'])->name('vip-plans.edit');
-        Route::put('/vip-plans/{id}', [VipPlanController::class, 'update'])->name('vip-plans.update');
-        Route::post('/vip-plans/{id}/toggle-status', [VipPlanController::class, 'toggleStatus'])->name('vip-plans.toggle-status');
-        Route::delete('/vip-plans/{id}', [VipPlanController::class, 'destroy'])->name('vip-plans.destroy');
+        // VIP Plans Management (Admin Only) - Use /manage-vip-plans to avoid vendor route conflict
+        Route::get('/manage-vip-plans', [VipPlanController::class, 'index'])->name('vip-plans.index');
+        Route::get('/manage-vip-plans/create', [VipPlanController::class, 'create'])->name('vip-plans.create');
+        Route::post('/manage-vip-plans', [VipPlanController::class, 'store'])->name('vip-plans.store');
+        Route::get('/manage-vip-plans/{id}', [VipPlanController::class, 'show'])->name('vip-plans.show');
+        Route::get('/manage-vip-plans/{id}/edit', [VipPlanController::class, 'edit'])->name('vip-plans.edit');
+        Route::put('/manage-vip-plans/{id}', [VipPlanController::class, 'update'])->name('vip-plans.update');
+        Route::post('/manage-vip-plans/{id}/toggle-status', [VipPlanController::class, 'toggleStatus'])->name('vip-plans.toggle-status');
+        Route::delete('/manage-vip-plans/{id}', [VipPlanController::class, 'destroy'])->name('vip-plans.destroy');
         
-        // VIP Subscriptions Management
-        Route::get('/vip-subscriptions', [AdminVipSubscriptionController::class, 'index'])->name('vip-subscriptions.index');
-        Route::get('/vip-subscriptions/create', [AdminVipSubscriptionController::class, 'create'])->name('vip-subscriptions.create');
-        Route::post('/vip-subscriptions', [AdminVipSubscriptionController::class, 'store'])->name('vip-subscriptions.store');
-        Route::get('/vip-subscriptions/{id}', [AdminVipSubscriptionController::class, 'show'])->name('vip-subscriptions.show');
-        Route::get('/vip-subscriptions/{id}/edit', [AdminVipSubscriptionController::class, 'edit'])->name('vip-subscriptions.edit');
-        Route::put('/vip-subscriptions/{id}', [AdminVipSubscriptionController::class, 'update'])->name('vip-subscriptions.update');
-        Route::post('/vip-subscriptions/{id}/cancel', [AdminVipSubscriptionController::class, 'cancel'])->name('vip-subscriptions.cancel');
-        Route::post('/vip-subscriptions/{id}/reactivate', [AdminVipSubscriptionController::class, 'reactivate'])->name('vip-subscriptions.reactivate');
-        Route::post('/vip-subscriptions/{id}/extend', [AdminVipSubscriptionController::class, 'extend'])->name('vip-subscriptions.extend');
-        Route::delete('/vip-subscriptions/{id}', [AdminVipSubscriptionController::class, 'destroy'])->name('vip-subscriptions.destroy');
-        Route::get('/vip-subscriptions/export/csv', [AdminVipSubscriptionController::class, 'export'])->name('vip-subscriptions.export');
+        // VIP Subscriptions Management (Admin Only) - Use /manage-vip-subscriptions to avoid vendor route conflict
+        Route::get('/manage-vip-subscriptions', [AdminVipSubscriptionController::class, 'index'])->name('vip-subscriptions.index');
+        Route::get('/manage-vip-subscriptions/create', [AdminVipSubscriptionController::class, 'create'])->name('vip-subscriptions.create');
+        Route::post('/manage-vip-subscriptions', [AdminVipSubscriptionController::class, 'store'])->name('vip-subscriptions.store');
+        Route::get('/manage-vip-subscriptions/export/csv', [AdminVipSubscriptionController::class, 'export'])->name('vip-subscriptions.export');
+        Route::get('/manage-vip-subscriptions/{id}', [AdminVipSubscriptionController::class, 'show'])->name('vip-subscriptions.show');
+        Route::get('/manage-vip-subscriptions/{id}/edit', [AdminVipSubscriptionController::class, 'edit'])->name('vip-subscriptions.edit');
+        Route::put('/manage-vip-subscriptions/{id}', [AdminVipSubscriptionController::class, 'update'])->name('vip-subscriptions.update');
+        Route::post('/manage-vip-subscriptions/{id}/cancel', [AdminVipSubscriptionController::class, 'cancel'])->name('vip-subscriptions.cancel');
+        Route::post('/manage-vip-subscriptions/{id}/reactivate', [AdminVipSubscriptionController::class, 'reactivate'])->name('vip-subscriptions.reactivate');
+        Route::post('/manage-vip-subscriptions/{id}/extend', [AdminVipSubscriptionController::class, 'extend'])->name('vip-subscriptions.extend');
+        Route::delete('/manage-vip-subscriptions/{id}', [AdminVipSubscriptionController::class, 'destroy'])->name('vip-subscriptions.destroy');
     });
 
     // Vendor Routes
