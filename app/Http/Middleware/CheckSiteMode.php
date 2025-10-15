@@ -47,13 +47,13 @@ class CheckSiteMode
         if ($siteModeEnabled && !$isSuperAdmin) {
             switch ($siteMode) {
                 case 'maintenance':
-                    return redirect()->route('site.maintenance');
+                    return response()->view('site.maintenance');
                 
                 case 'coming_soon':
-                    return redirect()->route('site.coming-soon');
+                    return response()->view('site.coming-soon');
                 
                 case 'update':
-                    return redirect()->route('site.update');
+                    return response()->view('site.update');
             }
         }
 

@@ -13,23 +13,22 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: #f8f9fa;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
+            color: #333;
             padding: 20px;
         }
 
         .container {
             max-width: 600px;
             text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: #ffffff;
             border-radius: 20px;
             padding: 50px 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
         }
 
         .icon {
@@ -51,13 +50,14 @@
             font-size: 42px;
             margin-bottom: 20px;
             font-weight: 700;
+            color: #f093fb;
         }
 
         p {
             font-size: 18px;
             line-height: 1.6;
             margin-bottom: 30px;
-            opacity: 0.9;
+            color: #666;
         }
 
         .countdown {
@@ -68,7 +68,7 @@
         }
 
         .countdown-item {
-            background: rgba(255, 255, 255, 0.2);
+            background: #f0f0f0;
             border-radius: 10px;
             padding: 15px 20px;
             min-width: 80px;
@@ -78,32 +78,13 @@
             font-size: 32px;
             font-weight: 700;
             display: block;
+            color: #f093fb;
         }
 
         .countdown-label {
             font-size: 12px;
-            opacity: 0.8;
+            color: #666;
             text-transform: uppercase;
-        }
-
-        .admin-link {
-            margin-top: 40px;
-            font-size: 14px;
-        }
-
-        .admin-link a {
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            display: inline-block;
-        }
-
-        .admin-link a:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -161,10 +142,6 @@
                 setInterval(updateCountdown, 1000);
             </script>
         @endif
-
-        <div class="admin-link">
-            <a href="{{ route('login') }}">Super Admin Login</a>
-        </div>
     </div>
 </body>
 </html>
