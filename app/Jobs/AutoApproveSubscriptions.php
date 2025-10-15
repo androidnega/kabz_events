@@ -24,14 +24,14 @@ class AutoApproveSubscriptions implements ShouldQueue
     public function handle(): void
     {
         // Check if auto-approval is enabled for subscriptions
-        $subscriptionAutoApprovalEnabled = AdminSetting::get('subscription_auto_approval_enabled', true);
+        $subscriptionAutoApprovalEnabled = AdminSetting::getValue('subscription_auto_approval_enabled', true);
         
         if ($subscriptionAutoApprovalEnabled) {
             $this->autoApproveSubscriptions();
         }
 
         // Check if auto-approval is enabled for featured ads
-        $adAutoApprovalEnabled = AdminSetting::get('featured_ad_auto_approval_enabled', true);
+        $adAutoApprovalEnabled = AdminSetting::getValue('featured_ad_auto_approval_enabled', true);
         
         if ($adAutoApprovalEnabled) {
             $this->autoApproveFeaturedAds();

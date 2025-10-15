@@ -77,7 +77,7 @@ class PaystackCallbackController extends Controller
             'payment_status' => 'paid',
             'payment_method' => 'paystack',
             'paid_at' => now(),
-            'payment_expires_at' => now()->addHours(AdminSetting::get('subscription_auto_approval_hours', 24)),
+            'payment_expires_at' => now()->addHours(AdminSetting::getValue('subscription_auto_approval_hours', 24)),
         ]);
 
         // Update payment record
@@ -127,7 +127,7 @@ class PaystackCallbackController extends Controller
             'payment_status' => 'paid',
             'payment_method' => 'paystack',
             'paid_at' => now(),
-            'payment_expires_at' => now()->addHours(AdminSetting::get('featured_ad_auto_approval_hours', 24)),
+            'payment_expires_at' => now()->addHours(AdminSetting::getValue('featured_ad_auto_approval_hours', 24)),
         ]);
 
         // Notify all admins (similar implementation)

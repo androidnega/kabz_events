@@ -20,7 +20,7 @@ class AdminSetting extends Model
     /**
      * Get a setting value by key with type casting
      */
-    public static function get($key, $default = null)
+    public static function getValue($key, $default = null)
     {
         $setting = self::where('key', $key)->first();
         

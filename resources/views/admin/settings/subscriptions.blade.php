@@ -29,7 +29,7 @@
                                 type="checkbox" 
                                 name="subscription_auto_approval_enabled" 
                                 value="1"
-                                {{ AdminSetting::get('subscription_auto_approval_enabled', true) ? 'checked' : '' }}
+                                {{ AdminSetting::getValue('subscription_auto_approval_enabled', true) ? 'checked' : '' }}
                                 class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                             >
                             <span class="text-sm font-medium text-gray-700">
@@ -48,7 +48,7 @@
                         <input 
                             type="number" 
                             name="subscription_auto_approval_hours"
-                            value="{{ AdminSetting::get('subscription_auto_approval_hours', 24) }}"
+                            value="{{ AdminSetting::getValue('subscription_auto_approval_hours', 24) }}"
                             min="1"
                             max="168"
                             class="w-64 rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500"
@@ -69,7 +69,7 @@
                                 type="checkbox" 
                                 name="featured_ad_auto_approval_enabled" 
                                 value="1"
-                                {{ AdminSetting::get('featured_ad_auto_approval_enabled', true) ? 'checked' : '' }}
+                                {{ AdminSetting::getValue('featured_ad_auto_approval_enabled', true) ? 'checked' : '' }}
                                 class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                             >
                             <span class="text-sm font-medium text-gray-700">
@@ -88,7 +88,7 @@
                         <input 
                             type="number" 
                             name="featured_ad_auto_approval_hours"
-                            value="{{ AdminSetting::get('featured_ad_auto_approval_hours', 24) }}"
+                            value="{{ AdminSetting::getValue('featured_ad_auto_approval_hours', 24) }}"
                             min="1"
                             max="168"
                             class="w-64 rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500"

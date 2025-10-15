@@ -60,7 +60,7 @@ Created comprehensive database structure:
 - Stores Paystack metadata
 
 **AdminSetting Model:**
-- `AdminSetting::get($key, $default)` - Get typed value
+- `AdminSetting::getValue($key, $default)` - Get typed value
 - `AdminSetting::set($key, $value, $type)` - Set value
 - `AdminSetting::getGroup($group)` - Get all settings in group
 - Auto type-casting (boolean, integer, json)
