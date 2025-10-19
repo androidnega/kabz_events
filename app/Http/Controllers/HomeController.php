@@ -82,18 +82,17 @@ class HomeController extends Controller
 
         foreach ($vendors as $vendor) {
             $address = strtolower($vendor->address ?? '');
-            $district = strtolower($vendor->district ?? '');
 
             foreach ($regionKeywords as $region => $keywords) {
                 foreach ($keywords as $keyword) {
-                    if (stripos($address, $keyword) !== false || stripos($district, $keyword) !== false) {
+                    if (stripos($address, $keyword) !== false) {
                         // Count for region
                         if (!isset($locationCounts['regions'][$region])) {
                             $locationCounts['regions'][$region] = 0;
                         }
                         $locationCounts['regions'][$region]++;
 
-                        // Count for town (use district or first keyword match)
+                        // Count for town (use first keyword match from address)
                         $town = ucwords($keyword);
                         $townKey = $region . '|' . $town;
                         if (!isset($locationCounts['towns'][$townKey])) {
