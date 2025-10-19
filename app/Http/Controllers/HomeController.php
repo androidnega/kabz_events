@@ -58,8 +58,7 @@ class HomeController extends Controller
      */
     private function getVendorLocationCounts(): array
     {
-        $vendors = Vendor::where('is_verified', true)
-            ->select('address', 'district')
+        $vendors = Vendor::select('address')
             ->get();
 
         $locationCounts = [
