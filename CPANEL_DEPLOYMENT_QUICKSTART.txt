@@ -1,0 +1,520 @@
+================================================================================
+                KABZS EVENT - CPANEL DEPLOYMENT QUICK START
+================================================================================
+
+🚀 How to Get Your Project on cPanel - SIMPLE 10-STEP PROCESS
+================================================================================
+
+⏱️ Total Time: 45-90 minutes
+📋 Difficulty: Intermediate
+✅ Success Rate: High with this guide
+
+================================================================================
+                        BEFORE YOU START
+================================================================================
+
+✅ CHECKLIST - Make sure you have:
+□ cPanel login credentials (username & password)
+□ cPanel URL (usually: yourdomain.com:2083 or yourdomain.com/cpanel)
+□ GitHub account created
+□ Your domain name or subdomain ready
+□ Access to your computer with the project files
+
+================================================================================
+                    STEP-BY-STEP DEPLOYMENT PROCESS
+================================================================================
+
+STEP 1: PREPARE YOUR PROJECT LOCALLY (10 minutes)
+==================================================
+
+1.1 Open Terminal/Command Prompt in your project folder:
+    - Windows: Hold Shift + Right-click in folder → "Open PowerShell window here"
+    - Or: Win+R → type "cmd" → cd C:\xampp\htdocs\kabz
+
+1.2 Check if Git is initialized:
+    git status
+
+1.3 If you see "not a git repository", initialize it:
+    git init
+    git add .
+    git commit -m "Initial commit - KABZS EVENT ready for deployment"
+
+✅ CHECKPOINT: You should see "nothing to commit, working tree clean"
+
+--------------------------------------------------------------------------------
+
+STEP 2: PUSH TO GITHUB (15 minutes)
+====================================
+
+2.1 Create GitHub Repository:
+    - Go to: https://github.com/new
+    - Repository name: kabzs-event (or your choice)
+    - Choose: Private (recommended)
+    - DON'T check "Initialize with README"
+    - Click "Create repository"
+
+2.2 Copy the repository URL shown (looks like):
+    https://github.com/yourusername/kabzs-event.git
+
+2.3 Link your local project to GitHub:
+    git remote add origin https://github.com/yourusername/kabzs-event.git
+    git branch -M main
+    git push -u origin main
+
+2.4 When prompted:
+    - Username: your_github_username
+    - Password: USE PERSONAL ACCESS TOKEN (not your GitHub password)
+    
+    Don't have a token? Create one:
+    - Go to: https://github.com/settings/tokens
+    - Click "Generate new token (classic)"
+    - Name: "cPanel Deployment"
+    - Select: ✓ repo (all sub-options)
+    - Generate token
+    - COPY IT IMMEDIATELY (you won't see it again!)
+    - Use this as your password when pushing
+
+✅ CHECKPOINT: Visit your GitHub repo URL - you should see all your files
+
+--------------------------------------------------------------------------------
+
+STEP 3: LOGIN TO CPANEL (2 minutes)
+====================================
+
+3.1 Open your browser and go to:
+    https://yourdomain.com:2083
+    OR
+    https://yourdomain.com/cpanel
+
+3.2 Enter your cPanel credentials
+    Username: [your cPanel username]
+    Password: [your cPanel password]
+
+3.3 You should see the cPanel dashboard with icons
+
+✅ CHECKPOINT: You're in cPanel and can see various icons/sections
+
+--------------------------------------------------------------------------------
+
+STEP 4: SETUP PHP VERSION (3 minutes)
+======================================
+
+4.1 In cPanel, search for: "Select PHP Version" or "MultiPHP Manager"
+
+4.2 Click on it and select your domain
+
+4.3 Choose PHP version: 8.1 or 8.2 (Laravel 10 requirement)
+
+4.4 Click "Apply"
+
+4.5 Under "PHP Extensions", enable these (check the boxes):
+    ✓ bcmath
+    ✓ ctype
+    ✓ curl
+    ✓ dom
+    ✓ fileinfo
+    ✓ json
+    ✓ mbstring
+    ✓ openssl
+    ✓ pdo
+    ✓ pdo_mysql
+    ✓ tokenizer
+    ✓ xml
+    ✓ zip
+    ✓ gd
+
+4.6 Click "Save" or "Apply"
+
+✅ CHECKPOINT: PHP version shows 8.1+ and extensions are checked
+
+--------------------------------------------------------------------------------
+
+STEP 5: CREATE DATABASE (5 minutes)
+====================================
+
+5.1 In cPanel dashboard, find: "MySQL Databases"
+
+5.2 CREATE DATABASE:
+    - Database Name: kabzs_event_db (or your choice)
+    - Click "Create Database"
+    - ⭐ NOTE: cPanel adds a prefix (e.g., username_kabzs_event_db)
+    - WRITE DOWN THE FULL DATABASE NAME: _______________________
+
+5.3 CREATE DATABASE USER:
+    - Scroll to "MySQL Users"
+    - Username: kabzs_user (or your choice)
+    - Password: Click "Generate Password" OR create a strong one
+    - ⭐ IMPORTANT: COPY AND SAVE THIS PASSWORD SECURELY!
+    - Password: _______________________
+    - Click "Create User"
+    - ⭐ NOTE: Full username will be: username_kabzs_user
+    - WRITE DOWN FULL USERNAME: _______________________
+
+5.4 ADD USER TO DATABASE:
+    - Scroll to "Add User To Database"
+    - Select the user you just created
+    - Select the database you just created
+    - Click "Add"
+    - Check "ALL PRIVILEGES"
+    - Click "Make Changes"
+
+✅ CHECKPOINT: You have noted down:
+   - Database name: username_kabzs_event_db
+   - Username: username_kabzs_user
+   - Password: [your secure password]
+
+--------------------------------------------------------------------------------
+
+STEP 6: ACCESS TERMINAL/SSH (2 minutes)
+========================================
+
+METHOD A: cPanel Terminal (Recommended - Easier)
+-------------------------------------------------
+6.1 In cPanel, search for: "Terminal" or "Terminal (SSH)"
+
+6.2 Click on it - a terminal window opens in your browser
+
+6.3 You should see a command prompt like:
+    [username@server ~]$
+
+METHOD B: SSH Client (Alternative)
+-----------------------------------
+6.1 Download PuTTY (Windows): https://www.putty.org/
+    Or use built-in Terminal (Mac/Linux)
+
+6.2 Connect:
+    Host: yourdomain.com (or your server IP)
+    Port: 22
+    Username: your_cpanel_username
+    Password: your_cpanel_password
+
+✅ CHECKPOINT: You have a terminal/command line open
+
+--------------------------------------------------------------------------------
+
+STEP 7: DEPLOY PROJECT FROM GITHUB (15 minutes)
+================================================
+
+7.1 In the terminal, check your current location:
+    pwd
+
+    You should see: /home/username
+
+7.2 Create a directory for Laravel projects:
+    mkdir -p ~/laravel
+    cd ~/laravel
+
+7.3 Clone your GitHub repository:
+    git clone https://github.com/yourusername/kabzs-event.git
+
+    When prompted:
+    - Username: your_github_username
+    - Password: [your Personal Access Token from Step 2.4]
+
+    ⏳ This will take 2-5 minutes
+
+7.4 Navigate into the project:
+    cd kabzs-event
+
+7.5 Verify files are there:
+    ls -la
+
+    You should see: app, config, database, public, routes, etc.
+
+✅ CHECKPOINT: Your project files are on the server at ~/laravel/kabzs-event
+
+--------------------------------------------------------------------------------
+
+STEP 8: INSTALL COMPOSER & DEPENDENCIES (10-15 minutes)
+========================================================
+
+8.1 Check if Composer is installed:
+    composer --version
+
+8.2 If NOT installed, install Composer:
+    cd ~
+    curl -sS https://getcomposer.org/installer | php
+    mkdir -p ~/bin
+    mv composer.phar ~/bin/composer
+    chmod +x ~/bin/composer
+    echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
+    source ~/.bashrc
+
+8.3 Verify Composer is working:
+    composer --version
+
+    Should show: Composer version 2.x.x
+
+8.4 Navigate back to project:
+    cd ~/laravel/kabzs-event
+
+8.5 Install PHP dependencies:
+    composer install --optimize-autoloader --no-dev
+
+    ⏳ This will take 5-15 minutes depending on server speed
+    
+    If you get memory errors, use:
+    php -d memory_limit=-1 ~/bin/composer install --optimize-autoloader --no-dev
+
+✅ CHECKPOINT: Vendor folder is created and filled with packages
+
+--------------------------------------------------------------------------------
+
+STEP 9: CONFIGURE ENVIRONMENT & DATABASE (10 minutes)
+======================================================
+
+9.1 Create .env file from example:
+    cp .env.example .env
+    
+    If .env.example doesn't exist:
+    nano .env
+    (Then paste the template from ENV_CONFIGURATION_TEMPLATE.txt)
+
+9.2 Edit .env file:
+    nano .env
+
+    Use arrow keys to navigate, edit these lines:
+
+    APP_ENV=production                  ← Change from "local"
+    APP_DEBUG=false                     ← Change from "true"
+    APP_URL=https://yourdomain.com      ← Your actual domain
+
+    DB_HOST=localhost                   ← Usually localhost
+    DB_DATABASE=username_kabzs_event_db ← From Step 5
+    DB_USERNAME=username_kabzs_user     ← From Step 5
+    DB_PASSWORD=your_password_here      ← From Step 5
+
+    Save and exit:
+    - Press Ctrl+X
+    - Press Y (yes)
+    - Press Enter
+
+9.3 Generate application key:
+    php artisan key:generate
+
+    You should see: "Application key set successfully."
+
+9.4 Run database migrations:
+    php artisan migrate --force
+
+    Type "yes" if asked to confirm
+    ⏳ This creates all database tables
+
+9.5 Seed database with initial data:
+    php artisan db:seed --force
+
+    ⏳ This creates admin accounts, categories, settings, etc.
+
+✅ CHECKPOINT: Database is created and populated with data
+
+--------------------------------------------------------------------------------
+
+STEP 10: CREATE WEB SYMLINK & SET PERMISSIONS (5 minutes)
+==========================================================
+
+10.1 Backup existing public_html (if it has important files):
+     mv ~/public_html ~/public_html_backup
+
+10.2 Create symbolic link to Laravel public folder:
+     ln -s ~/laravel/kabzs-event/public ~/public_html
+
+10.3 Create storage symlink:
+     cd ~/laravel/kabzs-event
+     php artisan storage:link
+
+10.4 Set correct permissions:
+     chmod -R 775 storage
+     chmod -R 775 bootstrap/cache
+
+10.5 Optimize for production:
+     php artisan config:cache
+     php artisan route:cache
+     php artisan view:cache
+     php artisan optimize
+
+✅ CHECKPOINT: Your website is now live!
+
+================================================================================
+                        🎉 DEPLOYMENT COMPLETE!
+================================================================================
+
+TEST YOUR WEBSITE:
+1. Open browser and visit: https://yourdomain.com
+2. You should see the KABZS EVENT homepage
+3. Try logging in:
+   - Super Admin: superadmin@kabzsevent.com / password123
+   - Admin: admin@kabzsevent.com / password123
+
+⚠️ IMPORTANT: Change these default passwords immediately!
+
+================================================================================
+                        POST-DEPLOYMENT TASKS
+================================================================================
+
+IMMEDIATE TASKS (Do Now):
+□ Change all default passwords
+□ Setup SSL/HTTPS (cPanel → SSL/TLS Status → Run AutoSSL)
+□ Test all features (login, vendor registration, etc.)
+□ Check error logs: tail ~/laravel/kabzs-event/storage/logs/laravel.log
+
+OPTIONAL BUT RECOMMENDED:
+□ Configure email (SMTP) - See ENV_CONFIGURATION_TEMPLATE.txt
+□ Configure Paystack (for payments)
+□ Configure Arkassel SMS (for SMS)
+□ Configure Cloudinary (for image storage)
+□ Setup cron job for Laravel scheduler
+□ Setup backups
+
+================================================================================
+                        TROUBLESHOOTING
+================================================================================
+
+PROBLEM: "500 Internal Server Error"
+SOLUTION:
+  chmod -R 775 storage bootstrap/cache
+  php artisan cache:clear
+  Check logs: tail storage/logs/laravel.log
+
+PROBLEM: "Database connection failed"
+SOLUTION:
+  - Verify credentials in .env match exactly from Step 5
+  - Ensure DB_HOST=localhost (not 127.0.0.1)
+  - Test: php artisan tinker → DB::connection()->getPdo();
+
+PROBLEM: "404 Not Found" on all pages
+SOLUTION:
+  - Check .htaccess exists in public folder
+  - Contact hosting to enable mod_rewrite
+
+PROBLEM: CSS/Images not loading
+SOLUTION:
+  - Verify APP_URL in .env matches your domain
+  - Check symlink: ls -la ~/public_html
+  - Clear browser cache
+
+PROBLEM: Permission denied errors
+SOLUTION:
+  chmod -R 775 storage bootstrap/cache
+  chown -R username:username ~/laravel/kabzs-event
+
+For more issues, see: CPANEL_GITHUB_DEPLOYMENT_GUIDE.txt (Part 13)
+
+================================================================================
+                        UPDATING YOUR SITE
+================================================================================
+
+When you make changes locally and want to update the live site:
+
+LOCAL COMPUTER:
+1. git add .
+2. git commit -m "Your changes description"
+3. git push origin main
+
+CPANEL TERMINAL:
+1. cd ~/laravel/kabzs-event
+2. git pull origin main
+3. composer install --no-dev
+4. php artisan migrate --force
+5. php artisan cache:clear
+6. php artisan config:cache
+7. php artisan route:cache
+8. php artisan view:cache
+
+Done! Changes are live.
+
+================================================================================
+                        USEFUL COMMANDS REFERENCE
+================================================================================
+
+NAVIGATION:
+cd ~/laravel/kabzs-event    # Go to project
+pwd                         # Show current directory
+ls -la                      # List all files
+
+PROJECT MANAGEMENT:
+git pull origin main        # Update from GitHub
+composer install --no-dev   # Install dependencies
+php artisan migrate --force # Run database migrations
+php artisan db:seed --force # Seed database
+php artisan optimize        # Optimize everything
+
+CACHING:
+php artisan cache:clear     # Clear all cache
+php artisan config:cache    # Cache config
+php artisan route:cache     # Cache routes
+php artisan view:cache      # Cache views
+
+LOGS & DEBUGGING:
+tail -f storage/logs/laravel.log              # Watch logs live
+tail -100 storage/logs/laravel.log            # Last 100 lines
+cat storage/logs/laravel.log | grep ERROR     # Find errors
+
+PERMISSIONS:
+chmod -R 775 storage        # Fix storage permissions
+chmod -R 775 bootstrap/cache # Fix cache permissions
+
+================================================================================
+                        IMPORTANT FILES LOCATIONS
+================================================================================
+
+Project Root: ~/laravel/kabzs-event
+Public Web: ~/public_html (symlinked to ~/laravel/kabzs-event/public)
+Config File: ~/laravel/kabzs-event/.env
+Logs: ~/laravel/kabzs-event/storage/logs/laravel.log
+Database: Managed via cPanel → phpMyAdmin
+
+================================================================================
+                        SUPPORT & NEXT STEPS
+================================================================================
+
+📚 DETAILED GUIDES IN YOUR PROJECT:
+- CPANEL_GITHUB_DEPLOYMENT_GUIDE.txt (Full 1400+ line guide)
+- ENV_CONFIGURATION_TEMPLATE.txt (All password & config info)
+- SYSTEM_AUDIT_REPORT.txt (Complete system documentation)
+- /Docs folder (70+ documentation files)
+
+🔐 SECURITY CHECKLIST:
+□ Change all default admin passwords
+□ Set APP_DEBUG=false in .env
+□ Set APP_ENV=production in .env
+□ Enable HTTPS/SSL
+□ Set strong database passwords
+□ Never share .env file
+□ Regular backups
+
+📞 GET HELP:
+- Hosting Support: For cPanel/server issues
+- Laravel Docs: https://laravel.com/docs/10.x
+- Your detailed guide: CPANEL_GITHUB_DEPLOYMENT_GUIDE.txt
+
+================================================================================
+                        🎊 CONGRATULATIONS!
+================================================================================
+
+Your KABZS EVENT platform is now LIVE on cPanel! 🇬🇭🎉
+
+You've successfully deployed a professional, enterprise-grade event and vendor
+management platform for Ghana!
+
+Next steps:
+1. Test all features thoroughly
+2. Change default passwords
+3. Configure payment & SMS services
+4. Add your vendor accounts
+5. Start connecting vendors with clients!
+
+Good luck with your platform! 🚀
+
+================================================================================
+                        END OF QUICK START GUIDE
+================================================================================
+
+Created: October 15, 2025
+For: KABZS EVENT - Ghana Event & Vendor Management Platform
+Deployment: GitHub → cPanel
+Estimated Time: 45-90 minutes
+Success Rate: High ✅
+
+For detailed explanations, troubleshooting, and advanced options, refer to:
+CPANEL_GITHUB_DEPLOYMENT_GUIDE.txt
+

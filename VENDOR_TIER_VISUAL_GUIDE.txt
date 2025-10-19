@@ -1,0 +1,214 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║              VENDOR SUBSCRIPTION TIERS - VISUAL REFERENCE GUIDE              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+This guide shows how different subscription types appear on your homepage.
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                         🟣 VIP PLATINUM VENDOR 🟣                            ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  ╔═══════════════════════════════════════════════════════════════════════╗  ┃
+┃  ║                                                      👑 PLATINUM       ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║                        [VENDOR IMAGE]                                 ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ╠═══════════════════════════════════════════════════════════════════════╣  ┃
+┃  ║  Graceful Venue Rental Group                                      ✓  ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║  ⭐⭐⭐⭐⭐ 5.0                                                        ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║  📍 Accra, Greater Accra                                              ║  ┃
+┃  ╚═══════════════════════════════════════════════════════════════════════╝  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+BORDER: Purple (thick) | SHADOW: Extra Large | BADGE: Purple-Pink Gradient
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                           🟡 VIP GOLD VENDOR 🟡                              ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  ╔═══════════════════════════════════════════════════════════════════════╗  ┃
+┃  ║                                                         👑 GOLD        ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║                        [VENDOR IMAGE]                                 ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ╠═══════════════════════════════════════════════════════════════════════╣  ┃
+┃  ║  Spectacular Hair & Makeup Artists                                ✓  ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║  ⭐⭐⭐⭐⭐ 4.9                                                        ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║  📍 Kumasi, Ashanti Region                                            ║  ┃
+┃  ╚═══════════════════════════════════════════════════════════════════════╝  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+BORDER: Gold/Yellow (thick) | SHADOW: Large | BADGE: Yellow-Gold Gradient
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                          ⚪ VIP SILVER VENDOR ⚪                             ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  ╔═══════════════════════════════════════════════════════════════════════╗  ┃
+┃  ║                                                        👑 SILVER       ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║                        [VENDOR IMAGE]                                 ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ╠═══════════════════════════════════════════════════════════════════════╣  ┃
+┃  ║  Crown Photography & Videography                                  ✓  ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║  ⭐⭐⭐⭐☆ 4.7                                                        ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║  📍 Takoradi, Western Region                                          ║  ┃
+┃  ╚═══════════════════════════════════════════════════════════════════════╝  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+BORDER: Gray (medium) | SHADOW: Medium | BADGE: Gray Gradient
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                          🟠 VIP BRONZE VENDOR 🟠                             ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  ╔═══════════════════════════════════════════════════════════════════════╗  ┃
+┃  ║                                                        👑 BRONZE       ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║                        [VENDOR IMAGE]                                 ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ╠═══════════════════════════════════════════════════════════════════════╣  ┃
+┃  ║  Exceptional Entertainment & DJ Services                          ✓  ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║  ⭐⭐⭐⭐☆ 4.5                                                        ║  ┃
+┃  ║                                                                        ║  ┃
+┃  ║  📍 Cape Coast, Central Region                                        ║  ┃
+┃  ╚═══════════════════════════════════════════════════════════════════════╝  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+BORDER: Orange (medium) | SHADOW: Small | BADGE: Orange Gradient
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                             ⚫ FREE VENDOR ⚫                                 ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┌───────────────────────────────────────────────────────────────────────────┐
+│  ┌─────────────────────────────────────────────────────────────────────┐  │
+│  │                                                                      │  │
+│  │                                                                      │  │
+│  │                        [VENDOR IMAGE]                                │  │
+│  │                                                                      │  │
+│  │                                                                      │  │
+│  ├─────────────────────────────────────────────────────────────────────┤  │
+│  │  Local Event Catering Services                                   ✓ │  │
+│  │                                                                      │  │
+│  │  ⭐⭐⭐⭐☆ 4.2                                                       │  │
+│  │                                                                      │  │
+│  │  📍 Tema, Greater Accra                                             │  │
+│  └─────────────────────────────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────────────────────────────────┘
+BORDER: Gray (thin) | SHADOW: None | BADGE: No Badge
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+KEY VISUAL ELEMENTS EXPLAINED:
+
+1. VIP TIER BADGE (Top Right Corner)
+   ─────────────────────────────────
+   👑 PLATINUM → Purple-Pink gradient, most prominent
+   👑 GOLD     → Yellow-Gold gradient, highly visible
+   👑 SILVER   → Gray gradient, professional
+   👑 BRONZE   → Orange gradient, entry-level premium
+   (No Badge)  → Free tier vendors
+
+2. BORDER COLORS
+   ─────────────────────────────────
+   • Platinum: Purple (most eye-catching)
+   • Gold: Yellow/Gold (premium feel)
+   • Silver: Gray (professional)
+   • Bronze: Orange (warm, welcoming)
+   • Free: Light gray (standard)
+
+3. VERIFICATION BADGE
+   ─────────────────────────────────
+   ✓ Blue checkmark appears for verified vendors
+   • Positioned next to business name
+   • Available to all tiers (not exclusive to VIP)
+   • Adds +30 points to ranking score
+
+4. SHADOW EFFECTS
+   ─────────────────────────────────
+   • Platinum: Extra-large shadow (most depth)
+   • Gold: Large shadow
+   • Silver: Medium shadow
+   • Bronze: Small shadow
+   • Free: No shadow
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+HOMEPAGE DISPLAY ORDER:
+
+When customers visit the homepage, they see vendors in this order:
+
+1st Priority: 👑 PLATINUM + ✓ VERIFIED + HIGH RATING
+              (Score: 90-95+ points)
+              ↓
+2nd Priority: 👑 PLATINUM + HIGH RATING
+              (Score: 60-70 points)
+              ↓
+3rd Priority: 👑 GOLD + ✓ VERIFIED + HIGH RATING
+              (Score: 80-90 points)
+              ↓
+4th Priority: 👑 GOLD + HIGH RATING
+              (Score: 50-60 points)
+              ↓
+5th Priority: 👑 SILVER + ✓ VERIFIED
+              (Score: 70-80 points)
+              ↓
+6th Priority: 👑 BRONZE + ✓ VERIFIED
+              (Score: 60-70 points)
+              ↓
+7th Priority: Free Vendors with ✓ VERIFIED
+              (Score: 30-40 points)
+              ↓
+8th Priority: Free Vendors (by rating)
+              (Score: 0-30 points)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+CUSTOMER EXPERIENCE:
+
+When browsing vendors, customers immediately notice:
+
+✓ Premium borders stand out (Purple, Gold, Orange)
+✓ VIP badges in corner are eye-catching
+✓ Verification badges build trust
+✓ Star ratings help compare quality
+✓ Portfolio images show work quality
+
+This creates a natural visual hierarchy that:
+• Highlights premium vendors
+• Maintains trust with verification
+• Rewards quality with ratings
+• Keeps the experience fair for all vendors
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+MOBILE VIEW CONSIDERATIONS:
+
+On mobile devices:
+• VIP badges resize appropriately (text-xs)
+• Borders remain visible and color-coded
+• Cards stack in single column
+• Ranking order maintained
+• Touch-friendly card links
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                            Created: October 19, 2025
+═══════════════════════════════════════════════════════════════════════════════
+

@@ -1,8 +1,41 @@
 @props(['vendor'])
 
-{{-- Smart Vendor Card Design - Clean & Unified --}}
+@php
+    // Get VIP tier and determine border/badge styling
+    $vipTier = $vendor->getVipTier();
+    $borderClass = 'border-gray-200 hover:border-gray-300';
+    $vipBadgeClass = '';
+    $vipLabel = '';
+    
+    if ($vipTier) {
+        switch($vipTier) {
+            case 'VIP Platinum':
+                $borderClass = 'border-purple-400 hover:border-purple-500 shadow-lg';
+                $vipBadgeClass = 'bg-gradient-to-r from-purple-600 to-pink-600 text-white';
+                $vipLabel = 'PLATINUM';
+                break;
+            case 'VIP Gold':
+                $borderClass = 'border-yellow-400 hover:border-yellow-500 shadow-md';
+                $vipBadgeClass = 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white';
+                $vipLabel = 'GOLD';
+                break;
+            case 'VIP Silver':
+                $borderClass = 'border-gray-400 hover:border-gray-500';
+                $vipBadgeClass = 'bg-gradient-to-r from-gray-400 to-gray-500 text-white';
+                $vipLabel = 'SILVER';
+                break;
+            case 'VIP Bronze':
+                $borderClass = 'border-orange-400 hover:border-orange-500';
+                $vipBadgeClass = 'bg-gradient-to-r from-orange-500 to-orange-600 text-white';
+                $vipLabel = 'BRONZE';
+                break;
+        }
+    }
+@endphp
+
+{{-- Smart Vendor Card Design - Enhanced with VIP Tiers --}}
 <a href="{{ route('vendors.show', $vendor->slug) }}" class="block group">
-    <div class="bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors duration-200 overflow-hidden">
+    <div class="bg-white rounded-lg border-2 {{ $borderClass }} transition-all duration-200 overflow-hidden relative">
         {{-- Vendor Image/Logo --}}
         @php
             $previewUrl = $vendor->getPreviewImageUrl();
@@ -11,8 +44,18 @@
             }
         @endphp
         
+        {{-- VIP Tier Badge (Top Right Corner) --}}
+        @if($vipTier)
+            <div class="absolute top-2 right-2 z-10">
+                <span class="{{ $vipBadgeClass }} text-xs font-bold px-2 py-1 rounded-full shadow-lg flex items-center gap-1">
+                    <span>👑</span>
+                    <span>{{ $vipLabel }}</span>
+                </span>
+            </div>
+        @endif
+
         @if($previewUrl && $previewUrl !== '')
-            <div class="h-32 md:h-40 lg:h-48 bg-gray-100 overflow-hidden">
+            <div class="h-32 md:h-40 lg:h-48 bg-gray-100 overflow-hidden relative">
                 <img src="{{ $previewUrl }}" 
                      alt="{{ $vendor->business_name }}" 
                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
@@ -20,7 +63,7 @@
                      onerror="this.parentElement.innerHTML='<div class=\'h-full bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center\'><div class=\'text-4xl md:text-6xl font-bold text-purple-300\'>{{ strtoupper(substr($vendor->business_name, 0, 1)) }}</div></div>'">
             </div>
         @else
-            <div class="h-32 md:h-40 lg:h-48 bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center overflow-hidden">
+            <div class="h-32 md:h-40 lg:h-48 bg-gradient-to-br from-purple-100 to-teal-100 flex items-center justify-center overflow-hidden relative">
                 <div class="text-4xl md:text-6xl font-bold text-purple-300">
                     {{ strtoupper(substr($vendor->business_name, 0, 1)) }}
                 </div>
@@ -29,13 +72,6 @@
 
         {{-- Vendor Details --}}
         <div class="p-3 md:p-4">
-            {{-- VIP Badge (Prominent at Top) --}}
-            @if($vendor->hasVipBadge())
-                <div class="mb-2">
-                    <x-vip-badge :tier="$vendor->getVipTier()" size="sm" />
-                </div>
-            @endif
-
             {{-- Business Name with Verified Badge --}}
             <div class="flex items-start justify-between mb-2">
                 <h3 class="text-sm md:text-base font-semibold text-gray-800 group-hover:text-purple-600 transition-colors line-clamp-2 flex-1">

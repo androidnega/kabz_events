@@ -47,7 +47,68 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
-        return view('home', compact('categories', 'featuredVendors', 'featuredAds', 'appearance'));
+        // Get vendor counts by location for the location modal
+        $locationCounts = $this->getVendorLocationCounts();
+
+        return view('home', compact('categories', 'featuredVendors', 'featuredAds', 'appearance', 'locationCounts'));
+    }
+
+    /**
+     * Get vendor counts grouped by region and district/town.
+     */
+    private function getVendorLocationCounts(): array
+    {
+        $vendors = Vendor::where('is_verified', true)
+            ->select('address', 'district')
+            ->get();
+
+        $locationCounts = [
+            'regions' => [],
+            'towns' => [],
+        ];
+
+        // Ghana regions mapping
+        $regionKeywords = [
+            'Greater Accra' => ['accra', 'tema', 'ga east', 'ga west', 'ga south', 'adenta', 'ashiaman', 'dome', 'madina', 'kasoa', 'spintex', 'east legon', 'osu', 'labone'],
+            'Ashanti' => ['kumasi', 'obuasi', 'ejisu', 'mampong', 'asokore', 'bantama', 'suame', 'adum', 'kejetia', 'asafo'],
+            'Western' => ['sekondi', 'takoradi', 'tarkwa', 'prestea', 'axim', 'effiakuma'],
+            'Central' => ['cape coast', 'winneba', 'agona swedru', 'elmina', 'mankessim'],
+            'Northern' => ['tamale', 'yendi', 'savelugu', 'gumani', 'tolon', 'kpandai'],
+            'Eastern' => ['koforidua', 'new juaben', 'akropong', 'nsawam', 'suhum', 'akim oda', 'mpraeso'],
+            'Volta' => ['ho', 'hohoe', 'keta', 'aflao', 'sogakope', 'denu', 'kpando'],
+            'Upper East' => ['bolgatanga', 'bongo', 'navrongo', 'bawku', 'paga'],
+            'Upper West' => ['wa', 'wechiau', 'lawra', 'jirapa', 'tumu'],
+            'Bono' => ['sunyani', 'berekum', 'techiman', 'wenchi', 'dormaa ahenkro'],
+        ];
+
+        foreach ($vendors as $vendor) {
+            $address = strtolower($vendor->address ?? '');
+            $district = strtolower($vendor->district ?? '');
+
+            foreach ($regionKeywords as $region => $keywords) {
+                foreach ($keywords as $keyword) {
+                    if (stripos($address, $keyword) !== false || stripos($district, $keyword) !== false) {
+                        // Count for region
+                        if (!isset($locationCounts['regions'][$region])) {
+                            $locationCounts['regions'][$region] = 0;
+                        }
+                        $locationCounts['regions'][$region]++;
+
+                        // Count for town (use district or first keyword match)
+                        $town = ucwords($keyword);
+                        $townKey = $region . '|' . $town;
+                        if (!isset($locationCounts['towns'][$townKey])) {
+                            $locationCounts['towns'][$townKey] = 0;
+                        }
+                        $locationCounts['towns'][$townKey]++;
+                        
+                        break 2; // Found match, move to next vendor
+                    }
+                }
+            }
+        }
+
+        return $locationCounts;
     }
 
     /**

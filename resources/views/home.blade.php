@@ -33,7 +33,7 @@
                         <!-- Location Button -->
                         <button 
                             type="button"
-                            @click="$dispatch('open-location-modal')"
+                            onclick="openLocationModal()"
                             class="w-full md:w-56 px-4 py-2.5 md:py-3 rounded-full bg-white text-gray-700 text-sm md:text-base border border-white hover:bg-gray-50 transition flex items-center justify-between gap-2"
                         >
                             <div class="flex items-center gap-2 flex-1 min-w-0">
@@ -194,7 +194,7 @@
     </div>
 
     <!-- Beautiful Location Modal -->
-    <x-home-location-modal />
+    <x-home-location-modal :appearance="$appearance" :location-counts="$locationCounts" />
 
 </x-layouts.base>
 

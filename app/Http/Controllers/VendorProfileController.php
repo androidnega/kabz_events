@@ -55,6 +55,11 @@ class VendorProfileController extends Controller
         if ($request->has('region') && $request->region) {
             $query->where('address', 'like', "%{$request->region}%");
         }
+        
+        // District/Town filter (more specific than region - takes priority)
+        if ($request->has('district') && $request->district) {
+            $query->where('address', 'like', "%{$request->district}%");
+        }
 
         // Sort filter
         $sortBy = $request->input('sort', 'rating');

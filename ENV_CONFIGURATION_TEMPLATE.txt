@@ -1,0 +1,504 @@
+================================================================================
+          KABZS EVENT - DATABASE & PASSWORD CONFIGURATION GUIDE
+================================================================================
+
+📍 WHERE ARE YOUR PASSWORDS & CONFIGURATIONS STORED?
+====================================================
+
+The .env file is your main configuration file containing ALL passwords and 
+sensitive credentials. It's located at:
+
+📁 LOCATION: C:\xampp\htdocs\kabz\.env
+
+⚠️ IMPORTANT: This file is hidden by .gitignore and won't appear in your 
+              file explorer unless you enable "Show hidden files"
+
+================================================================================
+                    YOUR .ENV FILE STRUCTURE
+================================================================================
+
+Below is the COMPLETE .env file template with ALL password locations marked.
+Copy this entire content and create a file named ".env" in your project root.
+
+--------------------------------------------------------------------------------
+
+# ================================================================================
+# APPLICATION SETTINGS
+# ================================================================================
+APP_NAME="KABZS EVENT"
+APP_ENV=local                           # Change to "production" when deploying
+APP_KEY=                                # ⭐ Generate with: php artisan key:generate
+APP_DEBUG=true                          # ⚠️ Set to "false" in production
+APP_URL=http://localhost:8000           # Change to your domain in production
+
+# ================================================================================
+# 🔐 DATABASE CONFIGURATION (PASSWORD #1)
+# ================================================================================
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=event_management_db         # ⭐ Your database name
+DB_USERNAME=root                        # ⭐ Your database username
+DB_PASSWORD=                            # ⭐ DATABASE PASSWORD HERE (empty for XAMPP)
+
+# For XAMPP (local development):
+# DB_HOST=127.0.0.1
+# DB_DATABASE=event_management_db
+# DB_USERNAME=root
+# DB_PASSWORD=                          (leave empty - no password by default)
+
+# For cPanel (production):
+# DB_HOST=localhost
+# DB_DATABASE=username_kabzs_event_db   (cPanel adds your username as prefix)
+# DB_USERNAME=username_kabzs_user       (cPanel adds your username as prefix)
+# DB_PASSWORD=YourStrongPassword123!    (⭐ PASSWORD YOU SET IN CPANEL)
+
+# ================================================================================
+# CACHE, SESSION, QUEUE SETTINGS
+# ================================================================================
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+LOG_CHANNEL=stack
+LOG_LEVEL=debug
+
+# ================================================================================
+# 🔐 EMAIL/SMTP CONFIGURATION (PASSWORD #2)
+# ================================================================================
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io              # ⭐ Your SMTP host
+MAIL_PORT=2525                          # ⭐ SMTP port (587 or 465)
+MAIL_USERNAME=                          # ⭐ Your email username
+MAIL_PASSWORD=                          # ⭐ EMAIL PASSWORD HERE
+MAIL_ENCRYPTION=tls                     # tls or ssl
+MAIL_FROM_ADDRESS="noreply@kabzsevent.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+# For local testing (Mailtrap):
+# MAIL_HOST=smtp.mailtrap.io
+# MAIL_PORT=2525
+# MAIL_USERNAME=your_mailtrap_username
+# MAIL_PASSWORD=your_mailtrap_password
+
+# For production (cPanel):
+# MAIL_HOST=mail.yourdomain.com
+# MAIL_PORT=465
+# MAIL_USERNAME=noreply@yourdomain.com
+# MAIL_PASSWORD=YourEmailPassword123!   (⭐ PASSWORD FROM CPANEL EMAIL ACCOUNT)
+# MAIL_ENCRYPTION=ssl
+
+# ================================================================================
+# 🔐 ARKASSEL SMS (Ghana) - API CREDENTIALS (PASSWORD #3 & #4)
+# ================================================================================
+SMS_PROVIDER=arkasel
+SMS_API_KEY=                            # ⭐ ARKASSEL API KEY HERE
+SMS_API_SECRET=                         # ⭐ ARKASSEL API SECRET HERE
+SMS_SENDER_ID=KABZS                     # Your sender ID (max 11 chars)
+SMS_ENABLED=false                       # Set to "true" when configured
+
+# Get your credentials from: https://arkasel.com/
+# After registration, find in: Dashboard → API Settings → API Credentials
+
+# ================================================================================
+# 🔐 PAYSTACK PAYMENT (Ghana) - API KEYS (PASSWORD #5 & #6)
+# ================================================================================
+PAYSTACK_PUBLIC_KEY=                    # ⭐ PAYSTACK PUBLIC KEY HERE
+PAYSTACK_SECRET_KEY=                    # ⭐ PAYSTACK SECRET KEY HERE
+PAYSTACK_CALLBACK_URL="${APP_URL}/payment/callback"
+PAYSTACK_ENABLED=false                  # Set to "true" when configured
+
+# Get your credentials from: https://dashboard.paystack.com/
+# After registration, find in: Settings → API Keys & Webhooks
+
+# For testing:
+# PAYSTACK_PUBLIC_KEY=pk_test_xxxxxxxxxxxxxxxxx
+# PAYSTACK_SECRET_KEY=sk_test_xxxxxxxxxxxxxxxxx
+
+# For production (keep these SECRET!):
+# PAYSTACK_PUBLIC_KEY=pk_live_xxxxxxxxxxxxxxxxx
+# PAYSTACK_SECRET_KEY=sk_live_xxxxxxxxxxxxxxxxx
+
+# ================================================================================
+# 🔐 CLOUDINARY STORAGE - API CREDENTIALS (PASSWORD #7, #8, #9)
+# ================================================================================
+CLOUD_STORAGE=local                     # Change to "cloudinary" when using Cloudinary
+CLOUDINARY_CLOUD_NAME=                  # ⭐ CLOUDINARY CLOUD NAME HERE
+CLOUDINARY_API_KEY=                     # ⭐ CLOUDINARY API KEY HERE
+CLOUDINARY_API_SECRET=                  # ⭐ CLOUDINARY API SECRET HERE
+
+# Get your credentials from: https://cloudinary.com/console
+# After registration, find in: Dashboard → Account Details
+
+# For local development:
+# CLOUD_STORAGE=local
+
+# For production:
+# CLOUD_STORAGE=cloudinary
+# CLOUDINARY_CLOUD_NAME=your-cloud-name
+# CLOUDINARY_API_KEY=123456789012345
+# CLOUDINARY_API_SECRET=abcdefghijklmnopqrstuvwxyz
+
+# ================================================================================
+# REDIS (Optional)
+# ================================================================================
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null                     # ⭐ Redis password if configured
+REDIS_PORT=6379
+
+# ================================================================================
+# PUSHER (Real-time Broadcasting - Optional)
+# ================================================================================
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_APP_CLUSTER=mt1
+
+# ================================================================================
+# ADDITIONAL SETTINGS
+# ================================================================================
+DEFAULT_CURRENCY=GHS
+CURRENCY_SYMBOL=GH₵
+APP_TIMEZONE=Africa/Accra
+
+--------------------------------------------------------------------------------
+
+================================================================================
+                    COMPLETE PASSWORD CHECKLIST
+================================================================================
+
+Here are ALL the passwords and credentials you need:
+
+1. 🔐 DATABASE PASSWORD (DB_PASSWORD)
+   Location in file: Line ~30
+   Where to get: 
+   - Local (XAMPP): Leave empty (no password)
+   - Production: cPanel → MySQL Databases → Create user with password
+   Current value: [EMPTY] for XAMPP
+
+2. 🔐 EMAIL PASSWORD (MAIL_PASSWORD)
+   Location in file: Line ~55
+   Where to get:
+   - Local: Mailtrap.io (free testing service)
+   - Production: cPanel → Email Accounts → Create email → Set password
+   Current value: [NOT SET]
+
+3. 🔐 SMS API KEY (SMS_API_KEY)
+   Location in file: Line ~72
+   Where to get: https://arkasel.com/ → Register → API Settings
+   Current value: [NOT SET]
+
+4. 🔐 SMS API SECRET (SMS_API_SECRET)
+   Location in file: Line ~73
+   Where to get: https://arkasel.com/ → Register → API Settings
+   Current value: [NOT SET]
+
+5. 🔐 PAYSTACK PUBLIC KEY (PAYSTACK_PUBLIC_KEY)
+   Location in file: Line ~82
+   Where to get: https://dashboard.paystack.com/ → Settings → API Keys
+   Current value: [NOT SET]
+
+6. 🔐 PAYSTACK SECRET KEY (PAYSTACK_SECRET_KEY)
+   Location in file: Line ~83
+   Where to get: https://dashboard.paystack.com/ → Settings → API Keys
+   Current value: [NOT SET]
+
+7. 🔐 CLOUDINARY CLOUD NAME (CLOUDINARY_CLOUD_NAME)
+   Location in file: Line ~97
+   Where to get: https://cloudinary.com/console → Dashboard
+   Current value: [NOT SET]
+
+8. 🔐 CLOUDINARY API KEY (CLOUDINARY_API_KEY)
+   Location in file: Line ~98
+   Where to get: https://cloudinary.com/console → Dashboard
+   Current value: [NOT SET]
+
+9. 🔐 CLOUDINARY API SECRET (CLOUDINARY_API_SECRET)
+   Location in file: Line ~99
+   Where to get: https://cloudinary.com/console → Dashboard
+   Current value: [NOT SET]
+
+================================================================================
+                    HOW TO FIND YOUR .ENV FILE
+================================================================================
+
+METHOD 1: Using Windows File Explorer
+--------------------------------------
+1. Navigate to: C:\xampp\htdocs\kabz\
+2. Click View → Show → File name extensions ✓
+3. Click View → Show → Hidden items ✓
+4. Look for file named: .env (no extension)
+5. If it doesn't exist, create it (see METHOD 3 below)
+
+METHOD 2: Using VS Code / Cursor
+---------------------------------
+1. Open your project in VS Code or Cursor
+2. Look in the file explorer (left sidebar)
+3. The .env file should be at the root level
+4. If you don't see it, it may not exist yet
+
+METHOD 3: Create .ENV File If Missing
+--------------------------------------
+1. Open Notepad or VS Code
+2. Copy the entire template above (between the lines)
+3. Save as: .env (exactly, with the dot at the start)
+4. Save location: C:\xampp\htdocs\kabz\.env
+5. In Notepad, when saving:
+   - File name: .env
+   - Save as type: All Files (*)
+   - Encoding: UTF-8
+
+================================================================================
+                    CURRENT DATABASE SETTINGS
+================================================================================
+
+Based on your project structure, here's what you should use:
+
+FOR LOCAL DEVELOPMENT (XAMPP):
+------------------------------
+Database Name: event_management_db
+Database User: root
+Database Password: (empty - leave blank)
+Database Host: 127.0.0.1 or localhost
+Database Port: 3306
+
+Your .env should have:
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=event_management_db
+DB_USERNAME=root
+DB_PASSWORD=
+
+FOR PRODUCTION (CPANEL):
+------------------------
+Database Name: username_event_management_db (or username_kabzs_event_db)
+Database User: username_dbuser (whatever you created)
+Database Password: The password YOU set when creating the database user
+Database Host: localhost
+Database Port: 3306
+
+Your .env should have:
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=username_kabzs_event_db
+DB_USERNAME=username_kabzs_user
+DB_PASSWORD=ThePasswordYouSetInCpanel
+
+================================================================================
+                    HOW TO CREATE DATABASE IN XAMPP
+================================================================================
+
+1. Open phpMyAdmin:
+   - Visit: http://localhost/phpmyadmin
+   - Or click "Admin" next to MySQL in XAMPP Control Panel
+
+2. Create Database:
+   - Click "New" in left sidebar
+   - Database name: event_management_db
+   - Collation: utf8mb4_unicode_ci
+   - Click "Create"
+
+3. Create User (Optional - for production-like setup):
+   - Click "User accounts" tab
+   - Click "Add user account"
+   - Username: kabzs_user
+   - Host: localhost
+   - Password: (choose a password)
+   - Database for user: Grant all privileges on event_management_db
+   - Click "Go"
+
+4. Update .env with these credentials
+
+================================================================================
+                    HOW TO FIND CREDENTIALS IN CPANEL
+================================================================================
+
+DATABASE CREDENTIALS:
+---------------------
+1. Login to cPanel: https://yourdomain.com:2083
+2. Scroll to "Databases" section
+3. Click "MySQL Databases"
+4. Here you can:
+   - Create new database (note the full name with prefix)
+   - Create new user (note the username with prefix)
+   - Set password (save this securely!)
+   - Add user to database (grant all privileges)
+
+EMAIL CREDENTIALS:
+------------------
+1. Login to cPanel
+2. Scroll to "Email" section
+3. Click "Email Accounts"
+4. Click "Create" to create new email
+5. Email address: noreply@yourdomain.com
+6. Password: Set a strong password (save this!)
+7. Note the SMTP settings shown after creation
+
+SMS CREDENTIALS (Arkassel):
+---------------------------
+1. Visit: https://arkasel.com/
+2. Click "Register" or "Sign Up"
+3. Complete registration
+4. Login to dashboard
+5. Go to: API Settings or Developer Settings
+6. Copy API Key and API Secret
+7. Register your Sender ID (e.g., KABZS)
+
+PAYSTACK CREDENTIALS:
+---------------------
+1. Visit: https://paystack.com/
+2. Click "Get Started" or "Sign Up"
+3. Complete business registration
+4. Verify your account
+5. Go to: Settings → API Keys & Webhooks
+6. Copy Test Keys (for testing)
+7. Copy Live Keys (for production - after verification)
+
+CLOUDINARY CREDENTIALS:
+-----------------------
+1. Visit: https://cloudinary.com/
+2. Click "Sign Up" (free tier available)
+3. Complete registration
+4. Login to dashboard
+5. On dashboard home page, you'll see:
+   - Cloud Name
+   - API Key
+   - API Secret
+6. Copy all three values
+
+================================================================================
+                    GENERATING APPLICATION KEY
+================================================================================
+
+The APP_KEY is crucial for encryption and security.
+
+HOW TO GENERATE:
+----------------
+1. Open terminal in your project folder
+2. Run: php artisan key:generate
+3. This will automatically update your .env file
+4. You should see: "Application key set successfully"
+
+The key looks like: base64:abcdefghijklmnopqrstuvwxyz1234567890=
+
+MANUAL METHOD (if artisan doesn't work):
+-----------------------------------------
+1. Visit: https://generate-random.org/laravel-key-generator
+2. Click "Generate Laravel Key"
+3. Copy the generated key
+4. Paste in .env as: APP_KEY=base64:xxxxxxxxxxxx
+
+================================================================================
+                    SECURITY WARNINGS
+================================================================================
+
+🚨 CRITICAL SECURITY RULES:
+
+1. ⚠️ NEVER commit .env to GitHub
+   - The .gitignore file prevents this
+   - Always double-check before pushing
+
+2. ⚠️ NEVER share your .env file publicly
+   - Don't email it
+   - Don't paste it in chat/forums
+   - Don't upload to public file sharing
+
+3. ⚠️ NEVER use production credentials in development
+   - Use test API keys during development
+   - Switch to live keys only in production
+
+4. ⚠️ ALWAYS use strong passwords
+   - Minimum 12 characters
+   - Mix of letters, numbers, symbols
+   - Don't use common words
+
+5. ⚠️ ALWAYS set APP_DEBUG=false in production
+   - Debug mode shows sensitive information
+   - Only use APP_DEBUG=true in development
+
+6. ⚠️ ALWAYS backup your .env file
+   - Save encrypted copy in password manager
+   - Document where to get each credential
+
+================================================================================
+                    TESTING YOUR CONFIGURATION
+================================================================================
+
+After setting up your .env file:
+
+1. TEST DATABASE CONNECTION:
+   php artisan tinker
+   DB::connection()->getPdo();
+   exit
+
+   ✅ Success: Shows PDO object details
+   ❌ Failure: Shows connection error
+
+2. TEST EMAIL:
+   php artisan tinker
+   Mail::raw('Test email', function($msg) {
+       $msg->to('test@example.com')->subject('Test');
+   });
+   exit
+
+   ✅ Check your email service for sent message
+
+3. CLEAR AND CACHE CONFIG:
+   php artisan config:clear
+   php artisan config:cache
+
+4. CHECK CONFIGURATION:
+   php artisan config:show
+
+================================================================================
+                    NEED HELP?
+================================================================================
+
+If you're having trouble finding or configuring credentials:
+
+1. Check Documentation:
+   - CPANEL_GITHUB_DEPLOYMENT_GUIDE.txt (in your project)
+   - SYSTEM_AUDIT_REPORT.txt (in your project)
+   - /Docs folder (70+ documentation files)
+
+2. Check Service Documentation:
+   - Arkassel: https://arkasel.com/docs
+   - Paystack: https://paystack.com/docs
+   - Cloudinary: https://cloudinary.com/documentation
+
+3. Contact Support:
+   - Your hosting provider (for cPanel issues)
+   - Arkassel support (for SMS issues)
+   - Paystack support (for payment issues)
+
+================================================================================
+                    SUMMARY
+================================================================================
+
+✅ Your .env file location: C:\xampp\htdocs\kabz\.env
+✅ Total passwords needed: 9 (listed above)
+✅ Required for local: Only database (can be empty for XAMPP)
+✅ Required for production: All 9 credentials
+✅ Template provided: Copy from this file
+✅ Never commit to GitHub: Already in .gitignore
+
+NEXT STEPS:
+1. Create .env file from template above
+2. For local development: Only fill in database settings
+3. Generate APP_KEY: php artisan key:generate
+4. Test database connection
+5. When deploying: Fill in all credentials
+
+================================================================================
+                    END OF CONFIGURATION GUIDE
+================================================================================
+
+Created: October 15, 2025
+For: KABZS EVENT Platform
+Version: 1.0
+
+

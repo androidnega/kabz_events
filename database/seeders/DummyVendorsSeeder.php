@@ -81,11 +81,11 @@ class DummyVendorsSeeder extends Seeder
                 'region_id' => $region->id,
                 'district_id' => $district->id,
                 'town_id' => $town->id,
-                'profile_photo' => "https://picsum.photos/600/400?random={$i}",
+                'profile_photo' => "https://picsum.photos/seed/dummy-vendor-{$i}/600/400",
                 'work_samples' => json_encode([
-                    "https://picsum.photos/600/400?random=" . ($i * 100 + 1),
-                    "https://picsum.photos/600/400?random=" . ($i * 100 + 2),
-                    "https://picsum.photos/600/400?random=" . ($i * 100 + 3),
+                    "https://picsum.photos/seed/dummy-vendor-{$i}-1/600/400",
+                    "https://picsum.photos/seed/dummy-vendor-{$i}-2/600/400",
+                    "https://picsum.photos/seed/dummy-vendor-{$i}-3/600/400",
                 ]),
                 'social_links' => json_encode([
                     'facebook' => "https://facebook.com/vendor{$i}",
