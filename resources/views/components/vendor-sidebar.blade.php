@@ -55,7 +55,8 @@
         <i class="fas fa-clock text-gray-400 mr-2 mt-0.5 text-xs"></i>
         <div>
           <p class="text-xs text-gray-500">Member Since</p>
-          <p class="text-gray-900">{{ $vendor->created_at->format('F Y') }}</p>
+          <p class="text-gray-900">{{ $vendor->created_at->diffForHumans() }}</p>
+          <p class="text-xs text-gray-400">{{ $vendor->created_at->format('d M Y') }}</p>
         </div>
       </div>
       @if($averageResponseTime)
